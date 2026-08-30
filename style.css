@@ -79,7 +79,7 @@ button{
 .brand img{
   width:165px !important;
   height:58px !important;
-  transform:scale(1.8);
+  transform:scale(1.9); /* tamanho da logo inicial */
   transform-origin:left center;
 }
 .menu{

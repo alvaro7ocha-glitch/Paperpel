@@ -157,8 +157,8 @@ button{
 .hero-bg{
   position:absolute;
   inset:0;
-  z-index:-1;
-  background-image:url('assets/background-paper.png?v=2');
+  z-index:0;
+  background-image:url('assets/background-paper.png?v=3');
   background-position:center;
   background-size:cover;
   background-repeat:no-repeat;
@@ -167,6 +167,10 @@ button{
 }
 
 .hero-grid{
+  position:relative;
+  z-index:1;
+}
+
   min-height:620px;
   display:grid;
   grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);
@@ -407,11 +411,11 @@ button{
   position:absolute;
   inset:0;
   z-index:-1;
-  background-image:url('assets/background-paper.png?v=2');
+  background-image:url('assets/background-paper.svg');
   background-position:center;
   background-size:cover;
   background-repeat:no-repeat;
-  opacity:.20;
+  opacity:.22;
   pointer-events:none;
 }
 .differentiators{

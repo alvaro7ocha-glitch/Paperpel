@@ -127,6 +127,48 @@
   }
 </style>
 
+
+<style id="paperpel-contrast-fix">
+  .hero-copy .eyebrow{
+    color:#102334 !important;
+  }
+
+  .hero-copy>p{
+    color:#102334 !important;
+  }
+
+  .hero-note{
+    color:#102334 !important;
+  }
+
+  .hero-note .dot{
+    box-shadow:0 0 0 4px rgba(34,181,115,.10);
+  }
+
+  .maps-link{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-top:7px;
+    color:#0470C9 !important;
+    font-size:13px !important;
+    font-weight:700 !important;
+    transition:transform .2s ease, opacity .2s ease;
+  }
+
+  .maps-link:hover{
+    transform:translateX(2px);
+    opacity:.85;
+  }
+
+  .maps-icon{
+    width:18px;
+    height:18px;
+    flex:0 0 18px;
+    display:block;
+  }
+</style>
+
 </head>
 <body>
 
@@ -194,53 +236,33 @@
         <p>Uma gráfica completa para transformar sua necessidade em material pronto para usar.</p>
       </div>
 
-      <div class="services-grid services-grid-images">
-        <article class="service-card service-card-image featured">
-          <div class="service-image">
-            <img src="assets/impressao.png?v=1" alt="Impressão">
-            <span class="service-number">01</span>
-          </div>
-          <div class="service-content">
-            <h3>Impressão</h3>
-            <p>Materiais para uso pessoal, comercial e escolar, ótimo preço para grandes quantidades</p>
-            <span class="service-link">Ver possibilidades →</span>
-          </div>
+      <div class="services-grid">
+        <article class="service-card featured">
+          <span class="service-number">01</span>
+          <h3>Impressão</h3>
+          <p>Materiais para uso pessoal, comercial e escolar, com diferentes formatos e acabamentos.</p>
+          <span class="service-link">Ver possibilidades →</span>
         </article>
 
-        <article class="service-card service-card-image">
-          <div class="service-image">
-            <img src="assets/comunicacao-visual.png?v=1" alt="Comunicação visual">
-            <span class="service-number">02</span>
-          </div>
-          <div class="service-content">
-            <h3>Comunicação visual</h3>
-            <p>Banners, cartazes, adesivos e materiais para destacar sua marca e sua mensagem.</p>
-            <span class="service-link">Ver possibilidades →</span>
-          </div>
+        <article class="service-card">
+          <span class="service-number">02</span>
+          <h3>Comunicação visual</h3>
+          <p>Banners, cartazes, adesivos e materiais para destacar sua marca e sua mensagem.</p>
+          <span class="service-link">Ver possibilidades →</span>
         </article>
 
-        <article class="service-card service-card-image">
-          <div class="service-image">
-            <img src="assets/foto.png?v=1" alt="Impressão de foto">
-            <span class="service-number">03</span>
-          </div>
-          <div class="service-content">
-            <h3>Impresso de Foto</h3>
-            <p>Foto tradicional, polaroid foto ima, 3/4, foto A3. qualidade e durabilidade</p>
-            <span class="service-link">Ver possibilidades →</span>
-          </div>
+        <article class="service-card">
+          <span class="service-number">03</span>
+          <h3>Papelaria</h3>
+          <p>Cartões, etiquetas, materiais personalizados e soluções para sua identidade.</p>
+          <span class="service-link">Ver possibilidades →</span>
         </article>
 
-        <article class="service-card service-card-image">
-          <div class="service-image">
-            <img src="assets/personalizados.png?v=1" alt="Personalizados">
-            <span class="service-number">04</span>
-          </div>
-          <div class="service-content">
-            <h3>Personalizados</h3>
-            <p>Canecas, ímãs, lembranças e outros produtos para presentes, eventos e datas especiais.</p>
-            <span class="service-link">Ver possibilidades →</span>
-          </div>
+        <article class="service-card">
+          <span class="service-number">04</span>
+          <h3>Personalizados</h3>
+          <p>Canecas, ímãs, lembranças e outros produtos para presentes, eventos e datas especiais.</p>
+          <span class="service-link">Ver possibilidades →</span>
         </article>
       </div>
     </div>
@@ -337,6 +359,15 @@
         <div>
           <small>ENDEREÇO</small>
           <p>Av. Bernarda Silvestre, 410 — Loja 3<br>Rio Branco — Belo Horizonte/MG</p>
+          <a class="maps-link" href="https://www.google.com/maps/search/?api=1&query=Av.%20Bernarda%20Silvestre%2C%20410%20Belo%20Horizonte%20MG" target="_blank" rel="noopener" aria-label="Abrir a localização da Paperpel no Google Maps">
+            <svg class="maps-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#EA4335" d="M12 2.5a7 7 0 0 0-7 7c0 5.2 7 12 7 12s7-6.8 7-12a7 7 0 0 0-7-7Zm0 10.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4Z"/>
+              <circle cx="12" cy="9.5" r="1.7" fill="#4285F4"/>
+              <path fill="#FBBC04" d="M5.8 8.2A6.3 6.3 0 0 0 5 11c0 2.1 2.3 5.2 4.2 7.7l1.2 1.5c-.7-1.4-5.3-7.3-5.3-10.9 0-.4.1-.7.2-1.1l.5 0Z"/>
+              <path fill="#34A853" d="M18.2 8.2a6.3 6.3 0 0 1 .8 2.8c0 2.1-2.3 5.2-4.2 7.7l-1.2 1.5c.7-1.4 5.3-7.3 5.3-10.9 0-.4-.1-.7-.2-1.1l-.5 0Z"/>
+            </svg>
+            <span>Ver localização no Google Maps</span>
+          </a>
         </div>
 
         <div>
@@ -356,6 +387,6 @@
   </div>
 </footer>
 
-<script src="script.js?v=20260830-15"></script>
+<script src="script.js?v=20260830-16"></script>
 </body>
 </html>

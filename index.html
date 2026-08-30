@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Paperpel Gráfica — impressão, comunicação visual e soluções gráficas em Belo Horizonte.">
   <title>Paperpel Gráfica | Impressão e soluções gráficas</title>
-  <link rel="stylesheet" href="style.css?v=20260830-14">
+  <link rel="stylesheet" href="style.css?v=20260830-15">
 
   <style>
     .brand img{
@@ -56,7 +56,7 @@
       position:absolute !important;
       inset:0 !important;
       z-index:0 !important;
-      background-image:url('assets/background-paper.png?v=4') !important;
+      background-image:url('assets/background-paper.png?v=5') !important;
       background-position:center !important;
       background-size:cover !important;
       background-repeat:no-repeat !important;
@@ -79,7 +79,7 @@
       position:absolute !important;
       inset:0 !important;
       z-index:0 !important;
-      background-image:url('assets/background-paper.png?v=4') !important;
+      background-image:url('assets/background-paper.png?v=5') !important;
       background-position:center !important;
       background-size:cover !important;
       background-repeat:no-repeat !important;
@@ -92,6 +92,41 @@
       z-index:1 !important;
     }
   </style>
+
+<style id="paperpel-layout-fix">
+  .hero-grid{
+    position:relative !important;
+    z-index:1 !important;
+    min-height:620px !important;
+    display:grid !important;
+    grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr) !important;
+    gap:70px !important;
+    align-items:center !important;
+    padding:80px 0 !important;
+  }
+
+  .hero-copy{
+    align-self:center !important;
+  }
+
+  .hero-card{
+    align-self:center !important;
+    justify-self:end !important;
+  }
+
+  @media(max-width:900px){
+    .hero-grid{
+      grid-template-columns:1fr !important;
+      gap:45px !important;
+      padding:65px 0 !important;
+    }
+
+    .hero-card{
+      justify-self:start !important;
+    }
+  }
+</style>
+
 </head>
 <body>
 
@@ -301,6 +336,6 @@
   </div>
 </footer>
 
-<script src="script.js?v=20260830-13"></script>
+<script src="script.js?v=20260830-15"></script>
 </body>
 </html>

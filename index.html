@@ -24,10 +24,10 @@
 
       <div class="social-icons" aria-label="Redes sociais">
         <a href="https://www.instagram.com/paperpel.grafica/" target="_blank" rel="noopener" aria-label="Instagram">
-          <img src="assets/instagram.svg" alt="">
+          <img src="assets/instagram.svg" alt="Instagram">
         </a>
         <a href="https://wa.me/5531985268205" target="_blank" rel="noopener" aria-label="WhatsApp">
-          <img src="assets/whatsapp.svg" alt="">
+          <img src="assets/whatsapp.svg" alt="WhatsApp">
         </a>
       </div>
     </div>
@@ -140,123 +140,26 @@
       </div>
     </section>
 
-    <section id="avaliacoes" class="reviews-section">
+    <section id="avaliacoes" class="reviews-section" aria-label="Avaliações do Google">
       <div class="container">
-
         <div class="reviews-heading">
           <span class="eyebrow">O QUE NOSSOS CLIENTES DIZEM</span>
-
           <div class="reviews-rating">
-            <strong>5,0</strong>
-            <span class="stars" aria-label="5 estrelas">★★★★★</span>
-            <span>215 avaliações no Google</span>
+            <strong id="reviewsScore">5,0</strong>
+            <span class="stars" id="reviewsStars" aria-label="5 estrelas">★★★★★</span>
+            <span id="reviewsCount">carregando avaliações...</span>
           </div>
         </div>
 
         <div class="reviews-carousel">
           <button class="review-arrow prev" type="button" aria-label="Avaliações anteriores">‹</button>
-
-          <div class="reviews-track" id="reviewsTrack">
-
-            <article class="review-card">
-              <div class="review-header">
-                <img class="review-photo" src="assets/reviews/mayana.jpg" alt="Mayana Rodrigues">
-                <div class="review-user">
-                  <strong>Mayana Rodrigues</strong>
-                  <span>7 avaliações · 2 semanas atrás</span>
-                </div>
-                <span class="google-icon" aria-hidden="true">G</span>
-              </div>
-              <div class="review-stars">★★★★★</div>
-              <p>Atendimento atencioso e personalizado! Tudo que precisei foi feito super rápido e com a maior qualidade. Indico de olhos fechados 💜</p>
-            </article>
-
-            <article class="review-card">
-              <div class="review-header">
-                <img class="review-photo" src="assets/reviews/jessica.jpg" alt="Jessica Machado">
-                <div class="review-user">
-                  <strong>Jessica Machado</strong>
-                  <span>3 avaliações · 5 meses atrás</span>
-                </div>
-                <span class="google-icon" aria-hidden="true">G</span>
-              </div>
-              <div class="review-stars">★★★★★</div>
-              <p>Sempre sou muito bem atendida lá, e o serviço prestado tem sempre um ótimo resultado. Trabalho com arte e às vezes peço tamanhos de impressão personalizados e eles arrasam em tudo.</p>
-              <img class="review-product" src="assets/reviews/jessica-produto.jpg" alt="Produto produzido pela Paperpel">
-            </article>
-
-            <article class="review-card">
-              <div class="review-header">
-                <img class="review-photo" src="assets/reviews/eliza.jpg" alt="Eliza">
-                <div class="review-user">
-                  <strong>Eliza</strong>
-                  <span>4 avaliações · 6 meses atrás</span>
-                </div>
-                <span class="google-icon" aria-hidden="true">G</span>
-              </div>
-              <div class="review-stars">★★★★★</div>
-              <p>Ótimo atendimento, além da rapidez e qualidade do trabalho.</p>
-            </article>
-
-            <article class="review-card">
-              <div class="review-header">
-                <img class="review-photo" src="assets/reviews/bruna.jpg" alt="Bruna Maciel">
-                <div class="review-user">
-                  <strong>Bruna Maciel</strong>
-                  <span>2 avaliações · 2 meses atrás</span>
-                </div>
-                <span class="google-icon" aria-hidden="true">G</span>
-              </div>
-              <div class="review-stars">★★★★★</div>
-              <p>Produtos de excelente qualidade e um ótimo atendimento</p>
-              <img class="review-product" src="assets/reviews/bruna-produto.jpg" alt="Produto produzido pela Paperpel">
-            </article>
-
-            <article class="review-card">
-              <div class="review-header">
-                <img class="review-photo" src="assets/reviews/luisa.jpg" alt="Luísa Neves">
-                <div class="review-user">
-                  <strong>Luísa Neves</strong>
-                  <span>7 avaliações · 5 meses atrás</span>
-                </div>
-                <span class="google-icon" aria-hidden="true">G</span>
-              </div>
-              <div class="review-stars">★★★★★</div>
-              <p>Encomendei uma foto 10x15 e algumas fotos 3x4 e eu amei a qualidade, ficaram muito lindas! Obrigada!</p>
-            </article>
-
-            <article class="review-card">
-              <div class="review-header">
-                <img class="review-photo" src="assets/reviews/lucia.jpg" alt="Lúcia Aparecida Sergio">
-                <div class="review-user">
-                  <strong>Lúcia Aparecida Sergio</strong>
-                  <span>Local Guide · 19 avaliações · 1 ano atrás</span>
-                </div>
-                <span class="google-icon" aria-hidden="true">G</span>
-              </div>
-              <div class="review-stars">★★★★★</div>
-              <p>Trabalho e atendimento perfeito... não deixa a desejar... podem confiar.</p>
-            </article>
-
-            <article class="review-card">
-              <div class="review-header">
-                <img class="review-photo" src="assets/reviews/ana-carolina.jpg" alt="Ana Carolina Gonçalves">
-                <div class="review-user">
-                  <strong>Ana Carolina Gonçalves</strong>
-                  <span>4 avaliações · 5 meses atrás</span>
-                </div>
-                <span class="google-icon" aria-hidden="true">G</span>
-              </div>
-              <div class="review-stars">★★★★★</div>
-              <p>Atendimento excelente, rápido e caprichoso.</p>
-            </article>
-
+          <div class="reviews-track" id="reviewsTrack" aria-live="polite">
+            <div class="reviews-loading">Carregando avaliações do Google...</div>
           </div>
-
           <button class="review-arrow next" type="button" aria-label="Próximas avaliações">›</button>
         </div>
-
         <div class="review-dots" id="reviewDots" aria-hidden="true"></div>
+        <p class="reviews-attribution">Avaliações e informações fornecidas pelo Google. <a id="googlePlaceLink" href="https://maps.app.goo.gl/QpfCBbPG4BsePanQ9" target="_blank" rel="noopener">Ver no Google Maps</a></p>
       </div>
     </section>
 
@@ -297,6 +200,11 @@
             <small>HORÁRIO DE ATENDIMENTO</small>
             <p>De segunda a sexta de 9:30 às 18:00 h</p>
           </div>
+
+          <div>
+            <small>HORÁRIO DE ATENDIMENTO</small>
+            <p>De segunda a sexta de 9:30 às 18:00 h</p>
+          </div>
         </div>
       </div>
     </section>
@@ -310,6 +218,7 @@
     </div>
   </footer>
 
+  <script src="config.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

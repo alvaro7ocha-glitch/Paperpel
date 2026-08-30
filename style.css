@@ -158,11 +158,11 @@ button{
   position:absolute;
   inset:0;
   z-index:-1;
-  background-image:url('assets/background-paper.svg');
+  background-image:url('assets/background-paper.svg?v=7');
   background-position:center;
   background-size:cover;
   background-repeat:no-repeat;
-  opacity:.1;
+  opacity:1;
   pointer-events:none;
 }
 

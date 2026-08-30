@@ -14,6 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
       photo: "assets/reviews/Mayana Rodrigues.png"
     },
     {
+      name: "Iris Valin",
+      meta: "1 avaliação · 3 meses atrás",
+      text: "Montagem e produção maravilhosas com um preço extremamente acessível!! Meus parabéns!!",
+      photo: "assets/reviews/Iris Valin.png"
+    },
+    {
       name: "Eliza",
       meta: "4 avaliações · 6 meses atrás",
       text: "Ótimo atendimento, além da rapidez e qualidade do trabalho.",
@@ -26,16 +32,22 @@ document.addEventListener("DOMContentLoaded", () => {
       photo: "assets/reviews/Bruna Maciel.png"
     },
     {
-      name: "Sílvia Fidelis",
-      meta: "1 avaliação · 11 meses atrás",
-      text: "Atendimento excelente... rápidos, cordiais e excelência no atendimento que tive. Fiz o cartão e troca da cor da arte do meu cartão. Super recomendo",
-      photo: "assets/reviews/Silvia Fidelis.png"
+      name: "Luísa Neves",
+      meta: "7 avaliações · 5 meses atrás",
+      text: "Encomendei uma foto 10x15 e algumas fotos 3x4 e eu amei a qualidade, ficaram muito lindas! Obrigada!",
+      photo: "assets/reviews/Luisa Neves.png"
     },
     {
       name: "Jessica Machado",
       meta: "3 avaliações · 5 meses atrás",
-      text: "Sempre sou muito bem atendida lá, e o serviço prestado tem sempre um ótimo resultado. Trabalho com arte e as vezes peço tamanhos de impressão personalizados e eles arrasam em tudo.",
+      text: "Sempre sou muito bem atendida lá, e o serviço prestado tem sempre um ótimo resultado. Trabalho com arte e às vezes peço tamanhos de impressão personalizados e eles arrasam em tudo.",
       photo: "assets/reviews/Jessica Machado.png"
+    },
+    {
+      name: "Sílvia Fidelis",
+      meta: "1 avaliação · 11 meses atrás",
+      text: "Atendimento excelente... rápidos, cordiais e excelência no atendimento que tive. Fiz o cartão e troca da cor da arte do meu cartão. Super recomendo",
+      photo: "assets/reviews/Silvia Fidelis.png"
     },
     {
       name: "Ana Carolina Gonçalves",
@@ -48,18 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
       meta: "4 avaliações · 3 anos atrás",
       text: "Gratidão pelo trabalho prestado. Preço justo, atendimento maravilhoso, profissionalismo e prazo. RECOMENDO!",
       photo: "assets/reviews/Sergio Santos.png"
-    },
-    {
-      name: "Iris Valin",
-      meta: "1 avaliação · 2 anos atrás",
-      text: "Atendimento maravilhoso! Super atenciosos e a qualidade da impressão é ótima! Além da rapidez que o brasileiro aaaaaama!",
-      photo: "assets/reviews/Iris Valin.png"
-    },
-    {
-      name: "Luísa Neves",
-      meta: "7 avaliações · 5 meses atrás",
-      text: "Encomendei uma foto 10x15 e algumas fotos 3x4 e eu amei a qualidade, ficaram muito lindas! Obrigada!",
-      photo: "assets/reviews/Luisa Neves.png"
     }
   ];
 

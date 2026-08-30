@@ -505,8 +505,8 @@ button{
 
 /* 3 avaliações visíveis por vez */
 .review-card{
-  flex:0 0 calc((100% - 32px)/3) !important;
-  width:calc((100% - 32px)/3) !important;
+  flex:0 0 calc((100% - 32px)/3);
+  width:calc((100% - 32px)/3);
   min-width:0;
   min-height:300px;
   height:300px;
@@ -916,5 +916,84 @@ button{
   .footer-inner{
     padding:25px 0;
     flex-wrap:wrap;
+  }
+}
+
+
+/* =========================================================
+   PAPERPEL — CARROSSEL FINAL
+   3 cartões por vez no desktop
+   ========================================================= */
+
+.reviews-carousel{
+  position:relative;
+  width:100%;
+  max-width:1140px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  min-width:0;
+}
+
+.reviews-track{
+  flex:1 1 auto;
+  width:100%;
+  min-width:0;
+  display:flex !important;
+  gap:16px !important;
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+  scroll-behavior:smooth;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+  padding:8px 3px 18px;
+}
+
+.reviews-track::-webkit-scrollbar{
+  display:none;
+}
+
+/* EXATAMENTE 3 cartões visíveis */
+.review-card{
+  flex:0 0 calc((100% - 32px)/3) !important;
+  width:calc((100% - 32px)/3) !important;
+  min-width:0 !important;
+  min-height:300px !important;
+  height:300px !important;
+  padding:26px !important;
+  margin:0 !important;
+  border:1px solid #e1eaf1;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 8px 25px rgba(4,112,201,.06);
+  display:flex !important;
+  flex-direction:column !important;
+  scroll-snap-align:start;
+}
+
+.review-card p{
+  margin-top:14px;
+  font-size:13px;
+  line-height:1.65;
+}
+
+/* Tablet: 2 */
+@media(max-width:900px){
+  .review-card{
+    flex:0 0 calc((100% - 16px)/2) !important;
+    width:calc((100% - 16px)/2) !important;
+    min-height:285px !important;
+    height:285px !important;
+  }
+}
+
+/* Celular: 1 */
+@media(max-width:560px){
+  .review-card{
+    flex:0 0 100% !important;
+    width:100% !important;
+    min-height:260px !important;
+    height:auto !important;
   }
 }

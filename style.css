@@ -77,10 +77,10 @@ button{
 }
 
 .brand img{
-  width:200px;
-  height:68px;
-  max-width:165px;
-  object-fit:contain;
+  width:165px !important;
+  height:58px !important;
+  transform:scale(1.8);
+  transform-origin:left center;
 }
 .menu{
   display:flex;

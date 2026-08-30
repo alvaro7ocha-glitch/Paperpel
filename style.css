@@ -111,12 +111,12 @@ button{
   flex:0 0 auto;
 }
 .social-icons a{
-  width:34px !important;
-  height:34px !important;
-  min-width:34px;
-  min-height:34px;
-  max-width:34px;
-  max-height:34px;
+  width:27px !important;
+  height:27px !important;
+  min-width:27px;
+  min-height:27px;
+  max-width:27px;
+  max-height:27px;
   display:flex;
   align-items:center;
   justify-content:center;

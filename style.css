@@ -79,7 +79,7 @@ button{
 .brand img{
   width:165px !important;
   height:58px !important;
-  transform:scale(1.85); /* tamanho da logo inicial */
+  transform:scale(1.8); /* tamanho da logo inicial */
   transform-origin:left center;
 }
 .menu{
@@ -111,12 +111,12 @@ button{
   flex:0 0 auto;
 }
 .social-icons a{
-  width:27px !important;
-  height:27px !important;
-  min-width:27px;
-  min-height:27px;
-  max-width:27px;
-  max-height:27px;
+  width:20px !important;
+  height:20px !important;
+  min-width:20px;
+  min-height:20px;
+  max-width:20px;
+  max-height:20px;
   display:flex;
   align-items:center;
   justify-content:center;

@@ -79,7 +79,7 @@ button{
 .brand img{
   width:165px !important;
   height:58px !important;
-  transform:scale(1.8); /* tamanho da logo inicial */
+  transform:scale(1.7); /* tamanho da logo inicial */
   transform-origin:left center;
 }
 .menu{
@@ -110,17 +110,28 @@ button{
   gap:12px;
   flex:0 0 auto;
 }
-.social-icons a{
-  width:20px !important;
-  height:20px !important;
-  min-width:20px;
-  min-height:20px;
-  max-width:20px;
-  max-height:20px;
+/* =========================================================
+   ÍCONES INSTAGRAM E WHATSAPP
+   ========================================================= */
+
+.social-icons{
   display:flex;
   align-items:center;
   justify-content:center;
-  overflow:hidden;
+  gap:12px;
+}
+
+.social-icons a{
+  width:40px !important;
+  height:40px !important;
+  min-width:40px;
+  min-height:40px;
+  max-width:40px;
+  max-height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:visible;
 }
 
 .social-icons img{
@@ -132,6 +143,7 @@ button{
   max-height:34px !important;
   object-fit:contain !important;
   object-position:center;
+  display:block;
 }
 
 .social-icons a:hover img{

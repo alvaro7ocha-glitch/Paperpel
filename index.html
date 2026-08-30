@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <header class="header">
     <div class="container nav">
       <a class="brand" href="#inicio" aria-label="Paperpel Gráfica">
@@ -21,15 +22,13 @@
         <a href="#contato">Contato</a>
       </nav>
 
-      <div class="nav-actions">
-        <a class="social-instagram" href="https://www.instagram.com/paperpel.grafica/" target="_blank" rel="noopener" aria-label="Instagram da Paperpel">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="3" y="3" width="18" height="18" rx="5"></rect>
-            <circle cx="12" cy="12" r="4.2"></circle>
-            <circle cx="17.4" cy="6.7" r="1"></circle>
-          </svg>
+      <div class="social-icons" aria-label="Redes sociais">
+        <a href="https://www.instagram.com/paperpel.grafica/" target="_blank" rel="noopener" aria-label="Instagram">
+          <img src="assets/instagram.svg" alt="">
         </a>
-        <a class="nav-cta" href="https://wa.me/5531985268205" target="_blank" rel="noopener">Falar no WhatsApp</a>
+        <a href="https://wa.me/5531985268205" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <img src="assets/whatsapp.svg" alt="">
+        </a>
       </div>
     </div>
   </header>
@@ -37,15 +36,18 @@
   <main>
     <section id="inicio" class="hero">
       <div class="hero-bg"></div>
+
       <div class="container hero-grid">
         <div class="hero-copy">
           <span class="eyebrow">PAPERPEL GRÁFICA</span>
           <h1>Suas ideias<br><strong>ganham forma.</strong></h1>
           <p>Impressão, acabamento e soluções gráficas para empresas, escolas, eventos e para o seu dia a dia.</p>
+
           <div class="hero-actions">
             <a class="button primary" href="https://wa.me/5531985268205" target="_blank" rel="noopener">Solicitar orçamento</a>
             <a class="button secondary" href="#servicos">Conhecer serviços</a>
           </div>
+
           <div class="hero-note">
             <span class="dot"></span>
             Atendimento em Belo Horizonte
@@ -76,18 +78,21 @@
             <p>Materiais para uso pessoal, comercial e escolar, com diferentes formatos e acabamentos.</p>
             <span class="service-link">Ver possibilidades →</span>
           </article>
+
           <article class="service-card">
             <span class="service-number">02</span>
             <h3>Comunicação visual</h3>
             <p>Banners, cartazes, adesivos e materiais para destacar sua marca e sua mensagem.</p>
             <span class="service-link">Ver possibilidades →</span>
           </article>
+
           <article class="service-card">
             <span class="service-number">03</span>
             <h3>Papelaria</h3>
             <p>Cartões, etiquetas, materiais personalizados e soluções para sua identidade.</p>
             <span class="service-link">Ver possibilidades →</span>
           </article>
+
           <article class="service-card">
             <span class="service-number">04</span>
             <h3>Personalizados</h3>
@@ -99,9 +104,10 @@
     </section>
 
     <section id="diferenciais" class="blue-section">
-      <div class="blue-pattern"></div>
+      <div class="blue-section-bg"></div>
+
       <div class="container differentiators">
-        <div class="blue-intro">
+        <div>
           <span class="eyebrow light">POR QUE A PAPERPEL</span>
           <h2>Mais do que imprimir.<br><strong>É entregar bem.</strong></h2>
         </div>
@@ -109,52 +115,159 @@
         <div class="diff-list">
           <div class="diff-item">
             <span>01</span>
-            <div><h3>Cuidado com o acabamento</h3><p>Cada pedido é preparado pensando no resultado final.</p></div>
+            <div>
+              <h3>Cuidado com o acabamento</h3>
+              <p>Cada pedido é preparado pensando no resultado final.</p>
+            </div>
           </div>
+
           <div class="diff-item">
             <span>02</span>
-            <div><h3>Atendimento próximo</h3><p>Você fala com quem entende do que está sendo produzido.</p></div>
+            <div>
+              <h3>Atendimento próximo</h3>
+              <p>Você fala com quem entende do que está sendo produzido.</p>
+            </div>
           </div>
+
           <div class="diff-item">
             <span>03</span>
-            <div><h3>Versatilidade</h3><p>Do pequeno material ao projeto de comunicação visual.</p></div>
+            <div>
+              <h3>Versatilidade</h3>
+              <p>Do pequeno material ao projeto de comunicação visual.</p>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="avaliacoes" class="reviews-section section">
+    <section id="avaliacoes" class="reviews-section">
       <div class="container">
+
         <div class="reviews-heading">
-          <div>
-            <span class="eyebrow">QUEM JÁ CONFIOU NA PAPERPEL</span>
-            <h2>O que nossos <span>clientes dizem.</span></h2>
-          </div>
-          <div class="google-score">
-            <div class="stars" aria-label="4,9 de 5 estrelas">★★★★★</div>
-            <strong>4,9 / 5</strong>
-            <small>Avaliações encontradas publicamente</small>
+          <span class="eyebrow">O QUE NOSSOS CLIENTES DIZEM</span>
+
+          <div class="reviews-rating">
+            <strong>5,0</strong>
+            <span class="stars" aria-label="5 estrelas">★★★★★</span>
+            <span>215 avaliações no Google</span>
           </div>
         </div>
 
-        <div class="review-placeholder">
-          <div class="review-icon">“</div>
-          <div>
-            <h3>Veja as avaliações reais dos nossos clientes</h3>
-            <p>Para manter os depoimentos sempre fiéis ao Google, o site leva você diretamente às avaliações públicas da Paperpel.</p>
+        <div class="reviews-carousel">
+          <button class="review-arrow prev" type="button" aria-label="Avaliações anteriores">‹</button>
+
+          <div class="reviews-track" id="reviewsTrack">
+
+            <article class="review-card">
+              <div class="review-header">
+                <img class="review-photo" src="assets/reviews/mayana.jpg" alt="Mayana Rodrigues">
+                <div class="review-user">
+                  <strong>Mayana Rodrigues</strong>
+                  <span>7 avaliações · 2 semanas atrás</span>
+                </div>
+                <span class="google-icon" aria-hidden="true">G</span>
+              </div>
+              <div class="review-stars">★★★★★</div>
+              <p>Atendimento atencioso e personalizado! Tudo que precisei foi feito super rápido e com a maior qualidade. Indico de olhos fechados 💜</p>
+            </article>
+
+            <article class="review-card">
+              <div class="review-header">
+                <img class="review-photo" src="assets/reviews/jessica.jpg" alt="Jessica Machado">
+                <div class="review-user">
+                  <strong>Jessica Machado</strong>
+                  <span>3 avaliações · 5 meses atrás</span>
+                </div>
+                <span class="google-icon" aria-hidden="true">G</span>
+              </div>
+              <div class="review-stars">★★★★★</div>
+              <p>Sempre sou muito bem atendida lá, e o serviço prestado tem sempre um ótimo resultado. Trabalho com arte e às vezes peço tamanhos de impressão personalizados e eles arrasam em tudo.</p>
+              <img class="review-product" src="assets/reviews/jessica-produto.jpg" alt="Produto produzido pela Paperpel">
+            </article>
+
+            <article class="review-card">
+              <div class="review-header">
+                <img class="review-photo" src="assets/reviews/eliza.jpg" alt="Eliza">
+                <div class="review-user">
+                  <strong>Eliza</strong>
+                  <span>4 avaliações · 6 meses atrás</span>
+                </div>
+                <span class="google-icon" aria-hidden="true">G</span>
+              </div>
+              <div class="review-stars">★★★★★</div>
+              <p>Ótimo atendimento, além da rapidez e qualidade do trabalho.</p>
+            </article>
+
+            <article class="review-card">
+              <div class="review-header">
+                <img class="review-photo" src="assets/reviews/bruna.jpg" alt="Bruna Maciel">
+                <div class="review-user">
+                  <strong>Bruna Maciel</strong>
+                  <span>2 avaliações · 2 meses atrás</span>
+                </div>
+                <span class="google-icon" aria-hidden="true">G</span>
+              </div>
+              <div class="review-stars">★★★★★</div>
+              <p>Produtos de excelente qualidade e um ótimo atendimento</p>
+              <img class="review-product" src="assets/reviews/bruna-produto.jpg" alt="Produto produzido pela Paperpel">
+            </article>
+
+            <article class="review-card">
+              <div class="review-header">
+                <img class="review-photo" src="assets/reviews/luisa.jpg" alt="Luísa Neves">
+                <div class="review-user">
+                  <strong>Luísa Neves</strong>
+                  <span>7 avaliações · 5 meses atrás</span>
+                </div>
+                <span class="google-icon" aria-hidden="true">G</span>
+              </div>
+              <div class="review-stars">★★★★★</div>
+              <p>Encomendei uma foto 10x15 e algumas fotos 3x4 e eu amei a qualidade, ficaram muito lindas! Obrigada!</p>
+            </article>
+
+            <article class="review-card">
+              <div class="review-header">
+                <img class="review-photo" src="assets/reviews/lucia.jpg" alt="Lúcia Aparecida Sergio">
+                <div class="review-user">
+                  <strong>Lúcia Aparecida Sergio</strong>
+                  <span>Local Guide · 19 avaliações · 1 ano atrás</span>
+                </div>
+                <span class="google-icon" aria-hidden="true">G</span>
+              </div>
+              <div class="review-stars">★★★★★</div>
+              <p>Trabalho e atendimento perfeito... não deixa a desejar... podem confiar.</p>
+            </article>
+
+            <article class="review-card">
+              <div class="review-header">
+                <img class="review-photo" src="assets/reviews/ana-carolina.jpg" alt="Ana Carolina Gonçalves">
+                <div class="review-user">
+                  <strong>Ana Carolina Gonçalves</strong>
+                  <span>4 avaliações · 5 meses atrás</span>
+                </div>
+                <span class="google-icon" aria-hidden="true">G</span>
+              </div>
+              <div class="review-stars">★★★★★</div>
+              <p>Atendimento excelente, rápido e caprichoso.</p>
+            </article>
+
           </div>
-          <a class="button primary" href="https://www.google.com/maps/search/?api=1&query=Paperpel%20Gr%C3%A1fica%20Av.%20Bernarda%20Silvestre%20410%20Belo%20Horizonte%20MG" target="_blank" rel="noopener">Ver avaliações no Google →</a>
+
+          <button class="review-arrow next" type="button" aria-label="Próximas avaliações">›</button>
         </div>
+
+        <div class="review-dots" id="reviewDots" aria-hidden="true"></div>
       </div>
     </section>
 
     <section class="quote-section">
       <div class="container quote-box">
         <div>
-          <span class="eyebrow">VAMOS PRODUZIR?</span>
+          <span class="eyebrow light">VAMOS PRODUZIR?</span>
           <h2>Conte o que você precisa.</h2>
           <p>Envie sua ideia, arquivo ou referência. A gente conversa sobre a melhor solução.</p>
         </div>
+
         <a class="button white" href="https://wa.me/5531985268205" target="_blank" rel="noopener">
           Pedir orçamento pelo WhatsApp →
         </a>
@@ -174,13 +287,15 @@
             <small>WHATSAPP</small>
             <a href="https://wa.me/5531985268205" target="_blank" rel="noopener">(31) 98526-8205</a>
           </div>
-          <div>
-            <small>INSTAGRAM</small>
-            <a class="contact-social" href="https://www.instagram.com/paperpel.grafica/" target="_blank" rel="noopener">@paperpel.grafica</a>
-          </div>
+
           <div>
             <small>ENDEREÇO</small>
             <p>Av. Bernarda Silvestre, 410 — Loja 3<br>Rio Branco — Belo Horizonte/MG</p>
+          </div>
+
+          <div>
+            <small>HORÁRIO DE ATENDIMENTO</small>
+            <p>De segunda a sexta de 9:30 às 18:00 h</p>
           </div>
         </div>
       </div>
@@ -191,17 +306,10 @@
     <div class="container footer-inner">
       <img src="assets/logo-paperpel.svg" alt="Paperpel Gráfica">
       <span>© 2026 Paperpel Gráfica. Todos os direitos reservados.</span>
-      <div class="footer-links">
-        <a href="https://www.instagram.com/paperpel.grafica/" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="3" y="3" width="18" height="18" rx="5"></rect>
-            <circle cx="12" cy="12" r="4.2"></circle>
-            <circle cx="17.4" cy="6.7" r="1"></circle>
-          </svg>
-        </a>
-        <a href="#inicio">Voltar ao topo ↑</a>
-      </div>
+      <a href="#inicio">Voltar ao topo ↑</a>
     </div>
   </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>

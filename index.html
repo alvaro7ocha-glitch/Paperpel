@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <header class="header">
     <div class="container nav">
       <a class="brand" href="#inicio" aria-label="Paperpel Gráfica">
@@ -24,10 +23,10 @@
 
       <div class="social-icons" aria-label="Redes sociais">
         <a href="https://www.instagram.com/paperpel.grafica/" target="_blank" rel="noopener" aria-label="Instagram">
-          <img src="assets/instagram.svg" alt="Instagram">
+          <img src="assets/Instagram_.svg" alt="Instagram">
         </a>
         <a href="https://wa.me/5531985268205" target="_blank" rel="noopener" aria-label="WhatsApp">
-          <img src="assets/whatsapp.svg" alt="WhatsApp">
+          <img src="assets/WhatsApp_.svg" alt="WhatsApp">
         </a>
       </div>
     </div>
@@ -35,8 +34,7 @@
 
   <main>
     <section id="inicio" class="hero">
-      <div class="hero-bg"></div>
-
+      <div class="hero-bg" aria-hidden="true"></div>
       <div class="container hero-grid">
         <div class="hero-copy">
           <span class="eyebrow">PAPERPEL GRÁFICA</span>
@@ -44,7 +42,7 @@
           <p>Impressão, acabamento e soluções gráficas para empresas, escolas, eventos e para o seu dia a dia.</p>
 
           <div class="hero-actions">
-            <a class="button primary" href="https://wa.me/5531985268205" target="_blank" rel="noopener">Solicitar orçamento</a>
+            <a class="button primary" href="https://wa.me/5531985268205" target="_blank" rel="noopener">Solicitar orçamento <span class="button-icon">↗</span></a>
             <a class="button secondary" href="#servicos">Conhecer serviços</a>
           </div>
 
@@ -55,7 +53,7 @@
         </div>
 
         <div class="hero-card">
-          <div class="paper-plane">✈</div>
+          <div class="paper-plane">➤</div>
           <span>QUALIDADE</span>
           <strong>que você<br>pode ver.</strong>
           <p>Do arquivo à impressão, cuidamos de cada detalhe para entregar um resultado profissional.</p>
@@ -63,9 +61,9 @@
       </div>
     </section>
 
-    <section id="servicos" class="section">
+    <section id="servicos" class="section services-section">
       <div class="container">
-        <div class="section-heading">
+        <div class="section-heading centered">
           <span class="eyebrow">O QUE FAZEMOS</span>
           <h2>Soluções para <span>cada projeto.</span></h2>
           <p>Uma gráfica completa para transformar sua necessidade em material pronto para usar.</p>
@@ -73,39 +71,37 @@
 
         <div class="services-grid">
           <article class="service-card featured">
-            <span class="service-number">01</span>
+            <div class="service-icon">▣</div>
             <h3>Impressão</h3>
             <p>Materiais para uso pessoal, comercial e escolar, com diferentes formatos e acabamentos.</p>
-            <span class="service-link">Ver possibilidades →</span>
+            <a href="#contato" class="service-link">Ver possibilidades →</a>
           </article>
 
           <article class="service-card">
-            <span class="service-number">02</span>
+            <div class="service-icon">▤</div>
             <h3>Comunicação visual</h3>
             <p>Banners, cartazes, adesivos e materiais para destacar sua marca e sua mensagem.</p>
-            <span class="service-link">Ver possibilidades →</span>
+            <a href="#contato" class="service-link">Ver possibilidades →</a>
           </article>
 
           <article class="service-card">
-            <span class="service-number">03</span>
+            <div class="service-icon">◇</div>
             <h3>Papelaria</h3>
             <p>Cartões, etiquetas, materiais personalizados e soluções para sua identidade.</p>
-            <span class="service-link">Ver possibilidades →</span>
+            <a href="#contato" class="service-link">Ver possibilidades →</a>
           </article>
 
           <article class="service-card">
-            <span class="service-number">04</span>
+            <div class="service-icon">□</div>
             <h3>Personalizados</h3>
             <p>Canecas, ímãs, lembranças e outros produtos para presentes, eventos e datas especiais.</p>
-            <span class="service-link">Ver possibilidades →</span>
+            <a href="#contato" class="service-link">Ver possibilidades →</a>
           </article>
         </div>
       </div>
     </section>
 
     <section id="diferenciais" class="blue-section">
-      <div class="blue-section-bg"></div>
-
       <div class="container differentiators">
         <div>
           <span class="eyebrow light">POR QUE A PAPERPEL</span>
@@ -120,7 +116,6 @@
               <p>Cada pedido é preparado pensando no resultado final.</p>
             </div>
           </div>
-
           <div class="diff-item">
             <span>02</span>
             <div>
@@ -128,7 +123,6 @@
               <p>Você fala com quem entende do que está sendo produzido.</p>
             </div>
           </div>
-
           <div class="diff-item">
             <span>03</span>
             <div>
@@ -139,17 +133,40 @@
         </div>
       </div>
     </section>
-<section class="quote-section">
+
+    <section id="avaliacoes" class="reviews-section" aria-label="Avaliações dos clientes">
+      <div class="container">
+        <div class="reviews-heading">
+          <h2>Google <span>Avaliações</span></h2>
+          <div class="reviews-rating">
+            <strong>5,0</strong>
+            <span class="stars">★★★★★</span>
+            <span>com base em 9 avaliações</span>
+          </div>
+        </div>
+
+        <div class="reviews-carousel">
+          <button class="review-arrow prev" type="button" aria-label="Avaliações anteriores">‹</button>
+
+          <div class="reviews-viewport">
+            <div class="reviews-track" id="reviewsTrack"></div>
+          </div>
+
+          <button class="review-arrow next" type="button" aria-label="Próximas avaliações">›</button>
+        </div>
+
+        <div class="review-dots" id="reviewDots" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section class="quote-section">
       <div class="container quote-box">
         <div>
           <span class="eyebrow light">VAMOS PRODUZIR?</span>
           <h2>Conte o que você precisa.</h2>
           <p>Envie sua ideia, arquivo ou referência. A gente conversa sobre a melhor solução.</p>
         </div>
-
-        <a class="button white" href="https://wa.me/5531985268205" target="_blank" rel="noopener">
-          Pedir orçamento pelo WhatsApp →
-        </a>
+        <a class="button white" href="https://wa.me/5531985268205" target="_blank" rel="noopener">Pedir orçamento pelo WhatsApp →</a>
       </div>
     </section>
 
@@ -162,20 +179,28 @@
         </div>
 
         <div class="contact-card">
-          <div>
-            <small>WHATSAPP</small>
-            <a href="https://wa.me/5531985268205" target="_blank" rel="noopener">(31) 98526-8205</a>
+          <div class="contact-item">
+            <div class="contact-symbol">◉</div>
+            <div>
+              <small>WHATSAPP</small>
+              <a href="https://wa.me/5531985268205" target="_blank" rel="noopener">(31) 98526-8205</a>
+            </div>
           </div>
 
-          <div>
-            <small>ENDEREÇO</small>
-            <p>Av. Bernarda Silvestre, 410 — Loja 3<br>Rio Branco — Belo Horizonte/MG</p>
+          <div class="contact-item">
+            <div class="contact-symbol">⌖</div>
+            <div>
+              <small>ENDEREÇO</small>
+              <p>Av. Bernarda Silvestre, 410 — Loja 3<br>Rio Branco — Belo Horizonte/MG</p>
+            </div>
           </div>
 
-
-          <div>
-            <small>HORÁRIO DE ATENDIMENTO</small>
-            <p>De segunda a sexta de 9:30 às 18:00 h</p>
+          <div class="contact-item">
+            <div class="contact-symbol">◷</div>
+            <div>
+              <small>HORÁRIO DE ATENDIMENTO</small>
+              <p>De segunda a sexta de 9:30 às 18:00 h</p>
+            </div>
           </div>
         </div>
       </div>

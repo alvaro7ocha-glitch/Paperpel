@@ -1,20 +1,24 @@
-document.addEventListener("DOMContentLoaded", () => {
+(function () {
   const track = document.getElementById("reviewsTrack");
+  const dotsBox = document.getElementById("reviewDots");
   const prev = document.querySelector(".review-arrow.prev");
   const next = document.querySelector(".review-arrow.next");
-  const dotsBox = document.getElementById("reviewDots");
 
-  /*
-    Avaliações cadastradas manualmente.
-    As fotos são lidas diretamente de assets/reviews/.
-    Para trocar uma foto, basta substituir o arquivo mantendo o mesmo nome.
-  */
+  if (!track) return;
+
   const reviews = [
     {
       name: "Mayana Rodrigues",
       meta: "7 avaliações · 2 semanas atrás",
       text: "Atendimento atencioso e personalizado! Tudo que precisei foi feito super rápido e com a maior qualidade. Indico de olhos fechados 💜",
       photo: "assets/reviews/Mayana Rodrigues.png"
+    },
+    {
+      name: "Maria Maria",
+      meta: "1 avaliação · 3 meses atrás",
+      text: "Montagem e produção maravilhosas com um preço extremamente acessível!!! Meus parabéns!!",
+      photo: null,
+      initial: "M"
     },
     {
       name: "Eliza",
@@ -33,12 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
       meta: "1 avaliação · 11 meses atrás",
       text: "Atendimento excelente... rápidos, cordiais e excelência no atendimento que tive. Fiz o cartão e troca da cor da arte do meu cartão. Super recomendo",
       photo: "assets/reviews/Silvia Fidelis.png"
-    },
-    {
-      name: "Jessica Machado",
-      meta: "3 avaliações · 5 meses atrás",
-      text: "Sempre sou muito bem atendida lá, e o serviço prestado tem sempre um ótimo resultado. Trabalho com arte e as vezes peço tamanhos de impressão personalizados e eles arrasam em tudo.",
-      photo: "assets/reviews/Jessica Machado.png"
     },
     {
       name: "Ana Carolina Gonçalves",
@@ -66,35 +64,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   ];
 
-  let currentPage = 0;
-  let pageCount = 1;
-
-  const initials = (name) =>
-    name.split(/\s+/).filter(Boolean).slice(0, 2).map(p => p[0]).join("").toUpperCase();
-
-  function createCard(review) {
+  function makeCard(review) {
     const card = document.createElement("article");
     card.className = "review-card";
 
     const header = document.createElement("div");
     header.className = "review-header";
 
-    const photoWrap = document.createElement("div");
-    photoWrap.className = "review-photo-link";
-
-    const img = document.createElement("img");
-    img.className = "review-photo";
-    img.src = review.photo;
-    img.alt = `Foto de ${review.name}`;
-    img.loading = "lazy";
-    img.onerror = () => {
-      photoWrap.innerHTML = "";
-      const fallback = document.createElement("span");
-      fallback.className = "review-avatar-fallback";
-      fallback.textContent = initials(review.name);
-      photoWrap.appendChild(fallback);
-    };
-    photoWrap.appendChild(img);
+    if (review.photo) {
+      const img = document.createElement("img");
+      img.className = "review-photo";
+      img.src = review.photo;
+      img.alt = "Foto de " + review.name;
+      img.loading = "lazy";
+      img.onerror = function () {
+        img.replaceWith(makeFallback(review.name, review.initial));
+      };
+      header.appendChild(img);
+    } else {
+      header.appendChild(makeFallback(review.name, review.initial));
+    }
 
     const user = document.createElement("div");
     user.className = "review-user";
@@ -103,81 +92,111 @@ document.addEventListener("DOMContentLoaded", () => {
     name.textContent = review.name;
 
     const meta = document.createElement("span");
+    meta.className = "review-meta";
     meta.textContent = review.meta;
 
     user.append(name, meta);
+    header.appendChild(user);
 
     const google = document.createElement("span");
     google.className = "google-icon";
     google.textContent = "G";
-    google.setAttribute("aria-label", "Google");
+    header.appendChild(google);
 
-    header.append(photoWrap, user, google);
-
-    const rating = document.createElement("div");
-    rating.className = "review-stars";
-    rating.textContent = "★★★★★";
-    rating.setAttribute("aria-label", "5 de 5 estrelas");
+    const stars = document.createElement("div");
+    stars.className = "review-stars";
+    stars.textContent = "★★★★★";
 
     const text = document.createElement("p");
     text.textContent = review.text;
 
-    card.append(header, rating, text);
+    card.append(header, stars, text);
     return card;
   }
 
-  function cardsPerPage() {
-    return window.innerWidth <= 760 ? 1 : 3;
+  function makeFallback(name, initial) {
+    const el = document.createElement("span");
+    el.className = "review-avatar-fallback";
+    el.textContent = initial || name.trim().charAt(0).toUpperCase();
+    return el;
   }
 
-  function render() {
-    const perPage = cardsPerPage();
-    pageCount = Math.ceil(reviews.length / perPage);
-    currentPage = Math.min(currentPage, pageCount - 1);
+  reviews.forEach(review => track.appendChild(makeCard(review)));
 
-    track.innerHTML = "";
-    reviews.forEach(review => track.appendChild(createCard(review)));
+  let current = 0;
+  let timer = null;
 
+  function visibleCards() {
+    if (window.innerWidth <= 560) return 1;
+    if (window.innerWidth <= 900) return 2;
+    if (window.innerWidth <= 1050) return 3;
+    return 5;
+  }
+
+  function pageCount() {
+    return Math.max(1, Math.ceil(reviews.length / visibleCards()));
+  }
+
+  function buildDots() {
     dotsBox.innerHTML = "";
-    for (let i = 0; i < pageCount; i++) {
+    const total = pageCount();
+
+    for (let i = 0; i < total; i++) {
       const dot = document.createElement("button");
       dot.type = "button";
-      dot.className = "review-dot" + (i === currentPage ? " active" : "");
-      dot.setAttribute("aria-label", `Ir para página ${i + 1} das avaliações`);
+      dot.className = "review-dot" + (i === current ? " active" : "");
+      dot.setAttribute("aria-label", "Ir para grupo de avaliações " + (i + 1));
       dot.addEventListener("click", () => goTo(i));
       dotsBox.appendChild(dot);
     }
-
-    requestAnimationFrame(() => goTo(currentPage, false));
   }
 
-  function goTo(page, smooth = true) {
-    const perPage = cardsPerPage();
-    pageCount = Math.ceil(reviews.length / perPage);
-    currentPage = (page + pageCount) % pageCount;
+  function updateDots() {
+    const total = pageCount();
+    if (current >= total) current = 0;
+    [...dotsBox.children].forEach((dot, i) => dot.classList.toggle("active", i === current));
+  }
 
-    const targetIndex = currentPage * perPage;
-    const target = track.children[targetIndex];
+  function goTo(page) {
+    const total = pageCount();
+    current = (page + total) % total;
+
+    const cards = [...track.children];
+    const index = current * visibleCards();
+    const target = cards[index];
+
     if (target) {
       track.scrollTo({
         left: target.offsetLeft - track.offsetLeft,
-        behavior: smooth ? "smooth" : "auto"
+        behavior: "smooth"
       });
     }
-
-    [...dotsBox.children].forEach((dot, i) =>
-      dot.classList.toggle("active", i === currentPage)
-    );
+    updateDots();
   }
 
-  prev.addEventListener("click", () => goTo(currentPage - 1));
-  next.addEventListener("click", () => goTo(currentPage + 1));
+  function restartAuto() {
+    clearInterval(timer);
+    timer = setInterval(() => goTo(current + 1), 5000);
+  }
 
-  let resizeTimer;
-  window.addEventListener("resize", () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(render, 150);
+  prev.addEventListener("click", () => {
+    goTo(current - 1);
+    restartAuto();
   });
 
-  render();
-});
+  next.addEventListener("click", () => {
+    goTo(current + 1);
+    restartAuto();
+  });
+
+  window.addEventListener("resize", () => {
+    const old = current;
+    buildDots();
+    current = Math.min(old, pageCount() - 1);
+    goTo(current);
+  });
+
+  buildDots();
+  updateDots();
+  restartAuto();
+})();

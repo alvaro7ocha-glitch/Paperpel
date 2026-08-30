@@ -77,11 +77,12 @@ button{
 }
 
 .brand img{
-  width:165px !important;
-  height:58px !important;
-  transform:scale(1.7); /* tamanho da logo inicial */
-  transform-origin:left center;
+  width:165px;
+  height:58px;
+  max-width:165px;
+  object-fit:contain;
 }
+
 .menu{
   display:flex;
   align-items:center;
@@ -103,6 +104,7 @@ button{
   color:var(--blue);
 }
 
+/* ÍCONES INSTAGRAM E WHATSAPP */
 .social-icons{
   display:flex;
   align-items:center;
@@ -110,40 +112,34 @@ button{
   gap:12px;
   flex:0 0 auto;
 }
-/* =========================================================
-   ÍCONES INSTAGRAM E WHATSAPP
-   ========================================================= */
-
-.social-icons{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:12px;
-}
 
 .social-icons a{
-  width:40px !important;
-  height:40px !important;
-  min-width:40px;
-  min-height:40px;
-  max-width:40px;
-  max-height:40px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:visible;
+  width:42px !important;
+  height:42px !important;
+  min-width:42px !important;
+  min-height:42px !important;
+  max-width:42px !important;
+  max-height:42px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:visible !important;
+  padding:0 !important;
+  margin:0 !important;
 }
 
 .social-icons img{
   width:34px !important;
   height:34px !important;
-  min-width:34px;
-  min-height:34px;
+  min-width:34px !important;
+  min-height:34px !important;
   max-width:34px !important;
   max-height:34px !important;
+  display:block !important;
   object-fit:contain !important;
-  object-position:center;
-  display:block;
+  object-position:center !important;
+  margin:0 !important;
+  padding:0 !important;
 }
 
 .social-icons a:hover img{
@@ -162,7 +158,7 @@ button{
   position:absolute;
   inset:0;
   z-index:-1;
-  background-image:url('assets/background-paper.png');
+  background-image:url('assets/background-paper.svg');
   background-position:center;
   background-size:cover;
   background-repeat:no-repeat;
@@ -411,11 +407,11 @@ button{
   position:absolute;
   inset:0;
   z-index:-1;
-  background-image:url('assets/background-paper.png');
+  background-image:url('assets/background-paper.svg');
   background-position:center;
   background-size:cover;
   background-repeat:no-repeat;
-  opacity:.55;
+  opacity:.14;
   pointer-events:none;
 }
 .differentiators{
@@ -517,8 +513,8 @@ button{
 
 /* 3 avaliações visíveis por vez */
 .review-card{
-  flex:0 0 calc((100% - 32px)/3);
-  width:calc((100% - 32px)/3);
+  flex:0 0 calc((100% - 32px)/3) !important;
+  width:calc((100% - 32px)/3) !important;
   min-width:0;
   min-height:300px;
   height:300px;
@@ -861,14 +857,6 @@ button{
     max-width:32px;
     max-height:32px;
   }
-  .social-icons img{
-    width:24px !important;
-    height:24px !important;
-    min-width:24px;
-    min-height:24px;
-    max-width:24px !important;
-    max-height:24px !important;
-  }
 
   .hero h1{
     font-size:48px;
@@ -928,84 +916,5 @@ button{
   .footer-inner{
     padding:25px 0;
     flex-wrap:wrap;
-  }
-}
-
-
-/* =========================================================
-   PAPERPEL — CARROSSEL FINAL
-   3 cartões por vez no desktop
-   ========================================================= */
-
-.reviews-carousel{
-  position:relative;
-  width:100%;
-  max-width:1140px;
-  margin:0 auto;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  min-width:0;
-}
-
-.reviews-track{
-  flex:1 1 auto;
-  width:100%;
-  min-width:0;
-  display:flex !important;
-  gap:16px !important;
-  overflow-x:auto !important;
-  overflow-y:hidden !important;
-  scroll-behavior:smooth;
-  scroll-snap-type:x mandatory;
-  scrollbar-width:none;
-  padding:8px 3px 18px;
-}
-
-.reviews-track::-webkit-scrollbar{
-  display:none;
-}
-
-/* EXATAMENTE 3 cartões visíveis */
-.review-card{
-  flex:0 0 calc((100% - 32px)/3) !important;
-  width:calc((100% - 32px)/3) !important;
-  min-width:0 !important;
-  min-height:300px !important;
-  height:300px !important;
-  padding:26px !important;
-  margin:0 !important;
-  border:1px solid #e1eaf1;
-  border-radius:18px;
-  background:#fff;
-  box-shadow:0 8px 25px rgba(4,112,201,.06);
-  display:flex !important;
-  flex-direction:column !important;
-  scroll-snap-align:start;
-}
-
-.review-card p{
-  margin-top:14px;
-  font-size:13px;
-  line-height:1.65;
-}
-
-/* Tablet: 2 */
-@media(max-width:900px){
-  .review-card{
-    flex:0 0 calc((100% - 16px)/2) !important;
-    width:calc((100% - 16px)/2) !important;
-    min-height:285px !important;
-    height:285px !important;
-  }
-}
-
-/* Celular: 1 */
-@media(max-width:560px){
-  .review-card{
-    flex:0 0 100% !important;
-    width:100% !important;
-    min-height:260px !important;
-    height:auto !important;
   }
 }

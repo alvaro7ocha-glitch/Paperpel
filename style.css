@@ -23,7 +23,6 @@ html{
   scroll-behavior:smooth;
   overflow-x:hidden;
 }
-
 body{
   width:100%;
   min-width:0;
@@ -83,7 +82,6 @@ button{
   max-width:165px;
   object-fit:contain;
 }
-
 .menu{
   display:flex;
   align-items:center;
@@ -112,7 +110,6 @@ button{
   gap:12px;
   flex:0 0 auto;
 }
-
 .social-icons a{
   width:34px !important;
   height:34px !important;
@@ -169,7 +166,6 @@ button{
   align-items:center;
   padding:80px 0;
 }
-
 .eyebrow{
   display:block;
   color:var(--blue);
@@ -206,7 +202,6 @@ button{
   flex-wrap:wrap;
   margin-top:34px;
 }
-
 .button{
   display:inline-flex;
   align-items:center;
@@ -239,7 +234,6 @@ button{
   border-color:var(--blue);
   color:var(--blue);
 }
-
 .hero-note{
   display:flex;
   align-items:center;
@@ -267,7 +261,6 @@ button{
   position:relative;
   overflow:hidden;
 }
-
 .hero-card::after{
   content:"";
   position:absolute;
@@ -337,7 +330,6 @@ button{
   grid-template-columns:repeat(4,minmax(0,1fr));
   gap:16px;
 }
-
 .service-card{
   min-height:290px;
   padding:30px;
@@ -360,7 +352,6 @@ button{
   color:#fff;
   border-color:var(--blue);
 }
-
 .service-number{
   margin-bottom:55px;
   color:var(--blue);
@@ -415,7 +406,6 @@ button{
   opacity:.14;
   pointer-events:none;
 }
-
 .differentiators{
   display:grid;
   grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
@@ -440,7 +430,6 @@ button{
   padding:27px 0;
   border-bottom:1px solid rgba(255,255,255,.22);
 }
-
 .diff-item>span{
   color:#bfe9ff;
   font-size:11px;
@@ -479,7 +468,6 @@ button{
   font-size:25px;
   line-height:1;
 }
-
 .stars{
   color:#f5ad00;
   font-size:19px;
@@ -511,16 +499,18 @@ button{
   scroll-snap-type:x mandatory;
   scrollbar-width:none;
 }
-
 .reviews-track::-webkit-scrollbar{
   display:none;
 }
 
+/* 3 avaliações visíveis por vez */
 .review-card{
-  flex:0 0 calc((100% - 64px)/5);
+  flex:0 0 calc((100% - 32px)/3);
+  width:calc((100% - 32px)/3);
   min-width:0;
-  min-height:245px;
-  padding:22px;
+  min-height:300px;
+  height:300px;
+  padding:26px;
   border:1px solid #e1eaf1;
   border-radius:18px;
   background:#fff;
@@ -536,7 +526,6 @@ button{
   gap:11px;
   min-width:0;
 }
-
 .review-photo{
   width:52px;
   height:52px;
@@ -568,7 +557,6 @@ button{
   color:#718291;
   font-size:10px;
 }
-
 .google-icon{
   flex:0 0 auto;
   margin-left:auto;
@@ -590,7 +578,7 @@ button{
   margin-top:14px;
   color:#263b4c;
   font-size:13px;
-  line-height:1.6;
+  line-height:1.65;
 }
 
 .review-arrow{
@@ -624,7 +612,6 @@ button{
   right:-22px;
   transform:translateY(-50%);
 }
-
 .review-dots{
   display:flex;
   justify-content:center;
@@ -654,7 +641,6 @@ button{
   padding:70px 0;
   background:#edf8ff;
 }
-
 .quote-box{
   display:flex;
   align-items:center;
@@ -714,7 +700,6 @@ button{
   border-radius:18px;
   background:#fff;
 }
-
 .contact-card small{
   display:block;
   margin-bottom:5px;
@@ -750,7 +735,6 @@ button{
   color:#7a8b98;
   font-size:11px;
 }
-
 .footer img{
   width:150px;
   height:52px;
@@ -796,7 +780,6 @@ button{
   .nav{
     justify-content:space-between;
   }
-
   .hero-grid,
   .differentiators,
   .contact-grid{
@@ -821,8 +804,12 @@ button{
     flex-direction:column;
   }
 
+  /* Tablet: 2 avaliações */
   .review-card{
     flex-basis:calc((100% - 16px)/2);
+    width:calc((100% - 16px)/2);
+    min-height:285px;
+    height:285px;
   }
 
   .review-arrow.prev{
@@ -862,7 +849,6 @@ button{
     max-width:32px;
     max-height:32px;
   }
-
   .social-icons img{
     width:24px !important;
     height:24px !important;
@@ -897,7 +883,6 @@ button{
   .quote-box{
     padding:34px 28px;
   }
-
   .quote-box h2{
     font-size:29px;
   }
@@ -914,9 +899,12 @@ button{
     width:100%;
   }
 
+  /* Celular: 1 avaliação */
   .review-card{
     flex-basis:100%;
-    min-height:250px;
+    width:100%;
+    min-height:260px;
+    height:auto;
   }
 
   .review-arrow{

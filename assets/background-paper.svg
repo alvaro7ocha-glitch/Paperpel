@@ -6,48 +6,14 @@ viewBox="0 0 11514.66 6502.38"
  xmlns:xlink="http://www.w3.org/1999/xlink"
  xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
  <defs>
-  <style type="text/css">
-   <![CDATA[
-    .fil0 {fill:none}
-    .fil2 {fill:#046BBF;fill-opacity:0.658824}
-    .fil1 {fill:#0470C9;fill-opacity:0.658824}
-   ]]>
-  </style>
    <clipPath id="id0">
-    <path d="M-0 0l11514.66 0 0 6502.39 -11514.66 0 0 -6502.39z"/>
+    <rect y="-0.01" width="11514.67" height="6502.4"/>
    </clipPath>
-    <clipPath id="id1">
-     <path d="M-0 0l11514.66 0 0 6502.39 -11514.66 0 0 -6502.39z"/>
-    </clipPath>
-    <clipPath id="id2">
-     <path d="M-0 0l11514.66 0 0 6502.39 -11514.66 0 0 -6502.39z"/>
-    </clipPath>
-    <clipPath id="id3">
-     <path d="M-0 0l11514.66 0 0 6502.39 -11514.66 0 0 -6502.39z"/>
-    </clipPath>
-    <clipPath id="id4">
-     <path d="M-0 0l11514.66 0 0 6502.39 -11514.66 0 0 -6502.39z"/>
-    </clipPath>
  </defs>
  <g id="Camada_x0020_1">
   <metadata id="CorelCorpID_0Corel-Layer"/>
-  <g>
-  </g>
   <g style="clip-path:url(#id0)">
-   <g>
-   </g>
-   <g style="clip-path:url(#id1)">
-   </g>
-   <g style="clip-path:url(#id2)">
-    <image x="-7758.43" y="-10260.34" width="27023.04" height="27023.04" xlink:href="Background_Images\Background_ImgID1.png"/>
-   </g>
-   <g style="clip-path:url(#id3)">
-   </g>
-   <g style="clip-path:url(#id4)">
-   </g>
+   <image x="-0" y="-0.01" width="11514.67" height="6502.4" xlink:href="background-paper_Images\background-paper_ImgID1.png"/>
   </g>
-  <polygon class="fil0" points="-0,0 11514.66,0 11514.66,6502.39 -0,6502.39 "/>
-  <polygon class="fil1" points="-0,-0.01 11514.67,-0.01 11514.67,6502.38 -0,6502.38 "/>
-  <polygon class="fil2" points="-0,-0.01 11514.67,-0.01 11514.67,6502.38 -0,6502.38 "/>
  </g>
 </svg>

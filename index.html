@@ -5,13 +5,89 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Paperpel Gráfica — impressão, comunicação visual e soluções gráficas em Belo Horizonte.">
   <title>Paperpel Gráfica | Impressão e soluções gráficas</title>
-  <link rel="stylesheet" href="style.css?v=20260830-8">
+  <link rel="stylesheet" href="style.css?v=20260830-11">
+
+<style>
+  .brand img{
+    width:210px !important;
+    height:68px !important;
+    max-width:210px !important;
+    object-fit:contain !important;
+  }
+
+  @media (max-width:560px){
+    .brand img{
+      width:145px !important;
+      height:52px !important;
+      max-width:145px !important;
+    }
+  }
+</style>
+
+<style>
+/* Avião Paperpel personalizado */
+.paper-plane{
+  width:78px;
+  height:52px;
+  margin-bottom:28px;
+  transform:none;
+  display:flex;
+  align-items:center;
+}
+
+.paper-plane img{
+  width:78px;
+  height:52px;
+  object-fit:contain;
+  display:block;
+}
+</style>
+
+<style id="paperpel-background-fix">
+  .hero{
+    position:relative !important;
+    isolation:isolate !important;
+    overflow:hidden !important;
+    background:#edf8ff !important;
+  }
+
+  .hero-bg{
+    position:absolute !important;
+    inset:0 !important;
+    z-index:-1 !important;
+    background-image:url('assets/background-paper.svg?v=5') !important;
+    background-position:center !important;
+    background-size:cover !important;
+    background-repeat:no-repeat !important;
+    opacity:.30 !important;
+    pointer-events:none !important;
+  }
+
+  .blue-section{
+    position:relative !important;
+    isolation:isolate !important;
+    overflow:hidden !important;
+  }
+
+  .blue-section-bg{
+    position:absolute !important;
+    inset:0 !important;
+    z-index:-1 !important;
+    background-image:url('assets/background-paper.svg?v=5') !important;
+    background-position:center !important;
+    background-size:cover !important;
+    background-repeat:no-repeat !important;
+    opacity:.16 !important;
+    pointer-events:none !important;
+  }
+</style>
+
 </head>
 <body>
 <header class="header">
   <div class="container nav">
     <a class="brand" href="#inicio" aria-label="Paperpel Gráfica">
-      <img src="assets/logo-paperpel.svg?v=2" alt="Paperpel Gráfica">
+      <img src="assets/logo-paperpel.svg?v=4" alt="Paperpel Gráfica">
     </a>
 
     <nav class="menu" aria-label="Navegação principal">
@@ -50,7 +126,7 @@
         </div>
       </div>
       <div class="hero-card">
-        <div class="paper-plane">✈</div>
+        <div class="paper-plane"><img src="assets/aviao-paperpel.png?v=1" alt="" aria-hidden="true"></div>
         <span>QUALIDADE</span>
         <strong>que você<br>pode ver.</strong>
         <p>Do arquivo à impressão, cuidamos de cada detalhe para entregar um resultado profissional.</p>
@@ -189,12 +265,12 @@
 
 <footer class="footer">
   <div class="container footer-inner">
-    <img src="assets/logo-paperpel.svg" alt="Paperpel Gráfica">
+    <img src="assets/logo-paperpel.svg?v=4" alt="Paperpel Gráfica">
     <span>© 2026 Paperpel Gráfica. Todos os direitos reservados.</span>
     <a href="#inicio">Voltar ao topo ↑</a>
   </div>
 </footer>
 
-<script src="script.js?v=20260830-8"></script>
+<script src="script.js?v=20260830-11"></script>
 </body>
 </html>

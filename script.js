@@ -1,14 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const section = document.getElementById("avaliacoes");
   const track = document.getElementById("reviewsTrack");
   const prev = document.querySelector(".review-arrow.prev");
   const next = document.querySelector(".review-arrow.next");
   const dotsBox = document.getElementById("reviewDots");
 
-  if (!section || !track || !prev || !next || !dotsBox) return;
-
-  // Remove any old/static review cards that may still be present from a cached page.
-  section.querySelectorAll(".review-card").forEach(card => card.remove());
+  if (!track || !prev || !next || !dotsBox) return;
 
   const reviews = [
     {
@@ -16,6 +12,12 @@ document.addEventListener("DOMContentLoaded", () => {
       meta: "7 avaliações · 2 semanas atrás",
       text: "Atendimento atencioso e personalizado! Tudo que precisei foi feito super rápido e com a maior qualidade. Indico de olhos fechados 💜",
       photo: "assets/reviews/Mayana Rodrigues.png"
+    },
+    {
+      name: "Iris Valin",
+      meta: "1 avaliação · 2 anos atrás",
+      text: "Atendimento maravilhoso! Super atenciosos e a qualidade da impressão é ótima! Além da rapidez que o brasileiro aaaama!",
+      photo: "assets/reviews/Iris Valin.png"
     },
     {
       name: "Eliza",
@@ -30,16 +32,22 @@ document.addEventListener("DOMContentLoaded", () => {
       photo: "assets/reviews/Bruna Maciel.png"
     },
     {
-      name: "Sílvia Fidelis",
-      meta: "1 avaliação · 11 meses atrás",
-      text: "Atendimento excelente... rápidos, cordiais e excelência no atendimento que tive. Fiz o cartão e troca da cor da arte do meu cartão. Super recomendo",
-      photo: "assets/reviews/Silvia Fidelis.png"
+      name: "Luísa Neves",
+      meta: "7 avaliações · 5 meses atrás",
+      text: "Encomendei uma foto 10x15 e algumas fotos 3x4 e eu amei a qualidade, ficaram muito lindas! Obrigada!",
+      photo: "assets/reviews/Luisa Neves.png"
     },
     {
       name: "Jessica Machado",
       meta: "3 avaliações · 5 meses atrás",
-      text: "Sempre sou muito bem atendida lá, e o serviço prestado tem sempre um ótimo resultado. Trabalho com arte e as vezes peço tamanhos de impressão personalizados e eles arrasam em tudo.",
+      text: "Sempre sou muito bem atendida lá, e o serviço prestado tem sempre um ótimo resultado. Trabalho com arte e às vezes peço tamanhos de impressão personalizados e eles arrasam em tudo.",
       photo: "assets/reviews/Jessica Machado.png"
+    },
+    {
+      name: "Sílvia Fidelis",
+      meta: "1 avaliação · 11 meses atrás",
+      text: "Atendimento excelente... rápidos, cordiais e excelência no atendimento que tive. Fiz o cartão e troca da cor da arte do meu cartão. Super recomendo",
+      photo: "assets/reviews/Silvia Fidelis.png"
     },
     {
       name: "Ana Carolina Gonçalves",
@@ -54,16 +62,22 @@ document.addEventListener("DOMContentLoaded", () => {
       photo: "assets/reviews/Sergio Santos.png"
     },
     {
-      name: "Iris Valin",
-      meta: "1 avaliação · 2 anos atrás",
-      text: "Atendimento maravilhoso! Super atenciosos e a qualidade da impressão é ótima! Além da rapidez que o brasileiro aaaaaama!",
-      photo: "assets/reviews/Iris Valin.png"
+      name: "Douglas Rodriguez",
+      meta: "2 avaliações · 8 anos atrás",
+      text: "Profissionais capacitados. Estou recebendo muitos elogios da logo e cartão de visita criado pela Paperpel. Recomendo a todos!! Obrigado Paperpel.",
+      photo: "assets/reviews/Douglas Rodriguez.png"
     },
     {
-      name: "Luísa Neves",
-      meta: "7 avaliações · 5 meses atrás",
-      text: "Encomendei uma foto 10x15 e algumas fotos 3x4 e eu amei a qualidade, ficaram muito lindas! Obrigada!",
-      photo: "assets/reviews/Luisa Neves.png"
+      name: "Jhonata Guilherme",
+      meta: "7 avaliações · 3 anos atrás",
+      text: "Trabalho impecável, ótimo atendimento, recomendo demais!",
+      photo: "assets/reviews/Jhonata Guilherme.png"
+    },
+    {
+      name: "Daniele Queiroz",
+      meta: "5 avaliações · 1 ano atrás",
+      text: "Ótimo atendimento.",
+      photo: "assets/reviews/Daniele Queiroz.png"
     }
   ];
 
@@ -140,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function cardsPerPage() {
     if (window.innerWidth <= 560) return 1;
     if (window.innerWidth <= 900) return 2;
-    return 5;
+    return 3;
   }
 
   function pageCount() {

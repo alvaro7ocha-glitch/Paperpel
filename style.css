@@ -124,12 +124,12 @@ button{
 }
 
 .social-icons img{
-  width:27px !important;
-  height:27px !important;
-  min-width:27px;
-  min-height:27px;
-  max-width:27px !important;
-  max-height:27px !important;
+  width:34px !important;
+  height:34px !important;
+  min-width:34px;
+  min-height:34px;
+  max-width:34px !important;
+  max-height:34px !important;
   object-fit:contain !important;
   object-position:center;
 }

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Paperpel Gráfica — impressão, comunicação visual e soluções gráficas em Belo Horizonte.">
   <title>Paperpel Gráfica | Impressão e soluções gráficas</title>
-  <link rel="stylesheet" href="style.css?v=20260831-24">
+  <link rel="stylesheet" href="style.css?v=20260831-22">
 
   <style>
     .brand img{
@@ -141,10 +141,13 @@
 
 
 <style id="paperpel-plane-animation">
-  /* Animação do card de QUALIDADE.
-     O card não muda de posição/tamanho durante o hover.
-     QUALIDADE usa duas camadas renderizadas em seus tamanhos reais,
-     evitando o aspecto borrado de aumentar uma única camada. */
+  /* =========================================================
+     ANIMAÇÃO DO CARD DE QUALIDADE
+     - avião flutua suavemente em repouso;
+     - ao entrar com o mouse no card, o avião "voa" para frente;
+     - QUALIDADE cresce;
+     - ao sair, QUALIDADE volta ao normal e o avião retorna com fade-in.
+     ========================================================= */
 
   .hero-card{
     position:relative;
@@ -169,22 +172,11 @@
     position:relative;
     z-index:2;
     display:inline-block;
-    line-height:1;
-    font-size:11px;
-    transform:none;
-    transition:opacity .22s ease;
-  }
-
-  .quality-label-large{
-    position:absolute;
-    left:0;
-    top:0;
-    font-size:28px;
-    font-weight:800;
-    letter-spacing:2px;
-    white-space:nowrap;
-    opacity:0;
-    pointer-events:none;
+    transform-origin:left center;
+    transition:
+      transform .36s cubic-bezier(.2,.8,.2,1),
+      opacity .25s ease;
+    will-change:transform;
   }
 
   @keyframes paperpel-plane-glide{
@@ -206,12 +198,8 @@
       animation:none;
     }
 
-    .hero-card:hover .quality-label-normal{
-      opacity:0;
-    }
-
-    .hero-card:hover .quality-label-large{
-      opacity:1;
+    .hero-card:hover .quality-label{
+      transform:scale(2.55);
     }
   }
 
@@ -276,8 +264,7 @@
         <div class="paper-plane">
           <img src="assets/aviao-paperpel.png?v=1" alt="" aria-hidden="true">
         </div>
-        <span class="quality-label quality-label-normal">QUALIDADE</span>
-        <span class="quality-label quality-label-large" aria-hidden="true">QUALIDADE</span>
+        <span class="quality-label">QUALIDADE</span>
         <strong>que você<br>pode ver.</strong>
         <p>Do arquivo à impressão, cuidamos de cada detalhe para entregar um resultado profissional.</p>
       </div>
@@ -321,7 +308,7 @@
             <span class="service-number">03</span>
           </div>
           <div class="service-content">
-            <h3>Impressão de fotos</h3>
+            <h3>Impressão de fotos.</h3>
             <p>Foto tradicional, polaroid, foto ímã, foto 3/4, foto tamanho A3 e A4, tudo com qualidade e durabilidade.</p>
                       </div>
         </article>
@@ -457,6 +444,6 @@
   </div>
 </footer>
 
-<script src="script.js?v=20260831-24"></script>
+<script src="script.js?v=20260831-22"></script>
 </body>
 </html>

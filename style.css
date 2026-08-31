@@ -920,41 +920,401 @@ button{
 }
 
 
-
 /* =========================================================
-   PAPERPEL — AJUSTE MOBILE
-   Desktop permanece exatamente como está acima.
+   PAPERPEL — VERSÃO MOBILE REFINADA
+   Mantém o desktop intacto.
    ========================================================= */
 
-@media (max-width: 560px){
+@media (max-width: 900px){
+  body{
+    overflow-x:hidden;
+  }
 
+  .container{
+    width:min(100% - 32px, 720px);
+  }
+
+  /* Cabeçalho */
+  .header{
+    position:sticky;
+    top:0;
+  }
+
+  .nav{
+    min-height:74px;
+    gap:12px;
+  }
+
+  .brand{
+    flex:1 1 auto;
+    min-width:0;
+  }
+
+  .brand img{
+    width:145px !important;
+    height:52px !important;
+    max-width:145px !important;
+  }
+
+  .social-icons{
+    margin-left:auto;
+    gap:7px;
+  }
+
+  /* No mobile, os links do menu ficam ocultos para não apertar o cabeçalho.
+     O conteúdo continua acessível pelos próprios links e pela rolagem. */
+  .menu{
+    display:none !important;
+  }
+
+  /* HERO */
+  .hero{
+    min-height:0;
+  }
+
+  .hero-grid{
+    min-height:0 !important;
+    grid-template-columns:1fr !important;
+    gap:38px !important;
+    padding:64px 0 72px !important;
+  }
+
+  .hero-copy{
+    max-width:100%;
+  }
+
+  .hero h1{
+    font-size:clamp(43px,13vw,58px);
+    line-height:.98;
+    letter-spacing:-2.4px;
+    margin-bottom:20px;
+    max-width:620px;
+  }
+
+  .hero-copy>p{
+    max-width:620px;
+    font-size:16px;
+    line-height:1.6;
+  }
+
+  .hero-actions{
+    flex-direction:column;
+    align-items:stretch;
+    gap:10px;
+    margin-top:28px;
+  }
+
+  .hero-actions .button{
+    width:100%;
+    min-height:50px;
+  }
+
+  .hero-note{
+    margin-top:22px;
+    font-size:11px;
+  }
+
+  .hero-card{
+    width:min(100%,360px);
+    justify-self:center !important;
+    align-self:center !important;
+    padding:34px 30px;
+    border-radius:24px;
+  }
+
+  .hero-card strong{
+    font-size:32px;
+  }
+
+  .hero-card p{
+    font-size:13px;
+  }
+
+  /* Mantém o padrão mais suave no celular */
+  .hero::before{
+    left:-45%;
+    top:-8%;
+    width:140%;
+    height:85%;
+  }
+
+  .hero::after{
+    right:-45%;
+    top:35%;
+    width:130%;
+    height:70%;
+  }
+
+  /* SEÇÕES */
+  .section{
+    padding:74px 0;
+  }
+
+  .section-heading{
+    margin-bottom:32px;
+  }
+
+  .section-heading h2,
+  .contact h2{
+    font-size:36px;
+    line-height:1.08;
+    letter-spacing:-1.5px;
+  }
+
+  .section-heading p{
+    font-size:14px;
+    line-height:1.6;
+  }
+
+  /* SERVIÇOS */
+  .services-grid{
+    grid-template-columns:1fr !important;
+    gap:14px;
+  }
+
+  .service-card{
+    min-height:0;
+    height:360px;
+    padding:0 !important;
+    overflow:hidden;
+    position:relative;
+    justify-content:flex-end;
+    border-radius:18px;
+    background:#fff;
+  }
+
+  /* Caso os cards já tenham imagens, preserva-as.
+     Caso o HTML use background-image, nada é sobrescrito aqui. */
+  .service-card img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+
+  .service-card .service-number,
+  .service-card h3,
+  .service-card p,
+  .service-card .service-link{
+    position:relative;
+    z-index:2;
+  }
+
+  .service-card h3{
+    margin:0;
+    padding:18px 20px 4px;
+    font-size:22px;
+    color:#fff;
+    text-shadow:0 2px 12px rgba(0,0,0,.35);
+  }
+
+  .service-card p{
+    padding:0 20px 18px;
+    color:rgba(255,255,255,.92);
+    font-size:13px;
+    text-shadow:0 2px 10px rgba(0,0,0,.35);
+  }
+
+  .service-card .service-link{
+    padding:0 20px 20px;
+    color:#fff;
+    font-size:12px;
+    text-shadow:0 2px 10px rgba(0,0,0,.35);
+  }
+
+  /* Gradiente para legibilidade dos textos sobre as fotos */
+  .service-card::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:58%;
+    z-index:1;
+    background:linear-gradient(
+      to top,
+      rgba(0,0,0,.70) 0%,
+      rgba(0,0,0,.34) 48%,
+      rgba(0,0,0,0) 100%
+    );
+    pointer-events:none;
+  }
+
+  .service-card.featured{
+    background:var(--blue);
+  }
+
+  /* DIFERENCIAIS */
+  .blue-section{
+    padding:74px 0;
+  }
+
+  .differentiators{
+    grid-template-columns:1fr !important;
+    gap:38px !important;
+  }
+
+  .blue-section h2{
+    font-size:40px;
+    line-height:1.02;
+  }
+
+  .diff-item{
+    grid-template-columns:38px minmax(0,1fr);
+    gap:12px;
+    padding:22px 0;
+  }
+
+  .diff-item h3{
+    font-size:16px;
+  }
+
+  .diff-item p{
+    font-size:12px;
+  }
+
+  /* AVALIAÇÕES — 1 por vez no celular */
+  .reviews-section{
+    padding:66px 0 72px;
+  }
+
+  .reviews-heading{
+    margin-bottom:24px;
+  }
+
+  .reviews-rating{
+    justify-content:flex-start;
+    flex-wrap:wrap;
+  }
+
+  .reviews-rating strong{
+    font-size:23px;
+  }
+
+  .reviews-rating>span:last-child{
+    width:100%;
+    font-size:11px;
+  }
+
+  .reviews-carousel{
+    gap:6px;
+  }
+
+  .reviews-track{
+    gap:12px;
+    padding-bottom:14px;
+  }
+
+  .review-card{
+    flex:0 0 100% !important;
+    width:100% !important;
+    min-height:280px !important;
+    height:auto !important;
+    padding:22px !important;
+    border-radius:18px;
+  }
+
+  .review-card p{
+    font-size:13px;
+    line-height:1.6;
+  }
+
+  .review-arrow{
+    width:38px;
+    height:38px;
+    font-size:26px;
+  }
+
+  .review-arrow.prev{
+    left:2px;
+  }
+
+  .review-arrow.next{
+    right:2px;
+  }
+
+  /* CTA */
+  .quote-section{
+    padding:60px 0;
+  }
+
+  .quote-box{
+    padding:34px 26px;
+    border-radius:20px;
+    gap:22px;
+  }
+
+  .quote-box h2{
+    font-size:30px;
+  }
+
+  .quote-box p{
+    font-size:13px;
+  }
+
+  .white{
+    width:100%;
+    white-space:normal;
+    text-align:center;
+  }
+
+  /* CONTATO */
+  .contact-grid{
+    grid-template-columns:1fr !important;
+    gap:36px !important;
+  }
+
+  .contact-card{
+    padding:24px;
+    gap:24px;
+  }
+
+  .contact-card a{
+    font-size:18px;
+  }
+
+  .contact-card p{
+    font-size:13px;
+  }
+
+  /* RODAPÉ */
+  .footer-inner{
+    min-height:0;
+    padding:24px 0;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:12px;
+  }
+
+  .footer-inner img{
+    width:140px;
+    height:48px;
+  }
+
+  .footer a{
+    align-self:flex-start;
+  }
+}
+
+@media (max-width:560px){
   .container{
     width:calc(100% - 28px);
   }
 
   .header .nav{
     min-height:68px;
-    gap:10px;
   }
 
   .brand img{
-    width:125px !important;
+    width:132px !important;
     height:48px !important;
-    max-width:125px !important;
+    max-width:132px !important;
   }
 
-  .social-icons{
-    gap:6px;
-  }
-
-  /* Mantém os ícones no tamanho que você ajustou manualmente */
   .social-icons a{
     width:34px !important;
     height:34px !important;
     min-width:34px !important;
     min-height:34px !important;
-    max-width:34px !important;
-    max-height:34px !important;
   }
 
   .social-icons img{
@@ -966,265 +1326,33 @@ button{
     max-height:27px !important;
   }
 
-  /* HERO */
   .hero-grid{
-    min-height:0 !important;
-    grid-template-columns:1fr !important;
-    gap:30px !important;
-    padding:52px 0 58px !important;
+    padding:54px 0 66px !important;
   }
 
   .hero h1{
-    font-size:44px !important;
-    line-height:.99 !important;
-    letter-spacing:-2.2px !important;
-    margin-bottom:18px !important;
-  }
-
-  .hero-copy>p{
-    font-size:15px !important;
-    line-height:1.55 !important;
-  }
-
-  .hero-actions{
-    gap:9px !important;
-    margin-top:24px !important;
-  }
-
-  .hero-actions .button{
-    min-height:46px !important;
-    padding:12px 17px !important;
-    font-size:13px !important;
-  }
-
-  .hero-note{
-    margin-top:19px !important;
-    font-size:11px !important;
+    font-size:48px;
   }
 
   .hero-card{
-    width:min(100%,300px) !important;
-    justify-self:center !important;
-    padding:28px 24px !important;
-    border-radius:22px !important;
+    width:100%;
+    padding:32px 28px;
   }
 
   .hero-card strong{
-    font-size:30px !important;
+    font-size:31px;
   }
 
-  .hero-card p{
-    font-size:12px !important;
-    line-height:1.55 !important;
-  }
-
-  /* SERVIÇOS */
-  .section{
-    padding:62px 0 !important;
-  }
-
-  .section-heading{
-    margin-bottom:28px !important;
+  .service-card{
+    height:270px;
   }
 
   .section-heading h2,
   .contact h2{
-    font-size:31px !important;
-    line-height:1.08 !important;
-    letter-spacing:-1.4px !important;
-  }
-
-  .section-heading p{
-    font-size:13px !important;
-    line-height:1.55 !important;
-  }
-
-  .services-grid{
-    grid-template-columns:1fr !important;
-    gap:12px !important;
-  }
-
-  .service-card{
-    height:245px !important;
-    min-height:245px !important;
-    border-radius:16px !important;
-  }
-
-  .service-card h3{
-    font-size:20px !important;
-    padding:14px 17px 3px !important;
-  }
-
-  .service-card p{
-    font-size:12px !important;
-    padding:0 17px 12px !important;
-  }
-
-  .service-card .service-link{
-    font-size:11px !important;
-    padding:0 17px 16px !important;
-  }
-
-  /* DIFERENCIAIS */
-  .blue-section{
-    padding:62px 0 !important;
-  }
-
-  .differentiators{
-    grid-template-columns:1fr !important;
-    gap:34px !important;
+    font-size:34px;
   }
 
   .blue-section h2{
-    font-size:35px !important;
-    line-height:1.02 !important;
-    letter-spacing:-1.5px !important;
-  }
-
-  .diff-item{
-    grid-template-columns:36px minmax(0,1fr) !important;
-    gap:11px !important;
-    padding:20px 0 !important;
-  }
-
-  .diff-item h3{
-    font-size:15px !important;
-  }
-
-  .diff-item p{
-    font-size:11px !important;
-  }
-
-  /* AVALIAÇÕES */
-  .reviews-section{
-    padding:62px 0 68px !important;
-  }
-
-  .reviews-heading{
-    margin-bottom:20px !important;
-  }
-
-  .reviews-rating{
-    flex-wrap:wrap !important;
-    gap:8px !important;
-  }
-
-  .reviews-rating strong{
-    font-size:21px !important;
-  }
-
-  .stars{
-    font-size:17px !important;
-  }
-
-  .reviews-rating>span:last-child{
-    width:100% !important;
-    font-size:10px !important;
-  }
-
-  .review-card{
-    flex-basis:100% !important;
-    width:100% !important;
-    min-height:245px !important;
-    height:auto !important;
-    padding:20px !important;
-    border-radius:16px !important;
-  }
-
-  .review-photo{
-    width:46px !important;
-    height:46px !important;
-    min-width:46px !important;
-    max-width:46px !important;
-  }
-
-  .review-user strong{
-    font-size:13px !important;
-  }
-
-  .review-user span{
-    font-size:9px !important;
-  }
-
-  .review-stars{
-    margin-top:13px !important;
-    font-size:15px !important;
-  }
-
-  .review-card p{
-    margin-top:12px !important;
-    font-size:12px !important;
-    line-height:1.55 !important;
-  }
-
-  .review-arrow{
-    width:36px !important;
-    height:36px !important;
-    font-size:25px !important;
-  }
-
-  /* CTA */
-  .quote-section{
-    padding:58px 0 !important;
-  }
-
-  .quote-box{
-    padding:30px 23px !important;
-    border-radius:19px !important;
-    gap:20px !important;
-  }
-
-  .quote-box h2{
-    font-size:28px !important;
-  }
-
-  .quote-box p{
-    font-size:12px !important;
-  }
-
-  .white{
-    width:100% !important;
-    white-space:normal !important;
-    text-align:center !important;
-  }
-
-  /* CONTATO */
-  .contact-grid{
-    grid-template-columns:1fr !important;
-    gap:32px !important;
-  }
-
-  .contact-card{
-    padding:23px !important;
-    gap:22px !important;
-    border-radius:16px !important;
-  }
-
-  .contact-card a{
-    font-size:17px !important;
-  }
-
-  .contact-card p{
-    font-size:12px !important;
-  }
-
-  /* RODAPÉ */
-  .footer-inner{
-    min-height:0 !important;
-    padding:22px 0 !important;
-    flex-direction:column !important;
-    align-items:flex-start !important;
-    gap:11px !important;
-    font-size:10px !important;
-  }
-
-  .footer-inner img{
-    width:140px !important;
-    height:48px !important;
-    max-width:140px !important;
-  }
-
-  .footer a{
-    align-self:flex-start !important;
+    font-size:36px;
   }
 }

@@ -1507,19 +1507,92 @@ button{
   }
 }
 
+
+/* Ajuste fino dos cards de serviços */
+.services-grid-images .service-number{
+  display:none !important;
+}
+
+.services-grid-images .service-content{
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  gap:0;
+}
+
+.services-grid-images .service-content h3{
+  margin-top:0 !important;
+  margin-bottom:10px !important;
+}
+
+.services-grid-images .service-content p{
+  margin-top:0 !important;
+  line-height:1.5 !important;
+}
+
+.services-grid-images .service-card{
+  display:flex !important;
+  flex-direction:column !important;
+}
+
+.services-grid-images .service-image{
+  flex:0 0 auto;
+}
+
+.services-grid-images .service-content{
+  flex:1 1 auto;
+}
+
+
+/* Alinhamento dos títulos dos cards de serviços */
+.services-grid-images .service-content h3{
+  min-height:2.2em;
+  display:flex;
+  align-items:flex-start;
+  margin-top:0 !important;
+  margin-bottom:10px !important;
+}
+
+@media (max-width:560px){
+  .services-grid-images .service-content h3{
+    min-height:2.2em;
+  }
+}
+
+
 /* =========================================================
-   PAPERPEL — ALINHAMENTO DOS TEXTOS DOS CARDS
-   ALTERA SOMENTE A ÁREA DE TEXTO DOS 4 CARDS.
-   Imagens, cores, animações e demais seções permanecem iguais.
+   AJUSTE FINAL — ALINHAMENTO DOS 4 CARDS DE SERVIÇOS
+   Somente geometria/alinhamento. Nada além desta seção é alterado.
    ========================================================= */
 
+/* As quatro áreas de imagem passam a ter exatamente a mesma altura.
+   object-fit:contain mantém cada produto inteiro, sem cortar a imagem. */
+.services-grid-images .service-image{
+  height:180px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+  box-sizing:border-box !important;
+}
+
+.services-grid-images .service-image img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  display:block !important;
+}
+
+/* Os quatro títulos passam a ocupar exatamente o mesmo espaço,
+   portanto todos os parágrafos começam na mesma linha. */
 .services-grid-images .service-content{
   display:flex !important;
   flex-direction:column !important;
   align-items:flex-start !important;
   text-align:left !important;
   padding:22px 22px 24px !important;
-  box-sizing:border-box;
+  box-sizing:border-box !important;
 }
 
 .services-grid-images .service-content h3{
@@ -1527,10 +1600,9 @@ button{
   min-height:50px !important;
   margin:0 0 10px !important;
   padding:0 !important;
-  display:flex !important;
-  align-items:flex-start !important;
+  display:block !important;
   line-height:1.12 !important;
-  box-sizing:border-box;
+  box-sizing:border-box !important;
 }
 
 .services-grid-images .service-content p{
@@ -1538,10 +1610,16 @@ button{
   margin:0 !important;
   padding:0 !important;
   line-height:1.5 !important;
-  box-sizing:border-box;
+  box-sizing:border-box !important;
 }
 
+/* Mantém o mesmo princípio no celular, apenas reduzindo a área de imagem
+   para caber melhor na tela pequena. */
 @media (max-width:560px){
+  .services-grid-images .service-image{
+    height:155px !important;
+  }
+
   .services-grid-images .service-content{
     padding:18px 18px 20px !important;
   }

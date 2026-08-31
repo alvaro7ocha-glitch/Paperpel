@@ -1434,3 +1434,75 @@ button{
     padding:18px 18px 20px;
   }
 }
+
+
+/* =========================================================
+   PAPERPEL — ANIMAÇÃO ORIGINAL DO CARD DE QUALIDADE
+   Esta regra não altera posição, tamanho ou cor dos cards de serviços.
+   ========================================================= */
+
+.hero-card{
+  position:relative;
+  overflow:hidden;
+}
+
+.paper-plane{
+  position:relative;
+  z-index:2;
+  transform:translate3d(0,0,0);
+  opacity:1;
+  transition:
+    transform .58s cubic-bezier(.2,.82,.25,1),
+    opacity .42s ease;
+  will-change:transform,opacity;
+}
+
+.paper-plane img{
+  display:block;
+  will-change:transform;
+  animation:paperpel-plane-float 3.8s ease-in-out infinite;
+}
+
+.hero-card > span{
+  position:relative;
+  z-index:2;
+  display:inline-block;
+  transform-origin:left center;
+  transition:
+    transform .38s cubic-bezier(.2,.82,.25,1),
+    opacity .22s ease;
+  will-change:transform;
+}
+
+@keyframes paperpel-plane-float{
+  0%,100%{
+    transform:translate3d(0,0,0) rotate(-1deg);
+  }
+  50%{
+    transform:translate3d(0,-7px,0) rotate(1deg);
+  }
+}
+
+@media (hover:hover) and (pointer:fine){
+  .hero-card:hover .paper-plane{
+    transform:translate3d(180px,-8px,0) scale(.62);
+    opacity:0;
+  }
+
+  .hero-card:hover .paper-plane img{
+    animation:none;
+  }
+
+  .hero-card:hover > span{
+    transform:scale(2.55);
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .paper-plane,
+  .paper-plane img,
+  .hero-card > span{
+    animation:none !important;
+    transition:none !important;
+  }
+}

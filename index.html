@@ -140,31 +140,100 @@
 </style>
 
 
-<style id="paperpel-services-pattern">
+<style id="paperpel-plane-animation">
+  /* =========================================================
+     ANIMAÇÃO DO CARD DE QUALIDADE
+     - avião flutua suavemente em repouso;
+     - ao entrar com o mouse no card, o avião "voa" para frente;
+     - QUALIDADE cresce;
+     - ao sair, QUALIDADE volta ao normal e o avião retorna com fade-in.
+     ========================================================= */
+
+  .hero-card{
+    position:relative;
+    overflow:hidden;
+  }
+
+  .paper-plane{
+    position:relative;
+    z-index:2;
+    transition:
+      transform .58s cubic-bezier(.2,.82,.25,1),
+      opacity .42s ease;
+    will-change:transform, opacity;
+  }
+
+  .paper-plane img{
+    will-change:transform;
+    animation:paperpel-plane-glide 3.8s ease-in-out infinite;
+  }
+
+  .quality-label{
+    position:relative;
+    z-index:2;
+    display:inline-block;
+    transform-origin:left center;
+    transition:
+      transform .36s cubic-bezier(.2,.8,.2,1),
+      opacity .25s ease;
+    will-change:transform;
+  }
+
+  @keyframes paperpel-plane-glide{
+    0%,100%{
+      transform:translate3d(0,0,0) rotate(-1deg);
+    }
+    50%{
+      transform:translate3d(0,-7px,0) rotate(1deg);
+    }
+  }
+
+  @media (hover:hover) and (pointer:fine){
+    .hero-card:hover .paper-plane{
+      transform:translate3d(180px,-8px,0) scale(.62);
+      opacity:0;
+    }
+
+    .hero-card:hover .paper-plane img{
+      animation:none;
+    }
+
+    .hero-card:hover .quality-label{
+      transform:scale(2.55);
+    }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .paper-plane,
+    .paper-plane img,
+    .quality-label{
+      animation:none !important;
+      transition:none !important;
+    }
+  }
+</style>
+
+
+<style id="paperpel-service-pattern">
   .services-grid-images .service-card:nth-child(odd) .service-content{
     background:#0470C9 !important;
     color:#fff !important;
   }
-
   .services-grid-images .service-card:nth-child(even) .service-content{
     background:#fff !important;
     color:#102334 !important;
   }
-
-  .services-grid-images .service-card:nth-child(odd) .service-content p{
-    color:rgba(255,255,255,.88) !important;
-  }
-
-  .services-grid-images .service-card:nth-child(even) .service-content p{
-    color:#667788 !important;
-  }
-
   .services-grid-images .service-card:nth-child(odd) .service-content h3{
     color:#fff !important;
   }
-
+  .services-grid-images .service-card:nth-child(odd) .service-content p{
+    color:rgba(255,255,255,.88) !important;
+  }
   .services-grid-images .service-card:nth-child(even) .service-content h3{
     color:#102334 !important;
+  }
+  .services-grid-images .service-card:nth-child(even) .service-content p{
+    color:#667788 !important;
   }
 </style>
 
@@ -219,7 +288,7 @@
         <div class="paper-plane">
           <img src="assets/aviao-paperpel.png?v=1" alt="" aria-hidden="true">
         </div>
-        <span>QUALIDADE</span>
+        <span class="quality-label">QUALIDADE</span>
         <strong>que você<br>pode ver.</strong>
         <p>Do arquivo à impressão, cuidamos de cada detalhe para entregar um resultado profissional.</p>
       </div>
@@ -263,7 +332,7 @@
             <span class="service-number">03</span>
           </div>
           <div class="service-content">
-            <h3>Impresso de Foto</h3>
+            <h3>Impressão de fotos.</h3>
             <p>Foto tradicional, polaroid, foto ímã, foto 3/4, foto tamanho A3 e A4, tudo com qualidade e durabilidade.</p>
                       </div>
         </article>

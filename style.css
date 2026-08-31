@@ -1507,61 +1507,10 @@ button{
   }
 }
 
-
-/* Ajuste fino dos cards de serviços */
-.services-grid-images .service-number{
-  display:none !important;
-}
-
-.services-grid-images .service-content{
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start;
-  gap:0;
-}
-
-.services-grid-images .service-content h3{
-  margin-top:0 !important;
-  margin-bottom:10px !important;
-}
-
-.services-grid-images .service-content p{
-  margin-top:0 !important;
-  line-height:1.5 !important;
-}
-
-.services-grid-images .service-card{
-  display:flex !important;
-  flex-direction:column !important;
-}
-
-.services-grid-images .service-image{
-  flex:0 0 auto;
-}
-
-.services-grid-images .service-content{
-  flex:1 1 auto;
-}
-
-
-/* Alinhamento dos títulos dos cards de serviços */
-.services-grid-images .service-content h3{
-  min-height:2.2em;
-  display:flex;
-  align-items:flex-start;
-  margin-top:0 !important;
-  margin-bottom:10px !important;
-}
-
-@media (max-width:560px){
-  .services-grid-images .service-content h3{
-    min-height:2.2em;
-  }
-}
-
-
 /* =========================================================
-   AJUSTE FINO — ALINHAMENTO DOS TEXTOS DOS CARDS
+   PAPERPEL — ALINHAMENTO DOS TEXTOS DOS CARDS
+   ALTERA SOMENTE A ÁREA DE TEXTO DOS 4 CARDS.
+   Imagens, cores, animações e demais seções permanecem iguais.
    ========================================================= */
 
 .services-grid-images .service-content{
@@ -1570,20 +1519,26 @@ button{
   align-items:flex-start !important;
   text-align:left !important;
   padding:22px 22px 24px !important;
+  box-sizing:border-box;
 }
 
 .services-grid-images .service-content h3{
   width:100% !important;
   min-height:50px !important;
   margin:0 0 10px !important;
-  display:block !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:flex-start !important;
   line-height:1.12 !important;
+  box-sizing:border-box;
 }
 
 .services-grid-images .service-content p{
   width:100% !important;
   margin:0 !important;
+  padding:0 !important;
   line-height:1.5 !important;
+  box-sizing:border-box;
 }
 
 @media (max-width:560px){
@@ -1594,6 +1549,5 @@ button{
   .services-grid-images .service-content h3{
     min-height:45px !important;
     margin-bottom:8px !important;
-    line-height:1.12 !important;
   }
 }

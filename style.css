@@ -1356,3 +1356,283 @@ button{
     font-size:36px;
   }
 }
+
+
+/* =========================================================
+   MOBILE — ESCALA MAIS COMPACTA
+   ========================================================= */
+
+@media (max-width:900px){
+  .container{
+    width:min(100% - 30px, 720px);
+  }
+
+  .hero-grid{
+    gap:30px !important;
+    padding:50px 0 58px !important;
+  }
+
+  .hero h1{
+    font-size:clamp(38px,11vw,50px) !important;
+    letter-spacing:-2px !important;
+    margin-bottom:16px !important;
+  }
+
+  .hero-copy>p{
+    font-size:15px !important;
+    line-height:1.5 !important;
+  }
+
+  .hero-actions{
+    margin-top:22px !important;
+  }
+
+  .hero-actions .button{
+    min-height:46px !important;
+    padding:12px 18px !important;
+    font-size:13px !important;
+  }
+
+  .hero-note{
+    margin-top:18px !important;
+    font-size:11px !important;
+  }
+
+  .hero-card{
+    width:min(100%,310px) !important;
+    padding:28px 24px !important;
+    border-radius:21px !important;
+  }
+
+  .hero-card strong{
+    font-size:29px !important;
+  }
+
+  .hero-card p{
+    font-size:12px !important;
+    line-height:1.5 !important;
+  }
+
+  .section,
+  .blue-section{
+    padding:62px 0 !important;
+  }
+
+  .section-heading{
+    margin-bottom:28px !important;
+  }
+
+  .section-heading h2,
+  .contact h2{
+    font-size:32px !important;
+    letter-spacing:-1.3px !important;
+  }
+
+  .section-heading p{
+    font-size:13px !important;
+  }
+
+  .services-grid{
+    gap:12px !important;
+  }
+
+  .service-card{
+    height:255px !important;
+    border-radius:16px !important;
+  }
+
+  .service-card h3{
+    font-size:20px !important;
+    padding:15px 18px 3px !important;
+  }
+
+  .service-card p{
+    font-size:12px !important;
+    padding:0 18px 14px !important;
+  }
+
+  .service-card .service-link{
+    font-size:11px !important;
+    padding:0 18px 17px !important;
+  }
+
+  .blue-section h2{
+    font-size:36px !important;
+    letter-spacing:-1.5px !important;
+  }
+
+  .diff-item{
+    padding:19px 0 !important;
+  }
+
+  .diff-item h3{
+    font-size:15px !important;
+  }
+
+  .diff-item p{
+    font-size:11px !important;
+  }
+
+  .reviews-section{
+    padding:58px 0 64px !important;
+  }
+
+  .reviews-heading{
+    margin-bottom:20px !important;
+  }
+
+  .reviews-rating strong{
+    font-size:21px !important;
+  }
+
+  .stars{
+    font-size:17px !important;
+  }
+
+  .reviews-rating>span:last-child{
+    font-size:10px !important;
+  }
+
+  .review-card{
+    min-height:245px !important;
+    height:auto !important;
+    padding:20px !important;
+    border-radius:16px !important;
+  }
+
+  .review-photo{
+    width:46px !important;
+    height:46px !important;
+    min-width:46px !important;
+    max-width:46px !important;
+  }
+
+  .review-user strong{
+    font-size:13px !important;
+  }
+
+  .review-user span{
+    font-size:9px !important;
+  }
+
+  .review-stars{
+    margin-top:13px !important;
+    font-size:15px !important;
+  }
+
+  .review-card p{
+    font-size:12px !important;
+    line-height:1.55 !important;
+    margin-top:12px !important;
+  }
+
+  .quote-section{
+    padding:55px 0 !important;
+  }
+
+  .quote-box{
+    padding:28px 22px !important;
+    border-radius:18px !important;
+    gap:18px !important;
+  }
+
+  .quote-box h2{
+    font-size:27px !important;
+  }
+
+  .quote-box p{
+    font-size:12px !important;
+  }
+
+  .contact-grid{
+    gap:30px !important;
+  }
+
+  .contact-card{
+    padding:22px !important;
+    gap:22px !important;
+    border-radius:16px !important;
+  }
+
+  .contact-card a{
+    font-size:17px !important;
+  }
+
+  .contact-card p{
+    font-size:12px !important;
+  }
+
+  .footer-inner{
+    padding:20px 0 !important;
+    font-size:10px !important;
+  }
+}
+
+@media (max-width:560px){
+  .container{
+    width:calc(100% - 26px) !important;
+  }
+
+  .header .nav{
+    min-height:64px !important;
+  }
+
+  .brand img{
+    width:125px !important;
+    height:46px !important;
+    max-width:125px !important;
+  }
+
+  .social-icons a{
+    width:32px !important;
+    height:32px !important;
+    min-width:32px !important;
+    min-height:32px !important;
+    max-width:32px !important;
+    max-height:32px !important;
+  }
+
+  .social-icons img{
+    width:25px !important;
+    height:25px !important;
+    min-width:25px !important;
+    min-height:25px !important;
+    max-width:25px !important;
+    max-height:25px !important;
+  }
+
+  .hero-grid{
+    padding:46px 0 52px !important;
+  }
+
+  .hero h1{
+    font-size:43px !important;
+  }
+
+  .hero-card{
+    max-width:290px !important;
+    padding:26px 23px !important;
+  }
+
+  .service-card{
+    height:235px !important;
+  }
+
+  .section,
+  .blue-section{
+    padding:56px 0 !important;
+  }
+
+  .section-heading h2,
+  .contact h2{
+    font-size:29px !important;
+  }
+
+  .blue-section h2{
+    font-size:33px !important;
+  }
+
+  .review-card{
+    min-height:235px !important;
+  }
+}

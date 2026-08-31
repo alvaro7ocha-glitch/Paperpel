@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Paperpel Gráfica — impressão, comunicação visual e soluções gráficas em Belo Horizonte.">
   <title>Paperpel Gráfica | Impressão e soluções gráficas</title>
-  <link rel="stylesheet" href="style.css?v=20260831-22">
+  <link rel="stylesheet" href="style.css?v=20260831-23">
 
   <style>
     .brand img{
@@ -172,11 +172,14 @@
     position:relative;
     z-index:2;
     display:inline-block;
+    font-size:11px;
+    line-height:1;
+    transform:none;
     transform-origin:left center;
     transition:
-      transform .36s cubic-bezier(.2,.8,.2,1),
+      font-size .36s cubic-bezier(.2,.8,.2,1),
       opacity .25s ease;
-    will-change:transform;
+    will-change:font-size;
   }
 
   @keyframes paperpel-plane-glide{
@@ -199,7 +202,7 @@
     }
 
     .hero-card:hover .quality-label{
-      transform:scale(2.55);
+      font-size:28px;
     }
   }
 
@@ -308,7 +311,7 @@
             <span class="service-number">03</span>
           </div>
           <div class="service-content">
-            <h3>Impressão de fotos.</h3>
+            <h3>Impressão de fotos</h3>
             <p>Foto tradicional, polaroid, foto ímã, foto 3/4, foto tamanho A3 e A4, tudo com qualidade e durabilidade.</p>
                       </div>
         </article>
@@ -444,6 +447,6 @@
   </div>
 </footer>
 
-<script src="script.js?v=20260831-22"></script>
+<script src="script.js?v=20260831-23"></script>
 </body>
 </html>

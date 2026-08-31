@@ -1356,3 +1356,81 @@ button{
     font-size:36px;
   }
 }
+
+
+/* =========================================================
+   PAPERPEL — PADRÃO DOS CARDS DE SERVIÇOS
+   01 azul / 02 branco / 03 azul / 04 branco
+   ========================================================= */
+
+.services-grid-images .service-card{
+  overflow:hidden;
+  border-radius:18px;
+  padding:0 !important;
+}
+
+.services-grid-images .service-card:nth-child(odd){
+  background:#0470C9 !important;
+  color:#fff !important;
+  border-color:#0470C9 !important;
+}
+
+.services-grid-images .service-card:nth-child(even){
+  background:#fff !important;
+  color:#102334 !important;
+  border-color:#dfeaf2 !important;
+}
+
+.services-grid-images .service-card .service-image{
+  position:relative;
+  overflow:hidden;
+}
+
+.services-grid-images .service-card .service-image img{
+  width:100%;
+  height:auto;
+  display:block;
+}
+
+.services-grid-images .service-card .service-content{
+  padding:22px 22px 24px;
+}
+
+.services-grid-images .service-card:nth-child(odd) .service-content{
+  background:#0470C9 !important;
+  color:#fff !important;
+}
+
+.services-grid-images .service-card:nth-child(even) .service-content{
+  background:#fff !important;
+  color:#102334 !important;
+}
+
+.services-grid-images .service-card:nth-child(odd) .service-content h3{
+  color:#fff !important;
+}
+
+.services-grid-images .service-card:nth-child(odd) .service-content p{
+  color:rgba(255,255,255,.88) !important;
+}
+
+.services-grid-images .service-card:nth-child(even) .service-content h3{
+  color:#102334 !important;
+}
+
+.services-grid-images .service-card:nth-child(even) .service-content p{
+  color:#667788 !important;
+}
+
+/* O 03 recebe exatamente o mesmo azul do 01. */
+.services-grid-images .service-card:nth-child(3),
+.services-grid-images .service-card:nth-child(3) .service-image,
+.services-grid-images .service-card:nth-child(3) .service-content{
+  background:#0470C9 !important;
+}
+
+@media (max-width:560px){
+  .services-grid-images .service-card .service-content{
+    padding:18px 18px 20px;
+  }
+}

@@ -1558,3 +1558,42 @@ button{
     min-height:2.2em;
   }
 }
+
+
+/* =========================================================
+   AJUSTE FINO — ALINHAMENTO DOS TEXTOS DOS CARDS
+   ========================================================= */
+
+.services-grid-images .service-content{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-start !important;
+  text-align:left !important;
+  padding:22px 22px 24px !important;
+}
+
+.services-grid-images .service-content h3{
+  width:100% !important;
+  min-height:50px !important;
+  margin:0 0 10px !important;
+  display:block !important;
+  line-height:1.12 !important;
+}
+
+.services-grid-images .service-content p{
+  width:100% !important;
+  margin:0 !important;
+  line-height:1.5 !important;
+}
+
+@media (max-width:560px){
+  .services-grid-images .service-content{
+    padding:18px 18px 20px !important;
+  }
+
+  .services-grid-images .service-content h3{
+    min-height:45px !important;
+    margin-bottom:8px !important;
+    line-height:1.12 !important;
+  }
+}

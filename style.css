@@ -1783,11 +1783,11 @@ button{
   }
 
   .review-arrow:hover{
-    transform:translateY(-50%) scale(1.05);
+    transform:translateY(-50%) scale(1.02);
   }
 
   .review-arrow:active{
-    transform:translateY(-50%) scale(.96);
+    transform:translateY(-50%) scale(.97);
   }
 
   /* ÍCONES SOCIAIS — mantém a interação já existente, apenas suaviza */

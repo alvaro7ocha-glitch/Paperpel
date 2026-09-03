@@ -1817,8 +1817,8 @@ button{
 }
 
 /* =========================================================
-   PAPERPEL — ABERTURA DE ENTRADA
-   Avião de papel revela o site na primeira visita.
+   PAPERPEL — ABERTURA DE ENTRADA — ESTILO 2
+   O avião corta a tela e a abertura diagonal revela o site.
    ========================================================= */
 
 .paperpel-intro{
@@ -1829,79 +1829,84 @@ button{
   background:#0C77CF;
   pointer-events:none;
   clip-path:polygon(0 0,100% 0,100% 100%,0 100%);
-  animation:paperpel-intro-reveal .98s cubic-bezier(.76,0,.18,1) .18s forwards;
+  animation:paperpel-intro-cut 1.28s cubic-bezier(.72,0,.18,1) .10s forwards;
 }
 
 .paperpel-intro-plane{
   position:absolute;
   left:0;
   top:50%;
-  width:clamp(96px,9vw,148px);
+  width:clamp(105px,10vw,158px);
   height:auto;
-  transform:translate3d(-24vw,-50%,0) rotate(-4deg);
+  transform:translate3d(-22vw,-50%,0) rotate(-8deg);
   filter:drop-shadow(0 7px 12px rgba(0,0,0,.12));
-  animation:paperpel-intro-flight .92s cubic-bezier(.22,.74,.16,1) forwards;
+  animation:paperpel-intro-flight 1.16s cubic-bezier(.18,.78,.16,1) forwards;
   will-change:transform;
 }
 
-.paperpel-intro-plane::after{
+/* Pequena linha de corte: discreta, rápida e integrada ao avião. */
+.paperpel-intro::after{
   content:"";
-}
-
-.paperpel-intro-streak{
   position:absolute;
   left:0;
   top:50%;
-  width:clamp(140px,18vw,280px);
-  height:1px;
-  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.5));
-  transform:translate3d(-30vw,-50%,0);
+  width:clamp(230px,30vw,520px);
+  height:2px;
+  transform-origin:left center;
+  transform:translate3d(-28vw,-50%,0) rotate(-8deg);
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.26),rgba(255,255,255,0));
   opacity:0;
-  animation:paperpel-intro-streak .72s cubic-bezier(.22,.74,.16,1) .08s forwards;
+  animation:paperpel-intro-cut-line .82s cubic-bezier(.22,.72,.18,1) .08s forwards;
 }
 
 @keyframes paperpel-intro-flight{
   0%{
-    transform:translate3d(-24vw,-50%,0) rotate(-4deg) scale(.96);
+    transform:translate3d(-22vw,-50%,0) rotate(-8deg) scale(.94);
+  }
+  28%{
+    transform:translate3d(25vw,-50%,0) rotate(-5deg) scale(1);
   }
   70%{
-    transform:translate3d(74vw,-50%,0) rotate(-1deg) scale(1);
+    transform:translate3d(82vw,-50%,0) rotate(-1deg) scale(1.02);
   }
   100%{
-    transform:translate3d(126vw,-50%,0) rotate(1deg) scale(.98);
+    transform:translate3d(125vw,-50%,0) rotate(1deg) scale(.98);
   }
 }
 
-@keyframes paperpel-intro-streak{
+@keyframes paperpel-intro-cut-line{
   0%{
-    transform:translate3d(-30vw,-50%,0);
+    transform:translate3d(-28vw,-50%,0) rotate(-8deg) scaleX(.15);
     opacity:0;
   }
   18%{
-    opacity:.5;
+    opacity:.34;
   }
-  72%{
-    transform:translate3d(52vw,-50%,0);
-    opacity:.28;
+  78%{
+    transform:translate3d(60vw,-50%,0) rotate(-2deg) scaleX(1);
+    opacity:.14;
   }
   100%{
-    transform:translate3d(98vw,-50%,0);
+    transform:translate3d(104vw,-50%,0) rotate(0deg) scaleX(.72);
     opacity:0;
   }
 }
 
-@keyframes paperpel-intro-reveal{
-  0%,28%{
+@keyframes paperpel-intro-cut{
+  0%,24%{
     clip-path:polygon(0 0,100% 0,100% 100%,0 100%);
   }
-  52%{
-    clip-path:polygon(0 0,92% 0,70% 100%,0 100%);
+  44%{
+    clip-path:polygon(0 0,86% 0,62% 100%,0 100%);
   }
-  76%{
-    clip-path:polygon(0 0,56% 0,30% 100%,0 100%);
+  63%{
+    clip-path:polygon(0 0,66% 0,42% 100%,0 100%);
   }
-  92%{
-    clip-path:polygon(0 0,18% 0,4% 100%,0 100%);
+  81%{
+    clip-path:polygon(0 0,38% 0,18% 100%,0 100%);
+  }
+  93%{
+    clip-path:polygon(0 0,14% 0,3% 100%,0 100%);
   }
   100%{
     clip-path:polygon(0 0,0 0,0 100%,0 100%);
@@ -1914,7 +1919,7 @@ button{
 
 @media(max-width:560px){
   .paperpel-intro-plane{
-    width:92px;
+    width:94px;
   }
 }
 

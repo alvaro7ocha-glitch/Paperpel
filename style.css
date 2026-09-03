@@ -276,7 +276,7 @@ button{
   }
 
   36%{
-    transform:scale(1);
+    transform:scale(.94);
     box-shadow:0 0 0 5px rgba(7,237,134,.10);
     opacity:1;
   }

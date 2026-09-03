@@ -258,7 +258,7 @@ button{
   border-radius:50%;
   background:#07ED86;
   box-shadow:0 0 0 0 rgba(7,237,134,.38);
-  animation:paperpel-online-pulse 3s ease-in-out infinite;
+  animation:paperpel-online-pulse 1.5s ease-in-out infinite;
   will-change:transform,box-shadow,opacity;
 }
 

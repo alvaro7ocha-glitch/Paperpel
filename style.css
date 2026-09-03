@@ -257,34 +257,22 @@ button{
   height:8px;
   border-radius:50%;
   background:#07ED86;
-  box-shadow:0 0 0 0 rgba(7,237,134,.38);
-  animation:paperpel-online-pulse .5s ease-in-out infinite;
+  box-shadow:0 0 0 0 rgba(7,237,134,0);
+  animation:paperpel-online-breathe 2s ease-in-out infinite;
   will-change:transform,box-shadow,opacity;
 }
 
-@keyframes paperpel-online-pulse{
+@keyframes paperpel-online-breathe{
   0%,100%{
     transform:scale(1);
     box-shadow:0 0 0 0 rgba(7,237,134,0);
     opacity:1;
   }
 
-  18%{
-    transform:scale(1.12);
-    box-shadow:0 0 0 3px rgba(7,237,134,.16);
+  50%{
+    transform:scale(1.08);
+    box-shadow:0 0 0 4px rgba(7,237,134,.12);
     opacity:.96;
-  }
-
-  36%{
-    transform:scale(.94);
-    box-shadow:0 0 0 5px rgba(7,237,134,.10);
-    opacity:1;
-  }
-
-  100%{
-    transform:scale(1);
-    box-shadow:0 0 0 0 rgba(7,237,134,0);
-    opacity:1;
   }
 }
 

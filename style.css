@@ -1779,17 +1779,16 @@ button{
   /* SETAS DO CARROSSEL — resposta pequena ao clique/hover */
   .review-arrow{
     transition:
-      transform .22s cubic-bezier(.22,.75,.25,1),
       box-shadow .22s ease,
       background-color .2s ease;
   }
 
   .review-arrow:hover{
-    transform:scale(1.05);
+    box-shadow:0 9px 24px rgba(0,0,0,.12);
   }
 
   .review-arrow:active{
-    transform:scale(.96);
+    box-shadow:0 6px 16px rgba(0,0,0,.10);
   }
 
   /* ÍCONES SOCIAIS — mantém a interação já existente, apenas suaviza */
@@ -1818,7 +1817,7 @@ button{
 
 /* =========================================================
    PAPERPEL — ABERTURA DE ENTRADA — ESTILO 2
-   O avião corta a tela e a abertura diagonal revela o site.
+   O avião corta a tela em diagonal e a abertura acompanha a trajetória.
    ========================================================= */
 
 .paperpel-intro{
@@ -1829,65 +1828,66 @@ button{
   background:#0C77CF;
   pointer-events:none;
   clip-path:polygon(0 0,100% 0,100% 100%,0 100%);
-  animation:paperpel-intro-cut 1.28s cubic-bezier(.72,0,.18,1) .10s forwards;
+  animation:paperpel-intro-cut 1.38s cubic-bezier(.70,0,.18,1) .10s forwards;
 }
 
 .paperpel-intro-plane{
   position:absolute;
   left:0;
-  top:50%;
+  top:0;
   width:clamp(105px,10vw,158px);
   height:auto;
-  transform:translate3d(-22vw,-50%,0) rotate(-8deg);
+  transform:translate3d(-22vw,72vh,0) rotate(-29deg);
+  transform-origin:center center;
   filter:drop-shadow(0 7px 12px rgba(0,0,0,.12));
-  animation:paperpel-intro-flight 1.16s cubic-bezier(.18,.78,.16,1) forwards;
+  animation:paperpel-intro-flight 1.24s cubic-bezier(.20,.78,.12,1) forwards;
   will-change:transform;
 }
 
-/* Pequena linha de corte: discreta, rápida e integrada ao avião. */
+/* Rastro discreto acompanhando o mesmo eixo do voo. */
 .paperpel-intro::after{
   content:"";
   position:absolute;
   left:0;
-  top:50%;
-  width:clamp(230px,30vw,520px);
+  top:0;
+  width:clamp(250px,34vw,560px);
   height:2px;
   transform-origin:left center;
-  transform:translate3d(-28vw,-50%,0) rotate(-8deg);
-  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.26),rgba(255,255,255,0));
+  transform:translate3d(-25vw,73vh,0) rotate(-29deg);
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.25),rgba(255,255,255,0));
   opacity:0;
-  animation:paperpel-intro-cut-line .82s cubic-bezier(.22,.72,.18,1) .08s forwards;
+  animation:paperpel-intro-cut-line .90s cubic-bezier(.20,.72,.15,1) .06s forwards;
 }
 
 @keyframes paperpel-intro-flight{
   0%{
-    transform:translate3d(-22vw,-50%,0) rotate(-8deg) scale(.94);
+    transform:translate3d(-22vw,72vh,0) rotate(-29deg) scale(.92);
   }
-  28%{
-    transform:translate3d(25vw,-50%,0) rotate(-5deg) scale(1);
+  34%{
+    transform:translate3d(22vw,43vh,0) rotate(-29deg) scale(1);
   }
-  70%{
-    transform:translate3d(82vw,-50%,0) rotate(-1deg) scale(1.02);
+  68%{
+    transform:translate3d(70vw,14vh,0) rotate(-27deg) scale(1.02);
   }
   100%{
-    transform:translate3d(125vw,-50%,0) rotate(1deg) scale(.98);
+    transform:translate3d(125vw,-20vh,0) rotate(-25deg) scale(.98);
   }
 }
 
 @keyframes paperpel-intro-cut-line{
   0%{
-    transform:translate3d(-28vw,-50%,0) rotate(-8deg) scaleX(.15);
+    transform:translate3d(-25vw,73vh,0) rotate(-29deg) scaleX(.08);
     opacity:0;
   }
   18%{
-    opacity:.34;
+    opacity:.28;
   }
-  78%{
-    transform:translate3d(60vw,-50%,0) rotate(-2deg) scaleX(1);
-    opacity:.14;
+  70%{
+    transform:translate3d(60vw,20vh,0) rotate(-29deg) scaleX(1);
+    opacity:.13;
   }
   100%{
-    transform:translate3d(104vw,-50%,0) rotate(0deg) scaleX(.72);
+    transform:translate3d(106vw,-12vh,0) rotate(-29deg) scaleX(.72);
     opacity:0;
   }
 }
@@ -1897,16 +1897,16 @@ button{
     clip-path:polygon(0 0,100% 0,100% 100%,0 100%);
   }
   44%{
-    clip-path:polygon(0 0,86% 0,62% 100%,0 100%);
+    clip-path:polygon(0 0,86% 0,63% 100%,0 100%);
   }
-  63%{
-    clip-path:polygon(0 0,66% 0,42% 100%,0 100%);
+  64%{
+    clip-path:polygon(0 0,65% 0,41% 100%,0 100%);
   }
-  81%{
-    clip-path:polygon(0 0,38% 0,18% 100%,0 100%);
+  82%{
+    clip-path:polygon(0 0,40% 0,18% 100%,0 100%);
   }
-  93%{
-    clip-path:polygon(0 0,14% 0,3% 100%,0 100%);
+  94%{
+    clip-path:polygon(0 0,15% 0,4% 100%,0 100%);
   }
   100%{
     clip-path:polygon(0 0,0 0,0 100%,0 100%);
@@ -1920,6 +1920,7 @@ button{
 @media(max-width:560px){
   .paperpel-intro-plane{
     width:94px;
+    transform:translate3d(-22vw,74vh,0) rotate(-29deg);
   }
 }
 
@@ -1927,138 +1928,5 @@ button{
   .paperpel-intro{
     display:none !important;
     animation:none !important;
-  }
-}
-
-
-/* =========================================================
-   PAPERPEL — AJUSTES APROVADOS / 3 CORREÇÕES
-   1) Card de QUALIDADE fica completamente estático ao hover.
-   2) Setas do carrossel ficam fixas, sem deslocamento.
-   3) Avião da abertura segue em trajetória diagonal para
-      cima/direita, acompanhando a direção para a qual aponta.
-   ========================================================= */
-
-/* 1. O quadro azul do hero não deve se mover com o mouse.
-   A animação interna do avião continua funcionando normalmente. */
-@media (hover:hover) and (pointer:fine){
-  .hero-card:hover{
-    transform:none !important;
-    box-shadow:var(--shadow) !important;
-  }
-}
-
-/* 2. As setas continuam clicáveis, mas praticamente estáticas.
-   Apenas uma resposta visual mínima, sem subir/descer. */
-.review-arrow{
-  transform:none !important;
-  transition:
-    background-color .18s ease,
-    box-shadow .18s ease,
-    opacity .18s ease !important;
-}
-
-.review-arrow:hover,
-.review-arrow:focus-visible{
-  transform:none !important;
-  box-shadow:0 8px 20px rgba(12,119,207,.10);
-}
-
-.review-arrow:active{
-  transform:none !important;
-  box-shadow:0 5px 14px rgba(12,119,207,.08);
-}
-
-/* 3. AVIÃO — trajetória diagonal para frente.
-   A linha de corte acompanha a mesma direção. */
-.paperpel-intro-plane{
-  transform:translate3d(-24vw,24vh,0) rotate(-18deg) scale(.86);
-  animation:paperpel-intro-flight-diagonal 1.22s cubic-bezier(.16,.78,.16,1) forwards;
-  will-change:transform;
-}
-
-.paperpel-intro::after{
-  transform:translate3d(-28vw,24vh,0) rotate(-18deg) scaleX(.15);
-  animation:paperpel-intro-cut-line-diagonal .92s cubic-bezier(.18,.74,.16,1) .06s forwards;
-  transform-origin:left center;
-}
-
-@keyframes paperpel-intro-flight-diagonal{
-  0%{
-    transform:translate3d(-24vw,24vh,0) rotate(-18deg) scale(.86);
-  }
-  22%{
-    transform:translate3d(8vw,12vh,0) rotate(-18deg) scale(.94);
-  }
-  60%{
-    transform:translate3d(58vw,-7vh,0) rotate(-18deg) scale(1.05);
-  }
-  82%{
-    transform:translate3d(88vw,-18vh,0) rotate(-18deg) scale(1.02);
-  }
-  100%{
-    transform:translate3d(125vw,-32vh,0) rotate(-18deg) scale(.96);
-  }
-}
-
-@keyframes paperpel-intro-cut-line-diagonal{
-  0%{
-    transform:translate3d(-28vw,24vh,0) rotate(-18deg) scaleX(.08);
-    opacity:0;
-  }
-  16%{
-    opacity:.28;
-  }
-  70%{
-    transform:translate3d(55vw,-7vh,0) rotate(-18deg) scaleX(1);
-    opacity:.13;
-  }
-  100%{
-    transform:translate3d(105vw,-27vh,0) rotate(-18deg) scaleX(.82);
-    opacity:0;
-  }
-}
-
-@media(max-width:560px){
-  .paperpel-intro-plane{
-    width:94px;
-    transform:translate3d(-25vw,18vh,0) rotate(-18deg) scale(.84);
-  }
-
-  @keyframes paperpel-intro-flight-diagonal{
-    0%{
-      transform:translate3d(-25vw,18vh,0) rotate(-18deg) scale(.84);
-    }
-    24%{
-      transform:translate3d(5vw,9vh,0) rotate(-18deg) scale(.92);
-    }
-    62%{
-      transform:translate3d(60vw,-6vh,0) rotate(-18deg) scale(1.03);
-    }
-    100%{
-      transform:translate3d(126vw,-28vh,0) rotate(-18deg) scale(.94);
-    }
-  }
-
-  .paperpel-intro::after{
-    transform:translate3d(-30vw,18vh,0) rotate(-18deg) scaleX(.12);
-  }
-
-  @keyframes paperpel-intro-cut-line-diagonal{
-    0%{
-      transform:translate3d(-30vw,18vh,0) rotate(-18deg) scaleX(.08);
-      opacity:0;
-    }
-    18%{
-      opacity:.25;
-    }
-    72%{
-      transform:translate3d(55vw,-7vh,0) rotate(-18deg) scaleX(1);
-      opacity:.12;
-    }
-    100%{
-      transform:translate3d(105vw,-25vh,0) rotate(-18deg) scaleX(.8);
-      opacity:0;
-    }
   }
 }

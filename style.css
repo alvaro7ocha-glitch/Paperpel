@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root{
-  --blue:#046BC1;
-  --blue-dark:#046BC1;
+  --blue:#0C77CF;
+  --blue-dark:#0C77CF;
   --ink:#102334;
   --muted:#667788;
   --line:#dfeaf2;
@@ -679,7 +679,7 @@ button{
   gap:30px;
   padding:48px 55px;
   border-radius:24px;
-  background:linear-gradient(120deg,#046BC1,#2A8FE2);
+  background:linear-gradient(120deg,#0C77CF,#2A8FE2);
   color:#fff;
 }
 
@@ -1393,9 +1393,9 @@ button{
 }
 
 .services-grid-images .service-card:nth-child(odd){
-  background:#046BC1 !important;
+  background:#0C77CF !important;
   color:#fff !important;
-  border-color:#046BC1 !important;
+  border-color:#0C77CF !important;
 }
 
 .services-grid-images .service-card:nth-child(even){
@@ -1420,7 +1420,7 @@ button{
 }
 
 .services-grid-images .service-card:nth-child(odd) .service-content{
-  background:#046BC1 !important;
+  background:#0C77CF !important;
   color:#fff !important;
 }
 
@@ -1449,7 +1449,7 @@ button{
 .services-grid-images .service-card:nth-child(3),
 .services-grid-images .service-card:nth-child(3) .service-image,
 .services-grid-images .service-card:nth-child(3) .service-content{
-  background:#046BC1 !important;
+  background:#0C77CF !important;
 }
 
 @media (max-width:560px){

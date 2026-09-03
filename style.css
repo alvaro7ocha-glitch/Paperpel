@@ -1732,16 +1732,14 @@ button{
     transform:scale(1.025);
   }
 
-  /* CARD AZUL DO HERO — sobe só um pouco e ganha presença */
+  /* CARD AZUL DO HERO — permanece estático para não interferir no avião */
   .hero-card{
-    transition:
-      transform .38s cubic-bezier(.22,.75,.25,1),
-      box-shadow .38s ease;
+    transition:none;
   }
 
   .hero-card:hover{
-    transform:translateY(-4px);
-    box-shadow:0 22px 48px rgba(12,119,207,.18);
+    transform:none;
+    box-shadow:var(--shadow);
   }
 
   /* LINK DO MAPA — resposta horizontal muito pequena */

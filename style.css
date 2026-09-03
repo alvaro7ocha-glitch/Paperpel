@@ -1929,3 +1929,136 @@ button{
     animation:none !important;
   }
 }
+
+
+/* =========================================================
+   PAPERPEL — AJUSTES APROVADOS / 3 CORREÇÕES
+   1) Card de QUALIDADE fica completamente estático ao hover.
+   2) Setas do carrossel ficam fixas, sem deslocamento.
+   3) Avião da abertura segue em trajetória diagonal para
+      cima/direita, acompanhando a direção para a qual aponta.
+   ========================================================= */
+
+/* 1. O quadro azul do hero não deve se mover com o mouse.
+   A animação interna do avião continua funcionando normalmente. */
+@media (hover:hover) and (pointer:fine){
+  .hero-card:hover{
+    transform:none !important;
+    box-shadow:var(--shadow) !important;
+  }
+}
+
+/* 2. As setas continuam clicáveis, mas praticamente estáticas.
+   Apenas uma resposta visual mínima, sem subir/descer. */
+.review-arrow{
+  transform:none !important;
+  transition:
+    background-color .18s ease,
+    box-shadow .18s ease,
+    opacity .18s ease !important;
+}
+
+.review-arrow:hover,
+.review-arrow:focus-visible{
+  transform:none !important;
+  box-shadow:0 8px 20px rgba(12,119,207,.10);
+}
+
+.review-arrow:active{
+  transform:none !important;
+  box-shadow:0 5px 14px rgba(12,119,207,.08);
+}
+
+/* 3. AVIÃO — trajetória diagonal para frente.
+   A linha de corte acompanha a mesma direção. */
+.paperpel-intro-plane{
+  transform:translate3d(-24vw,24vh,0) rotate(-18deg) scale(.86);
+  animation:paperpel-intro-flight-diagonal 1.22s cubic-bezier(.16,.78,.16,1) forwards;
+  will-change:transform;
+}
+
+.paperpel-intro::after{
+  transform:translate3d(-28vw,24vh,0) rotate(-18deg) scaleX(.15);
+  animation:paperpel-intro-cut-line-diagonal .92s cubic-bezier(.18,.74,.16,1) .06s forwards;
+  transform-origin:left center;
+}
+
+@keyframes paperpel-intro-flight-diagonal{
+  0%{
+    transform:translate3d(-24vw,24vh,0) rotate(-18deg) scale(.86);
+  }
+  22%{
+    transform:translate3d(8vw,12vh,0) rotate(-18deg) scale(.94);
+  }
+  60%{
+    transform:translate3d(58vw,-7vh,0) rotate(-18deg) scale(1.05);
+  }
+  82%{
+    transform:translate3d(88vw,-18vh,0) rotate(-18deg) scale(1.02);
+  }
+  100%{
+    transform:translate3d(125vw,-32vh,0) rotate(-18deg) scale(.96);
+  }
+}
+
+@keyframes paperpel-intro-cut-line-diagonal{
+  0%{
+    transform:translate3d(-28vw,24vh,0) rotate(-18deg) scaleX(.08);
+    opacity:0;
+  }
+  16%{
+    opacity:.28;
+  }
+  70%{
+    transform:translate3d(55vw,-7vh,0) rotate(-18deg) scaleX(1);
+    opacity:.13;
+  }
+  100%{
+    transform:translate3d(105vw,-27vh,0) rotate(-18deg) scaleX(.82);
+    opacity:0;
+  }
+}
+
+@media(max-width:560px){
+  .paperpel-intro-plane{
+    width:94px;
+    transform:translate3d(-25vw,18vh,0) rotate(-18deg) scale(.84);
+  }
+
+  @keyframes paperpel-intro-flight-diagonal{
+    0%{
+      transform:translate3d(-25vw,18vh,0) rotate(-18deg) scale(.84);
+    }
+    24%{
+      transform:translate3d(5vw,9vh,0) rotate(-18deg) scale(.92);
+    }
+    62%{
+      transform:translate3d(60vw,-6vh,0) rotate(-18deg) scale(1.03);
+    }
+    100%{
+      transform:translate3d(126vw,-28vh,0) rotate(-18deg) scale(.94);
+    }
+  }
+
+  .paperpel-intro::after{
+    transform:translate3d(-30vw,18vh,0) rotate(-18deg) scaleX(.12);
+  }
+
+  @keyframes paperpel-intro-cut-line-diagonal{
+    0%{
+      transform:translate3d(-30vw,18vh,0) rotate(-18deg) scaleX(.08);
+      opacity:0;
+    }
+    18%{
+      opacity:.25;
+    }
+    72%{
+      transform:translate3d(55vw,-7vh,0) rotate(-18deg) scaleX(1);
+      opacity:.12;
+    }
+    100%{
+      transform:translate3d(105vw,-25vh,0) rotate(-18deg) scaleX(.8);
+      opacity:0;
+    }
+  }
+}

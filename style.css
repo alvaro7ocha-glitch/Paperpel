@@ -1815,3 +1815,112 @@ button{
     transition:none !important;
   }
 }
+
+/* =========================================================
+   PAPERPEL — ABERTURA DE ENTRADA
+   Avião de papel revela o site na primeira visita.
+   ========================================================= */
+
+.paperpel-intro{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  overflow:hidden;
+  background:#0C77CF;
+  pointer-events:none;
+  clip-path:polygon(0 0,100% 0,100% 100%,0 100%);
+  animation:paperpel-intro-reveal .98s cubic-bezier(.76,0,.18,1) .18s forwards;
+}
+
+.paperpel-intro-plane{
+  position:absolute;
+  left:0;
+  top:50%;
+  width:clamp(96px,9vw,148px);
+  height:auto;
+  transform:translate3d(-24vw,-50%,0) rotate(-4deg);
+  filter:drop-shadow(0 7px 12px rgba(0,0,0,.12));
+  animation:paperpel-intro-flight .92s cubic-bezier(.22,.74,.16,1) forwards;
+  will-change:transform;
+}
+
+.paperpel-intro-plane::after{
+  content:"";
+}
+
+.paperpel-intro-streak{
+  position:absolute;
+  left:0;
+  top:50%;
+  width:clamp(140px,18vw,280px);
+  height:1px;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.5));
+  transform:translate3d(-30vw,-50%,0);
+  opacity:0;
+  animation:paperpel-intro-streak .72s cubic-bezier(.22,.74,.16,1) .08s forwards;
+}
+
+@keyframes paperpel-intro-flight{
+  0%{
+    transform:translate3d(-24vw,-50%,0) rotate(-4deg) scale(.96);
+  }
+  70%{
+    transform:translate3d(74vw,-50%,0) rotate(-1deg) scale(1);
+  }
+  100%{
+    transform:translate3d(126vw,-50%,0) rotate(1deg) scale(.98);
+  }
+}
+
+@keyframes paperpel-intro-streak{
+  0%{
+    transform:translate3d(-30vw,-50%,0);
+    opacity:0;
+  }
+  18%{
+    opacity:.5;
+  }
+  72%{
+    transform:translate3d(52vw,-50%,0);
+    opacity:.28;
+  }
+  100%{
+    transform:translate3d(98vw,-50%,0);
+    opacity:0;
+  }
+}
+
+@keyframes paperpel-intro-reveal{
+  0%,28%{
+    clip-path:polygon(0 0,100% 0,100% 100%,0 100%);
+  }
+  52%{
+    clip-path:polygon(0 0,92% 0,70% 100%,0 100%);
+  }
+  76%{
+    clip-path:polygon(0 0,56% 0,30% 100%,0 100%);
+  }
+  92%{
+    clip-path:polygon(0 0,18% 0,4% 100%,0 100%);
+  }
+  100%{
+    clip-path:polygon(0 0,0 0,0 100%,0 100%);
+  }
+}
+
+.paperpel-intro.is-leaving{
+  opacity:0;
+}
+
+@media(max-width:560px){
+  .paperpel-intro-plane{
+    width:92px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .paperpel-intro{
+    display:none !important;
+    animation:none !important;
+  }
+}

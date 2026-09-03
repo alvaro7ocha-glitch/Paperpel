@@ -1,0 +1,1817 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --blue:#0C77CF;
+  --blue-dark:#0C77CF;
+  --ink:#102334;
+  --muted:#667788;
+  --line:#dfeaf2;
+  --white:#fff;
+  --bg:#f7fbfe;
+  --shadow:0 18px 45px rgba(4,112,201,.12);
+}
+
+*,
+*::before,
+*::after{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html{
+  scroll-behavior:smooth;
+  overflow-x:hidden;
+}
+body{
+  width:100%;
+  min-width:0;
+  overflow-x:hidden;
+  font-family:Inter,Arial,sans-serif;
+  color:var(--ink);
+  background:#fff;
+  line-height:1.6;
+}
+
+img{
+  display:block;
+  max-width:100%;
+}
+
+a{
+  text-decoration:none;
+  color:inherit;
+}
+
+button{
+  font:inherit;
+}
+
+.container{
+  width:min(1140px,calc(100% - 40px));
+  margin-inline:auto;
+}
+
+/* HEADER */
+.header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  width:100%;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(223,234,242,.85);
+}
+
+.nav{
+  min-height:82px;
+  display:flex;
+  align-items:center;
+  gap:28px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  flex:0 0 auto;
+}
+
+.brand img{
+  width:165px;
+  height:58px;
+  max-width:165px;
+  object-fit:contain;
+}
+
+.menu{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:25px;
+  margin-left:auto;
+  min-width:0;
+}
+
+.menu a{
+  white-space:nowrap;
+  font-size:14px;
+  font-weight:600;
+  color:#42586b;
+  transition:color .2s ease;
+}
+
+.menu a:hover{
+  color:var(--blue);
+}
+
+/* ÍCONES INSTAGRAM E WHATSAPP */
+.social-icons{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  flex:0 0 auto;
+}
+
+.social-icons a{
+  width:42px !important;
+  height:42px !important;
+  min-width:42px !important;
+  min-height:42px !important;
+  max-width:42px !important;
+  max-height:42px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:visible !important;
+  padding:0 !important;
+  margin:0 !important;
+}
+
+.social-icons img{
+  width:34px !important;
+  height:34px !important;
+  min-width:34px !important;
+  min-height:34px !important;
+  max-width:34px !important;
+  max-height:34px !important;
+  display:block !important;
+  object-fit:contain !important;
+  object-position:center !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+
+.social-icons a:hover img{
+  transform:scale(1.08);
+}
+
+/* HERO */
+.hero{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:#edf8ff;
+}
+
+.hero-bg{
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background-image:url('assets/background-paper.svg');
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  opacity:.28;
+  pointer-events:none;
+}
+
+.hero-grid{
+  min-height:620px;
+  display:grid;
+  grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);
+  gap:70px;
+  align-items:center;
+  padding:80px 0;
+}
+.eyebrow{
+  display:block;
+  color:var(--blue);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:2.2px;
+  margin-bottom:15px;
+}
+
+.eyebrow.light{
+  color:#9BE9FF;
+}
+
+.hero h1{
+  font-size:clamp(48px,6vw,76px);
+  line-height:1.02;
+  letter-spacing:-3px;
+  margin-bottom:24px;
+}
+
+.hero h1 strong{
+  color:var(--blue);
+}
+
+.hero-copy>p{
+  max-width:620px;
+  font-size:18px;
+  color:var(--muted);
+}
+
+.hero-actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:34px;
+}
+.button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:50px;
+  padding:15px 22px;
+  border-radius:10px;
+  font-size:14px;
+  font-weight:700;
+  transition:.2s ease;
+}
+
+.primary{
+  background:var(--blue);
+  color:#fff;
+}
+
+.primary:hover{
+  background:var(--blue-dark);
+  transform:translateY(-1px);
+}
+
+.secondary{
+  border:1px solid #2A8FE2;
+  background:#fff;
+  color:var(--ink);
+}
+
+.secondary:hover{
+  border-color:var(--blue);
+  color:var(--blue);
+}
+.hero-note{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:26px;
+  color:#738596;
+  font-size:12px;
+}
+
+/* Indicador de atendimento online */
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#07ED86;
+  box-shadow:0 0 0 0 rgba(7,237,134,0);
+  animation:paperpel-online-pulse 2.4s ease-in-out infinite;
+  will-change:transform,box-shadow;
+}
+
+@keyframes paperpel-online-pulse{
+  0%,100%{
+    transform:scale(1);
+    box-shadow:0 0 0 0 rgba(7,237,134,0);
+  }
+
+  50%{
+    transform:scale(1.18);
+    box-shadow:0 0 0 5px rgba(7,237,134,.12);
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .dot{
+    animation:none;
+    box-shadow:none;
+  }
+}
+
+.hero-card{
+  justify-self:end;
+  width:min(340px,100%);
+  padding:42px;
+  border-radius:28px;
+  background:linear-gradient(145deg,var(--blue),#2A8FE2);
+  color:#fff;
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
+.hero-card::after{
+  content:"";
+  position:absolute;
+  width:180px;
+  height:180px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:50%;
+  right:-80px;
+  bottom:-70px;
+}
+
+.paper-plane{
+  font-size:38px;
+  margin-bottom:35px;
+  transform:rotate(-12deg);
+}
+
+.hero-card span{
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:2px;
+  opacity:.8;
+}
+
+.hero-card strong{
+  display:block;
+  font-size:36px;
+  line-height:1.1;
+  margin:10px 0 20px;
+}
+
+.hero-card p{
+  font-size:14px;
+  opacity:.86;
+}
+
+/* SEÇÕES */
+.section{
+  padding:110px 0;
+}
+
+.section-heading{
+  max-width:680px;
+  margin-bottom:48px;
+}
+
+.section-heading h2,
+.contact h2{
+  font-size:clamp(34px,4vw,50px);
+  line-height:1.1;
+  letter-spacing:-1.8px;
+}
+
+.section-heading h2 span,
+.contact h2 span{
+  color:var(--blue);
+}
+
+.section-heading p{
+  color:var(--muted);
+  margin-top:16px;
+}
+
+/* SERVIÇOS */
+.services-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:16px;
+}
+.service-card{
+  min-height:290px;
+  padding:30px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#fff;
+  display:flex;
+  flex-direction:column;
+  transition:.25s ease;
+}
+
+.service-card:hover{
+  transform:translateY(-5px);
+  box-shadow:var(--shadow);
+  border-color:#2A8FE2;
+}
+
+.service-card.featured{
+  background:var(--blue);
+  color:#fff;
+  border-color:var(--blue);
+}
+.service-number{
+  margin-bottom:55px;
+  color:var(--blue);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1.5px;
+}
+
+.featured .service-number{
+  color:#9BE9FF;
+}
+
+.service-card h3{
+  font-size:22px;
+  margin-bottom:10px;
+}
+
+.service-card p{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.featured p{
+  color:rgba(255,255,255,.82);
+}
+
+.service-link{
+  margin-top:auto;
+  padding-top:20px;
+  font-size:12px;
+  font-weight:800;
+}
+
+/* DIFERENCIAIS */
+.blue-section{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  padding:105px 0;
+  background:var(--blue);
+  color:#fff;
+}
+
+.blue-section-bg{
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background-image:url('assets/background-paper.svg');
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  opacity:.22;
+  pointer-events:none;
+}
+.differentiators{
+  display:grid;
+  grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
+  gap:90px;
+  align-items:start;
+}
+
+.blue-section h2{
+  font-size:clamp(38px,4vw,56px);
+  line-height:1.05;
+  letter-spacing:-2px;
+}
+
+.diff-list{
+  border-top:1px solid rgba(255,255,255,.22);
+}
+
+.diff-item{
+  display:grid;
+  grid-template-columns:55px minmax(0,1fr);
+  gap:15px;
+  padding:27px 0;
+  border-bottom:1px solid rgba(255,255,255,.22);
+}
+.diff-item>span{
+  color:#9BE9FF;
+  font-size:11px;
+  font-weight:800;
+}
+
+.diff-item h3{
+  font-size:17px;
+  margin-bottom:4px;
+}
+
+.diff-item p{
+  color:rgba(255,255,255,.72);
+  font-size:13px;
+}
+
+/* AVALIAÇÕES */
+.reviews-section{
+  padding:78px 0 88px;
+  background:#fff;
+  overflow:hidden;
+}
+
+.reviews-heading{
+  margin-bottom:30px;
+}
+
+.reviews-rating{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.reviews-rating strong{
+  color:#102334;
+  font-size:25px;
+  line-height:1;
+}
+.stars{
+  color:#f5ad00;
+  font-size:19px;
+  letter-spacing:2px;
+  line-height:1;
+}
+
+.reviews-rating>span:last-child{
+  color:#718293;
+  font-size:12px;
+}
+
+.reviews-carousel{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  min-width:0;
+}
+
+.reviews-track{
+  width:100%;
+  min-width:0;
+  display:flex;
+  gap:16px;
+  overflow-x:auto;
+  padding:8px 3px 18px;
+  scroll-behavior:smooth;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+}
+.reviews-track::-webkit-scrollbar{
+  display:none;
+}
+
+/* 3 avaliações visíveis por vez */
+.review-card{
+  flex:0 0 calc((100% - 32px)/3) !important;
+  width:calc((100% - 32px)/3) !important;
+  min-width:0;
+  min-height:300px;
+  height:300px;
+  padding:26px;
+  border:1px solid #e1eaf1;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 8px 25px rgba(4,112,201,.06);
+  display:flex;
+  flex-direction:column;
+  scroll-snap-align:start;
+}
+
+.review-header{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  min-width:0;
+}
+.review-photo{
+  width:52px;
+  height:52px;
+  min-width:52px;
+  max-width:52px;
+  border-radius:50%;
+  object-fit:cover;
+  border:1px solid #e1eaf1;
+}
+
+.review-user{
+  min-width:0;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+.review-user strong{
+  color:#102334;
+  font-size:14px;
+  line-height:1.2;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.review-user span{
+  margin-top:4px;
+  color:#718291;
+  font-size:10px;
+}
+.google-icon{
+  flex:0 0 auto;
+  margin-left:auto;
+  color:#4285f4;
+  font-family:Arial,sans-serif;
+  font-size:19px;
+  font-weight:700;
+}
+
+.review-stars{
+  margin-top:16px;
+  color:#f5ad00;
+  font-size:17px;
+  letter-spacing:1px;
+  line-height:1;
+}
+
+.review-card p{
+  margin-top:14px;
+  color:#263b4c;
+  font-size:13px;
+  line-height:1.65;
+}
+
+.review-arrow{
+  position:absolute;
+  top:50%;
+  z-index:5;
+  width:44px;
+  height:44px;
+  border:1px solid #dce7ef;
+  border-radius:50%;
+  background:#fff;
+  color:var(--blue);
+  font-size:32px;
+  line-height:36px;
+  cursor:pointer;
+  box-shadow:0 8px 22px rgba(0,0,0,.10);
+  transition:.2s ease;
+}
+
+.review-arrow:hover{
+  background:var(--blue);
+  color:#fff;
+}
+
+.review-arrow.prev{
+  left:-22px;
+  transform:translateY(-50%);
+}
+
+.review-arrow.next{
+  right:-22px;
+  transform:translateY(-50%);
+}
+.review-dots{
+  display:flex;
+  justify-content:center;
+  gap:7px;
+  margin-top:10px;
+}
+
+.review-dot{
+  width:8px;
+  height:8px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:#ccd8e1;
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+.review-dot.active{
+  width:20px;
+  border-radius:10px;
+  background:var(--blue);
+}
+
+/* CTA */
+.quote-section{
+  padding:70px 0;
+  background:#edf8ff;
+}
+.quote-box{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:30px;
+  padding:48px 55px;
+  border-radius:24px;
+  background:linear-gradient(120deg,#0C77CF,#2A8FE2);
+  color:#fff;
+}
+
+.quote-box h2{
+  font-size:36px;
+  line-height:1.1;
+  margin-bottom:8px;
+}
+
+.quote-box p{
+  color:rgba(255,255,255,.78);
+  font-size:14px;
+}
+
+.white{
+  flex:0 0 auto;
+  background:#fff;
+  color:var(--blue);
+  white-space:nowrap;
+}
+
+.white:hover{
+  transform:translateY(-2px);
+}
+
+/* CONTATO */
+.contact{
+  background:var(--bg);
+}
+
+.contact-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:90px;
+  align-items:center;
+}
+
+.contact>div>p{
+  max-width:500px;
+  margin-top:18px;
+  color:var(--muted);
+}
+
+.contact-card{
+  display:grid;
+  gap:28px;
+  padding:30px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#fff;
+}
+.contact-card small{
+  display:block;
+  margin-bottom:5px;
+  color:#8294a3;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1.7px;
+}
+
+.contact-card a{
+  color:var(--blue);
+  font-size:20px;
+  font-weight:800;
+}
+
+.contact-card p{
+  color:#526678;
+  font-size:14px;
+}
+
+/* FOOTER */
+.footer{
+  border-top:1px solid var(--line);
+  background:#fff;
+}
+
+.footer-inner{
+  min-height:95px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:25px;
+  color:#7a8b98;
+  font-size:11px;
+}
+.footer img{
+  width:150px;
+  height:52px;
+  max-width:150px;
+  object-fit:contain;
+}
+
+.footer a{
+  color:var(--blue);
+  font-weight:700;
+}
+
+/* TABLET */
+@media(max-width:1050px){
+  .nav{
+    gap:18px;
+  }
+
+  .brand img{
+    width:145px;
+    max-width:145px;
+  }
+
+  .menu{
+    gap:16px;
+  }
+
+  .menu a{
+    font-size:12px;
+  }
+
+  .social-icons{
+    gap:7px;
+  }
+}
+
+/* MOBILE/TABLET */
+@media(max-width:900px){
+  .menu{
+    display:none;
+  }
+
+  .nav{
+    justify-content:space-between;
+  }
+  .hero-grid,
+  .differentiators,
+  .contact-grid{
+    grid-template-columns:1fr;
+    gap:45px;
+  }
+
+  .hero-grid{
+    padding:65px 0;
+  }
+
+  .hero-card{
+    justify-self:start;
+  }
+
+  .services-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .quote-box{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  /* Tablet: 2 avaliações */
+  .review-card{
+    flex-basis:calc((100% - 16px)/2);
+    width:calc((100% - 16px)/2);
+    min-height:285px;
+    height:285px;
+  }
+
+  .review-arrow.prev{
+    left:4px;
+  }
+
+  .review-arrow.next{
+    right:4px;
+  }
+}
+
+/* CELULAR */
+@media(max-width:560px){
+  .container{
+    width:calc(100% - 28px);
+  }
+
+  .header .nav{
+    min-height:70px;
+  }
+
+  .brand img{
+    width:125px;
+    height:48px;
+    max-width:125px;
+  }
+
+  .social-icons{
+    gap:6px;
+  }
+
+  .social-icons a{
+    width:32px !important;
+    height:32px !important;
+    min-width:32px;
+    min-height:32px;
+    max-width:32px;
+    max-height:32px;
+  }
+
+  .hero h1{
+    font-size:48px;
+    letter-spacing:-2px;
+  }
+
+  .hero-copy>p{
+    font-size:16px;
+  }
+
+  .section,
+  .blue-section{
+    padding:75px 0;
+  }
+
+  .services-grid{
+    grid-template-columns:1fr;
+  }
+
+  .service-card{
+    min-height:235px;
+  }
+
+  .quote-box{
+    padding:34px 28px;
+  }
+  .quote-box h2{
+    font-size:29px;
+  }
+
+  .reviews-section{
+    padding:65px 0 72px;
+  }
+
+  .reviews-rating{
+    flex-wrap:wrap;
+  }
+
+  .reviews-rating>span:last-child{
+    width:100%;
+  }
+
+  /* Celular: 1 avaliação */
+  .review-card{
+    flex-basis:100%;
+    width:100%;
+    min-height:260px;
+    height:auto;
+  }
+
+  .review-arrow{
+    width:38px;
+    height:38px;
+    font-size:27px;
+  }
+
+  .footer-inner{
+    padding:25px 0;
+    flex-wrap:wrap;
+  }
+}
+
+
+/* =========================================================
+   PAPERPEL — VERSÃO MOBILE REFINADA
+   Mantém o desktop intacto.
+   ========================================================= */
+
+@media (max-width: 900px){
+  body{
+    overflow-x:hidden;
+  }
+
+  .container{
+    width:min(100% - 32px, 720px);
+  }
+
+  /* Cabeçalho */
+  .header{
+    position:sticky;
+    top:0;
+  }
+
+  .nav{
+    min-height:74px;
+    gap:12px;
+  }
+
+  .brand{
+    flex:1 1 auto;
+    min-width:0;
+  }
+
+  .brand img{
+    width:145px !important;
+    height:52px !important;
+    max-width:145px !important;
+  }
+
+  .social-icons{
+    margin-left:auto;
+    gap:7px;
+  }
+
+  /* No mobile, os links do menu ficam ocultos para não apertar o cabeçalho.
+     O conteúdo continua acessível pelos próprios links e pela rolagem. */
+  .menu{
+    display:none !important;
+  }
+
+  /* HERO */
+  .hero{
+    min-height:0;
+  }
+
+  .hero-grid{
+    min-height:0 !important;
+    grid-template-columns:1fr !important;
+    gap:38px !important;
+    padding:64px 0 72px !important;
+  }
+
+  .hero-copy{
+    max-width:100%;
+  }
+
+  .hero h1{
+    font-size:clamp(43px,13vw,58px);
+    line-height:.98;
+    letter-spacing:-2.4px;
+    margin-bottom:20px;
+    max-width:620px;
+  }
+
+  .hero-copy>p{
+    max-width:620px;
+    font-size:16px;
+    line-height:1.6;
+  }
+
+  .hero-actions{
+    flex-direction:column;
+    align-items:stretch;
+    gap:10px;
+    margin-top:28px;
+  }
+
+  .hero-actions .button{
+    width:100%;
+    min-height:50px;
+  }
+
+  .hero-note{
+    margin-top:22px;
+    font-size:11px;
+  }
+
+  .hero-card{
+    width:min(100%,360px);
+    justify-self:center !important;
+    align-self:center !important;
+    padding:34px 30px;
+    border-radius:24px;
+  }
+
+  .hero-card strong{
+    font-size:32px;
+  }
+
+  .hero-card p{
+    font-size:13px;
+  }
+
+  /* Mantém o padrão mais suave no celular */
+  .hero::before{
+    left:-45%;
+    top:-8%;
+    width:140%;
+    height:85%;
+  }
+
+  .hero::after{
+    right:-45%;
+    top:35%;
+    width:130%;
+    height:70%;
+  }
+
+  /* SEÇÕES */
+  .section{
+    padding:74px 0;
+  }
+
+  .section-heading{
+    margin-bottom:32px;
+  }
+
+  .section-heading h2,
+  .contact h2{
+    font-size:36px;
+    line-height:1.08;
+    letter-spacing:-1.5px;
+  }
+
+  .section-heading p{
+    font-size:14px;
+    line-height:1.6;
+  }
+
+  /* SERVIÇOS */
+  .services-grid{
+    grid-template-columns:1fr !important;
+    gap:14px;
+  }
+
+  .service-card{
+    min-height:0;
+    height:360px;
+    padding:0 !important;
+    overflow:hidden;
+    position:relative;
+    justify-content:flex-end;
+    border-radius:18px;
+    background:#fff;
+  }
+
+  /* Caso os cards já tenham imagens, preserva-as.
+     Caso o HTML use background-image, nada é sobrescrito aqui. */
+  .service-card img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+
+  .service-card .service-number,
+  .service-card h3,
+  .service-card p,
+  .service-card .service-link{
+    position:relative;
+    z-index:2;
+  }
+
+  .service-card h3{
+    margin:0;
+    padding:18px 20px 4px;
+    font-size:22px;
+    color:#fff;
+    text-shadow:0 2px 12px rgba(0,0,0,.35);
+  }
+
+  .service-card p{
+    padding:0 20px 18px;
+    color:rgba(255,255,255,.92);
+    font-size:13px;
+    text-shadow:0 2px 10px rgba(0,0,0,.35);
+  }
+
+  .service-card .service-link{
+    padding:0 20px 20px;
+    color:#fff;
+    font-size:12px;
+    text-shadow:0 2px 10px rgba(0,0,0,.35);
+  }
+
+  /* Gradiente para legibilidade dos textos sobre as fotos */
+  .service-card::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:58%;
+    z-index:1;
+    background:linear-gradient(
+      to top,
+      rgba(0,0,0,.70) 0%,
+      rgba(0,0,0,.34) 48%,
+      rgba(0,0,0,0) 100%
+    );
+    pointer-events:none;
+  }
+
+  .service-card.featured{
+    background:var(--blue);
+  }
+
+  /* DIFERENCIAIS */
+  .blue-section{
+    padding:74px 0;
+  }
+
+  .differentiators{
+    grid-template-columns:1fr !important;
+    gap:38px !important;
+  }
+
+  .blue-section h2{
+    font-size:40px;
+    line-height:1.02;
+  }
+
+  .diff-item{
+    grid-template-columns:38px minmax(0,1fr);
+    gap:12px;
+    padding:22px 0;
+  }
+
+  .diff-item h3{
+    font-size:16px;
+  }
+
+  .diff-item p{
+    font-size:12px;
+  }
+
+  /* AVALIAÇÕES — 1 por vez no celular */
+  .reviews-section{
+    padding:66px 0 72px;
+  }
+
+  .reviews-heading{
+    margin-bottom:24px;
+  }
+
+  .reviews-rating{
+    justify-content:flex-start;
+    flex-wrap:wrap;
+  }
+
+  .reviews-rating strong{
+    font-size:23px;
+  }
+
+  .reviews-rating>span:last-child{
+    width:100%;
+    font-size:11px;
+  }
+
+  .reviews-carousel{
+    gap:6px;
+  }
+
+  .reviews-track{
+    gap:12px;
+    padding-bottom:14px;
+  }
+
+  .review-card{
+    flex:0 0 100% !important;
+    width:100% !important;
+    min-height:280px !important;
+    height:auto !important;
+    padding:22px !important;
+    border-radius:18px;
+  }
+
+  .review-card p{
+    font-size:13px;
+    line-height:1.6;
+  }
+
+  .review-arrow{
+    width:38px;
+    height:38px;
+    font-size:26px;
+  }
+
+  .review-arrow.prev{
+    left:2px;
+  }
+
+  .review-arrow.next{
+    right:2px;
+  }
+
+  /* CTA */
+  .quote-section{
+    padding:60px 0;
+  }
+
+  .quote-box{
+    padding:34px 26px;
+    border-radius:20px;
+    gap:22px;
+  }
+
+  .quote-box h2{
+    font-size:30px;
+  }
+
+  .quote-box p{
+    font-size:13px;
+  }
+
+  .white{
+    width:100%;
+    white-space:normal;
+    text-align:center;
+  }
+
+  /* CONTATO */
+  .contact-grid{
+    grid-template-columns:1fr !important;
+    gap:36px !important;
+  }
+
+  .contact-card{
+    padding:24px;
+    gap:24px;
+  }
+
+  .contact-card a{
+    font-size:18px;
+  }
+
+  .contact-card p{
+    font-size:13px;
+  }
+
+  /* RODAPÉ */
+  .footer-inner{
+    min-height:0;
+    padding:24px 0;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:12px;
+  }
+
+  .footer-inner img{
+    width:140px;
+    height:48px;
+  }
+
+  .footer a{
+    align-self:flex-start;
+  }
+}
+
+@media (max-width:560px){
+  .container{
+    width:calc(100% - 28px);
+  }
+
+  .header .nav{
+    min-height:68px;
+  }
+
+  .brand img{
+    width:132px !important;
+    height:48px !important;
+    max-width:132px !important;
+  }
+
+  .social-icons a{
+    width:34px !important;
+    height:34px !important;
+    min-width:34px !important;
+    min-height:34px !important;
+  }
+
+  .social-icons img{
+    width:27px !important;
+    height:27px !important;
+    min-width:27px !important;
+    min-height:27px !important;
+    max-width:27px !important;
+    max-height:27px !important;
+  }
+
+  .hero-grid{
+    padding:54px 0 66px !important;
+  }
+
+  .hero h1{
+    font-size:48px;
+  }
+
+  .hero-card{
+    width:100%;
+    padding:32px 28px;
+  }
+
+  .hero-card strong{
+    font-size:31px;
+  }
+
+  .service-card{
+    height:270px;
+  }
+
+  .section-heading h2,
+  .contact h2{
+    font-size:34px;
+  }
+
+  .blue-section h2{
+    font-size:36px;
+  }
+}
+
+
+/* =========================================================
+   PAPERPEL — PADRÃO DOS CARDS DE SERVIÇOS
+   01 azul / 02 branco / 03 azul / 04 branco
+   ========================================================= */
+
+.services-grid-images .service-card{
+  overflow:hidden;
+  border-radius:18px;
+  padding:0 !important;
+}
+
+.services-grid-images .service-card:nth-child(odd){
+  background:#0C77CF !important;
+  color:#fff !important;
+  border-color:#0C77CF !important;
+}
+
+.services-grid-images .service-card:nth-child(even){
+  background:#fff !important;
+  color:#102334 !important;
+  border-color:#dfeaf2 !important;
+}
+
+.services-grid-images .service-card .service-image{
+  position:relative;
+  overflow:hidden;
+}
+
+.services-grid-images .service-card .service-image img{
+  width:100%;
+  height:auto;
+  display:block;
+}
+
+.services-grid-images .service-card .service-content{
+  padding:22px 22px 24px;
+}
+
+.services-grid-images .service-card:nth-child(odd) .service-content{
+  background:#0C77CF !important;
+  color:#fff !important;
+}
+
+.services-grid-images .service-card:nth-child(even) .service-content{
+  background:#fff !important;
+  color:#102334 !important;
+}
+
+.services-grid-images .service-card:nth-child(odd) .service-content h3{
+  color:#fff !important;
+}
+
+.services-grid-images .service-card:nth-child(odd) .service-content p{
+  color:rgba(255,255,255,.88) !important;
+}
+
+.services-grid-images .service-card:nth-child(even) .service-content h3{
+  color:#102334 !important;
+}
+
+.services-grid-images .service-card:nth-child(even) .service-content p{
+  color:#667788 !important;
+}
+
+/* O 03 recebe exatamente o mesmo azul do 01. */
+.services-grid-images .service-card:nth-child(3),
+.services-grid-images .service-card:nth-child(3) .service-image,
+.services-grid-images .service-card:nth-child(3) .service-content{
+  background:#0C77CF !important;
+}
+
+@media (max-width:560px){
+  .services-grid-images .service-card .service-content{
+    padding:18px 18px 20px;
+  }
+}
+
+
+/* =========================================================
+   PAPERPEL — ANIMAÇÃO ORIGINAL DO CARD DE QUALIDADE
+   Esta regra não altera posição, tamanho ou cor dos cards de serviços.
+   ========================================================= */
+
+.hero-card{
+  position:relative;
+  overflow:hidden;
+}
+
+.paper-plane{
+  position:relative;
+  z-index:2;
+  transform:translate3d(0,0,0);
+  opacity:1;
+  transition:
+    transform .58s cubic-bezier(.2,.82,.25,1),
+    opacity .42s ease;
+  will-change:transform,opacity;
+}
+
+.paper-plane img{
+  display:block;
+  will-change:transform;
+  animation:paperpel-plane-float 3.8s ease-in-out infinite;
+}
+
+.hero-card > span{
+  position:relative;
+  z-index:2;
+  display:inline-block;
+  transform-origin:left center;
+  transition:
+    transform .38s cubic-bezier(.2,.82,.25,1),
+    opacity .22s ease;
+  will-change:transform;
+}
+
+@keyframes paperpel-plane-float{
+  0%,100%{
+    transform:translate3d(0,0,0) rotate(-1deg);
+  }
+  50%{
+    transform:translate3d(0,-7px,0) rotate(1deg);
+  }
+}
+
+@media (hover:hover) and (pointer:fine){
+  .hero-card:hover .paper-plane{
+    transform:translate3d(180px,-8px,0) scale(.62);
+    opacity:0;
+  }
+
+  .hero-card:hover .paper-plane img{
+    animation:none;
+  }
+
+  .hero-card:hover > span{
+    transform:scale(2.55);
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .paper-plane,
+  .paper-plane img,
+  .hero-card > span{
+    animation:none !important;
+    transition:none !important;
+  }
+}
+
+
+/* Ajuste fino dos cards de serviços */
+.services-grid-images .service-number{
+  display:none !important;
+}
+
+.services-grid-images .service-content{
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  gap:0;
+}
+
+.services-grid-images .service-content h3{
+  margin-top:0 !important;
+  margin-bottom:10px !important;
+}
+
+.services-grid-images .service-content p{
+  margin-top:0 !important;
+  line-height:1.5 !important;
+}
+
+.services-grid-images .service-card{
+  display:flex !important;
+  flex-direction:column !important;
+}
+
+.services-grid-images .service-image{
+  flex:0 0 auto;
+}
+
+.services-grid-images .service-content{
+  flex:1 1 auto;
+}
+
+
+/* Alinhamento dos títulos dos cards de serviços */
+.services-grid-images .service-content h3{
+  min-height:2.2em;
+  display:flex;
+  align-items:flex-start;
+  margin-top:0 !important;
+  margin-bottom:10px !important;
+}
+
+@media (max-width:560px){
+  .services-grid-images .service-content h3{
+    min-height:2.2em;
+  }
+}
+
+
+/* =========================================================
+   AJUSTE FINAL — ALINHAMENTO DOS 4 CARDS DE SERVIÇOS
+   Somente geometria/alinhamento. Nada além desta seção é alterado.
+   ========================================================= */
+
+/* As quatro áreas de imagem passam a ter exatamente a mesma altura.
+   object-fit:contain mantém cada produto inteiro, sem cortar a imagem. */
+.services-grid-images .service-image{
+  height:180px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+  box-sizing:border-box !important;
+}
+
+.services-grid-images .service-image img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  display:block !important;
+}
+
+/* Os quatro títulos passam a ocupar exatamente o mesmo espaço,
+   portanto todos os parágrafos começam na mesma linha. */
+.services-grid-images .service-content{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-start !important;
+  text-align:left !important;
+  padding:22px 22px 24px !important;
+  box-sizing:border-box !important;
+}
+
+.services-grid-images .service-content h3{
+  width:100% !important;
+  min-height:50px !important;
+  margin:0 0 10px !important;
+  padding:0 !important;
+  display:block !important;
+  line-height:1.12 !important;
+  box-sizing:border-box !important;
+}
+
+.services-grid-images .service-content p{
+  width:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  line-height:1.5 !important;
+  box-sizing:border-box !important;
+}
+
+/* Mantém o mesmo princípio no celular, apenas reduzindo a área de imagem
+   para caber melhor na tela pequena. */
+@media (max-width:560px){
+  .services-grid-images .service-image{
+    height:155px !important;
+  }
+
+  .services-grid-images .service-content{
+    padding:18px 18px 20px !important;
+  }
+
+  .services-grid-images .service-content h3{
+    min-height:45px !important;
+    margin-bottom:8px !important;
+  }
+}
+
+/* =========================================================
+   PAPERPEL — MICROINTERAÇÕES PREMIUM
+   Camada adicional: não altera paleta nem estrutura.
+   Objetivo: respostas pequenas, suaves e naturais.
+   ========================================================= */
+
+@media (hover:hover) and (pointer:fine){
+
+  /* LINKS DO MENU — pequeno deslocamento + underline elegante */
+  .menu a{
+    position:relative;
+    transition:color .22s ease, transform .22s ease;
+  }
+
+  .menu a::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:-6px;
+    height:1.5px;
+    background:var(--blue);
+    transform:scaleX(0);
+    transform-origin:center;
+    transition:transform .28s cubic-bezier(.22,.75,.25,1);
+  }
+
+  .menu a:hover{
+    transform:translateY(-1px);
+  }
+
+  .menu a:hover::after{
+    transform:scaleX(1);
+  }
+
+  /* BOTÕES — levantam levemente, sem exagero */
+  .button{
+    transition:
+      transform .26s cubic-bezier(.22,.75,.25,1),
+      box-shadow .26s ease,
+      background-color .2s ease,
+      border-color .2s ease;
+  }
+
+  .primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 18px rgba(12,119,207,.16);
+  }
+
+  .secondary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 7px 16px rgba(12,119,207,.10);
+  }
+
+  .button:active{
+    transform:translateY(0) scale(.985);
+    transition-duration:.08s;
+  }
+
+  /* CARDS DE SERVIÇOS — interação discreta e imagem respirando */
+  .services-grid-images .service-card{
+    transition:
+      transform .34s cubic-bezier(.22,.75,.25,1),
+      box-shadow .34s ease;
+  }
+
+  .services-grid-images .service-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 18px 38px rgba(12,119,207,.12);
+  }
+
+  .services-grid-images .service-card .service-image img{
+    transition:transform .5s cubic-bezier(.22,.75,.25,1);
+  }
+
+  .services-grid-images .service-card:hover .service-image img{
+    transform:scale(1.025);
+  }
+
+  /* CARD AZUL DO HERO — sobe só um pouco e ganha presença */
+  .hero-card{
+    transition:
+      transform .38s cubic-bezier(.22,.75,.25,1),
+      box-shadow .38s ease;
+  }
+
+  .hero-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 22px 48px rgba(12,119,207,.18);
+  }
+
+  /* LINK DO MAPA — resposta horizontal muito pequena */
+  .maps-link{
+    transition:transform .24s cubic-bezier(.22,.75,.25,1), opacity .2s ease;
+  }
+
+  .maps-link:hover{
+    transform:translateX(3px);
+  }
+
+  /* A seta/ícone do mapa acompanha o movimento */
+  .maps-link .maps-icon{
+    transition:transform .24s cubic-bezier(.22,.75,.25,1);
+  }
+
+  .maps-link:hover .maps-icon{
+    transform:translateX(2px);
+  }
+
+  /* AVALIAÇÕES — elevação mínima para transmitir interatividade */
+  .review-card{
+    transition:
+      transform .32s cubic-bezier(.22,.75,.25,1),
+      box-shadow .32s ease,
+      border-color .25s ease;
+  }
+
+  .review-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 16px 34px rgba(12,119,207,.10);
+    border-color:#d4e5f1;
+  }
+
+  /* SETAS DO CARROSSEL — resposta pequena ao clique/hover */
+  .review-arrow{
+    transition:
+      transform .22s cubic-bezier(.22,.75,.25,1),
+      box-shadow .22s ease,
+      background-color .2s ease;
+  }
+
+  .review-arrow:hover{
+    transform:scale(1.05);
+  }
+
+  .review-arrow:active{
+    transform:scale(.96);
+  }
+
+  /* ÍCONES SOCIAIS — mantém a interação já existente, apenas suaviza */
+  .social-icons img{
+    transition:transform .24s cubic-bezier(.22,.75,.25,1);
+  }
+
+}
+
+/* Usuários que pedem menos movimento recebem uma versão estática. */
+@media (prefers-reduced-motion:reduce){
+  .menu a,
+  .menu a::after,
+  .button,
+  .services-grid-images .service-card,
+  .services-grid-images .service-card .service-image img,
+  .hero-card,
+  .maps-link,
+  .maps-link .maps-icon,
+  .review-card,
+  .review-arrow,
+  .social-icons img{
+    transition:none !important;
+  }
+}

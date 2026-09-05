@@ -1876,8 +1876,8 @@ button{
   .brand::after{
     content:"";
     position:absolute;
-    left:9%;
-    right:9%;
+    left:10%;
+    right:10%;
     bottom:0;
     height:1.5px;
     background:var(--blue);

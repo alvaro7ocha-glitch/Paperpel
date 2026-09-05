@@ -1677,6 +1677,34 @@ button{
 
 @media (hover:hover) and (pointer:fine){
 
+  /* LOGO — mesma linguagem do menu: leve elevação + linha de hover */
+  .brand{
+    position:relative;
+    transition:transform .22s ease;
+  }
+
+  .brand::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:-6px;
+    height:1.5px;
+    background:var(--blue);
+    transform:scaleX(0);
+    transform-origin:center;
+    transition:transform .28s cubic-bezier(.22,.75,.25,1);
+    pointer-events:none;
+  }
+
+  .brand:hover{
+    transform:translateY(-1px);
+  }
+
+  .brand:hover::after{
+    transform:scaleX(1);
+  }
+
   /* LINKS DO MENU — pequeno deslocamento + underline elegante */
   .menu a{
     position:relative;

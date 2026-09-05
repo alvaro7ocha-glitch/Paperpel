@@ -105,9 +105,9 @@ button{
 
 .menu a{
   white-space:nowrap;
-  font-size:18px;
-  font-weight:400;
-  color:#556979;
+  font-size:14px;
+  font-weight:600;
+  color:#42586b;
   transition:color .2s ease;
 }
 
@@ -1827,6 +1827,33 @@ button{
   .review-card,
   .review-arrow,
   .social-icons img{
+    transition:none !important;
+  }
+}
+
+
+/* LOGO PRINCIPAL — interação coerente com os botões */
+@media (hover:hover) and (pointer:fine){
+  .brand img{
+    transition:
+      transform .26s cubic-bezier(.22,.75,.25,1),
+      filter .26s ease;
+    will-change:transform,filter;
+  }
+
+  .brand:hover img{
+    transform:translateY(-2px);
+    filter:drop-shadow(0 8px 18px rgba(12,119,207,.16));
+  }
+
+  .brand:active img{
+    transform:translateY(0) scale(.985);
+    transition-duration:.08s;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .brand img{
     transition:none !important;
   }
 }

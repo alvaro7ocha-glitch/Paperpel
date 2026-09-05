@@ -3,221 +3,376 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Paperpel Gráfica — impressão, comunicação visual e soluções gráficas em Belo Horizonte.">
-  <title>Paperpel Gráfica | Impressão e soluções gráficas</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="description" content="Paperpel Gráfica em Belo Horizonte. Impressão digital, banners, adesivos personalizados, cartões de visita, comunicação visual e encadernação no Rio Branco e região.">
+  <title>Paperpel Gráfica em Belo Horizonte | Impressão e Comunicação Visual</title>
+  <link rel="canonical" href="https://www.paperpelgrafica.com.br/">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Paperpel Gráfica em Belo Horizonte | Impressão e Comunicação Visual">
+  <meta property="og:description" content="Impressão digital, banners, adesivos personalizados, cartões de visita, comunicação visual e encadernação no Rio Branco e região.">
+  <meta property="og:url" content="https://www.paperpelgrafica.com.br/">
+  <meta property="og:site_name" content="Paperpel Gráfica">
+  <link rel="stylesheet" href="style.css?v=20260831-33">
+
+  <style>
+    .brand img{
+      width:210px !important;
+      height:68px !important;
+      max-width:210px !important;
+      object-fit:contain !important;
+    }
+
+    @media (max-width:560px){
+      .brand img{
+        width:145px !important;
+        height:52px !important;
+        max-width:145px !important;
+      }
+    }
+  </style>
+
+  <style>
+    /* Avião escolhido pelo usuário */
+    .paper-plane{
+      width:78px;
+      height:52px;
+      margin-bottom:28px;
+      transform:none;
+      display:flex;
+      align-items:center;
+    }
+
+    .paper-plane img{
+      width:78px;
+      height:52px;
+      object-fit:contain;
+      display:block;
+    }
+  </style>
+
+  <style id="paperpel-background-fix">
+    /* O background fica ACIMA da cor da seção e ABAIXO do conteúdo */
+    .hero{
+      position:relative !important;
+      isolation:isolate !important;
+      overflow:hidden !important;
+      background:#edf8ff !important;
+    }
+
+    .hero-bg{
+      position:absolute !important;
+      inset:0 !important;
+      z-index:0 !important;
+      background-image:url('assets/background-paper.png?v=5') !important;
+      background-position:center !important;
+      background-size:cover !important;
+      background-repeat:no-repeat !important;
+      opacity:.45 !important;
+      pointer-events:none !important;
+    }
+
+    .hero-grid{
+      position:relative !important;
+      z-index:1 !important;
+    }
+
+    .blue-section{
+      position:relative !important;
+      isolation:isolate !important;
+      overflow:hidden !important;
+    }
+
+    .blue-section-bg{
+      position:absolute !important;
+      inset:0 !important;
+      z-index:0 !important;
+      background-image:url('assets/background-paper.png?v=5') !important;
+      background-position:center !important;
+      background-size:cover !important;
+      background-repeat:no-repeat !important;
+      opacity:.20 !important;
+      pointer-events:none !important;
+    }
+
+    .differentiators{
+      position:relative !important;
+      z-index:1 !important;
+    }
+  </style>
+
+<style id="paperpel-layout-fix">
+  .hero-grid{
+    position:relative !important;
+    z-index:1 !important;
+    min-height:620px !important;
+    display:grid !important;
+    grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr) !important;
+    gap:70px !important;
+    align-items:center !important;
+    padding:80px 0 !important;
+  }
+
+  .hero-copy{
+    align-self:center !important;
+  }
+
+  .hero-card{
+    align-self:center !important;
+    justify-self:end !important;
+  }
+
+  @media(max-width:900px){
+    .hero-grid{
+      grid-template-columns:1fr !important;
+      gap:45px !important;
+      padding:65px 0 !important;
+    }
+
+    .hero-card{
+      justify-self:start !important;
+    }
+  }
+</style>
+
+
+<style id="paperpel-quality-map-fix">
+  .quality-word{color:#bfe9ff !important;font-weight:800 !important;}
+  .hero-copy .eyebrow,.hero-copy>p,.hero-note{color:#102334 !important;}
+  .maps-link{
+    display:inline-flex;align-items:center;gap:8px;margin-top:7px;
+    color:#0470C9 !important;font-size:13px !important;font-weight:700 !important;
+  }
+  .maps-link:hover{opacity:.85;transform:translateX(2px);}
+  .maps-icon{width:18px;height:18px;display:block;flex:0 0 18px;}
+</style>
+
 </head>
 <body>
 
-  <header class="header">
-    <div class="container nav">
-      <a class="brand" href="#inicio" aria-label="Paperpel Gráfica">
-        <img src="assets/logo-paperpel.svg" alt="Paperpel Gráfica">
+<header class="header">
+  <div class="container nav">
+    <a class="brand" href="#inicio" aria-label="Paperpel Gráfica">
+      <img src="assets/logo-paperpel.svg?v=4" alt="Paperpel Gráfica">
+    </a>
+
+    <nav class="menu" aria-label="Navegação principal">
+      <a href="#servicos">Serviços</a>
+      <a href="#diferenciais">Por que a Paperpel</a>
+      <a href="#avaliacoes">Avaliações</a>
+      <a href="#contato">Contato</a>
+    </nav>
+
+    <div class="social-icons" aria-label="Redes sociais">
+      <a href="https://www.instagram.com/paperpel.grafica/" target="_blank" rel="noopener" aria-label="Instagram">
+        <img src="assets/Instagram_.svg" alt="">
       </a>
+      <a href="https://wa.me/5531985268205" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <img src="assets/WhatsApp_.svg" alt="">
+      </a>
+    </div>
+  </div>
+</header>
 
-      <nav class="menu" aria-label="Navegação principal">
-        <a href="#servicos">Serviços</a>
-        <a href="#diferenciais">Por que a Paperpel</a>
-        <a href="#avaliacoes">Avaliações</a>
-        <a href="#contato">Contato</a>
-      </nav>
+<main>
+  <section id="inicio" class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
 
-      <div class="social-icons" aria-label="Redes sociais">
-        <a href="https://www.instagram.com/paperpel.grafica/" target="_blank" rel="noopener" aria-label="Instagram">
-          <img src="assets/instagram.svg" alt="Instagram">
-        </a>
-        <a href="https://wa.me/5531985268205" target="_blank" rel="noopener" aria-label="WhatsApp">
-          <img src="assets/whatsapp.svg" alt="WhatsApp">
-        </a>
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <h1><strong>Suas ideias ganham forma.</strong></h1>
+        <p>Impressão e soluções gráficas em Belo Horizonte para empresas, escolas, eventos e para o seu dia a dia.</p>
+
+        <div class="hero-actions">
+          <a class="button primary" href="https://wa.me/5531985268205" target="_blank" rel="noopener">Solicitar orçamento</a>
+          <a class="button secondary" href="#servicos">Conhecer serviços</a>
+        </div>
+
+        <div class="hero-note">
+          <span class="dot"></span>
+          Atendimento em Belo Horizonte
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <div class="paper-plane">
+          <img src="assets/aviao-paperpel.png?v=1" alt="" aria-hidden="true">
+        </div>
+        <span>QUALIDADE</span>
+        <strong>que você<br>pode ver.</strong>
+        <p>Do arquivo à impressão, cuidamos de cada detalhe para entregar um resultado profissional.</p>
       </div>
     </div>
-  </header>
+  </section>
 
-  <main>
-    <section id="inicio" class="hero">
-      <div class="hero-bg"></div>
-
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <h1>Suas ideias<br><strong>ganham forma.</strong></h1>
-          <p>Impressão, acabamento e soluções gráficas para empresas, escolas, eventos e para o seu dia a dia.</p>
-
-          <div class="hero-actions">
-            <a class="button primary" href="https://wa.me/5531985268205" target="_blank" rel="noopener">Solicitar orçamento</a>
-            <a class="button secondary" href="#servicos">Conhecer serviços</a>
-          </div>
-
-          <div class="hero-note">
-            <span class="dot"></span>
-            Atendimento em Belo Horizonte
-          </div>
-        </div>
-
-        <div class="hero-card">
-          <div class="paper-plane">✈</div>
-          <span>QUALIDADE</span>
-          <strong>que você<br>pode ver.</strong>
-          <p>Do arquivo à impressão, cuidamos de cada detalhe para entregar um resultado profissional.</p>
-        </div>
+  <section id="servicos" class="section">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">O QUE FAZEMOS</span>
+        <h2>Soluções para <span>cada projeto.</span></h2>
+        <p>Uma gráfica completa para transformar sua necessidade em material pronto para usar.</p>
       </div>
-    </section>
 
-    <section id="servicos" class="section">
-      <div class="container">
-        <div class="section-heading">
-          <span class="eyebrow">O QUE FAZEMOS</span>
-          <h2>Soluções para <span>cada projeto.</span></h2>
-          <p>Uma gráfica completa para transformar sua necessidade em material pronto para usar.</p>
-        </div>
-
-        <div class="services-grid">
-          <article class="service-card featured">
-            <span class="service-number">01</span>
+      <div class="services-grid services-grid-images">
+        <article class="service-card service-card-image featured">
+          <div class="service-image">
+            <img src="assets/impressao.png?v=1" alt="Impressão digital em Belo Horizonte">
+          </div>
+          <div class="service-content">
             <h3>Impressão</h3>
-            <p>Materiais para uso pessoal, comercial e escolar, com diferentes formatos e acabamentos.</p>
-            <span class="service-link">Ver possibilidades →</span>
-          </article>
+            <p>Impressão para uso pessoal, comercial e escolar, com opções para pequenas e grandes quantidades.</p>
+                      </div>
+        </article>
 
-          <article class="service-card">
-            <span class="service-number">02</span>
+        <article class="service-card service-card-image">
+          <div class="service-image">
+            <img src="assets/comunicacao-visual.png?v=1" alt="Comunicação visual, banners e adesivos em Belo Horizonte">
+          </div>
+          <div class="service-content">
             <h3>Comunicação visual</h3>
-            <p>Banners, cartazes, adesivos e materiais para destacar sua marca e sua mensagem.</p>
-            <span class="service-link">Ver possibilidades →</span>
-          </article>
+            <p>Banners, panfletos, cartões de visita, Wind Banners, blocos e adesivos personalizados.</p>
+                      </div>
+        </article>
 
-          <article class="service-card">
-            <span class="service-number">03</span>
-            <h3>Papelaria</h3>
-            <p>Cartões, etiquetas, materiais personalizados e soluções para sua identidade.</p>
-            <span class="service-link">Ver possibilidades →</span>
-          </article>
+        <article class="service-card service-card-image">
+          <div class="service-image">
+            <img src="assets/foto.png?v=1" alt="Impressão de fotos em Belo Horizonte">
+          </div>
+          <div class="service-content">
+            <h3>Impressão de fotos</h3>
+            <p>Foto tradicional, polaroid, foto ímã, foto 3/4, foto tamanho A3 e A4, tudo com qualidade e durabilidade.</p>
+                      </div>
+        </article>
 
-          <article class="service-card">
-            <span class="service-number">04</span>
+        <article class="service-card service-card-image">
+          <div class="service-image">
+            <img src="assets/personalizados.png?v=1" alt="Produtos personalizados em Belo Horizonte">
+          </div>
+          <div class="service-content">
             <h3>Personalizados</h3>
-            <p>Canecas, ímãs, lembranças e outros produtos para presentes, eventos e datas especiais.</p>
-            <span class="service-link">Ver possibilidades →</span>
-          </article>
+            <p>Canecas, chaveiros, relógio de parede e de mesa, botons e mouse pad.</p>
+                      </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="diferenciais" class="blue-section">
+    <div class="blue-section-bg" aria-hidden="true"></div>
+
+    <div class="container differentiators">
+      <div>
+        <span class="eyebrow light">POR QUE A PAPERPEL</span>
+        <h2>Mais do que imprimir.<br><strong>É entregar <span class="quality-word">QUALIDADE.</span></strong></h2>
+      </div>
+
+      <div class="diff-list">
+        <div class="diff-item">
+          <span>01</span>
+          <div>
+            <h3>Cuidado com o acabamento</h3>
+            <p>Cada pedido é preparado pensando no resultado final.</p>
+          </div>
+        </div>
+
+        <div class="diff-item">
+          <span>02</span>
+          <div>
+            <h3>Atendimento especializado</h3>
+            <p>Você fala com quem entende do que está sendo produzido.</p>
+          </div>
+        </div>
+
+        <div class="diff-item">
+          <span>03</span>
+          <div>
+            <h3>Versatilidade</h3>
+            <p>Do pequeno material ao projeto de comunicação visual.</p>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="diferenciais" class="blue-section">
-      <div class="blue-section-bg"></div>
-
-      <div class="container differentiators">
+  <section id="avaliacoes" class="reviews-section">
+    <div class="container">
+      <div class="reviews-heading">
         <div>
-          <span class="eyebrow light">POR QUE A PAPERPEL</span>
-          <h2>Mais do que imprimir.<br><strong>É entregar bem.</strong></h2>
-        </div>
-
-        <div class="diff-list">
-          <div class="diff-item">
-            <span>01</span>
-            <div>
-              <h3>Cuidado com o acabamento</h3>
-              <p>Cada pedido é preparado pensando no resultado final.</p>
-            </div>
-          </div>
-
-          <div class="diff-item">
-            <span>02</span>
-            <div>
-              <h3>Atendimento próximo</h3>
-              <p>Você fala com quem entende do que está sendo produzido.</p>
-            </div>
-          </div>
-
-          <div class="diff-item">
-            <span>03</span>
-            <div>
-              <h3>Versatilidade</h3>
-              <p>Do pequeno material ao projeto de comunicação visual.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="avaliacoes" class="reviews-section" aria-label="Avaliações do Google">
-      <div class="container">
-        <div class="reviews-heading">
           <span class="eyebrow">O QUE NOSSOS CLIENTES DIZEM</span>
           <div class="reviews-rating">
-            <strong id="reviewsScore">5,0</strong>
-            <span class="stars" id="reviewsStars" aria-label="5 estrelas">★★★★★</span>
-            <span id="reviewsCount">carregando avaliações...</span>
-          </div>
-        </div>
-
-        <div class="reviews-carousel">
-          <button class="review-arrow prev" type="button" aria-label="Avaliações anteriores">‹</button>
-          <div class="reviews-track" id="reviewsTrack" aria-live="polite">
-            <div class="reviews-loading">Carregando avaliações do Google...</div>
-          </div>
-          <button class="review-arrow next" type="button" aria-label="Próximas avaliações">›</button>
-        </div>
-        <div class="review-dots" id="reviewDots" aria-hidden="true"></div>
-        <p class="reviews-attribution">Avaliações e informações fornecidas pelo Google. <a id="googlePlaceLink" href="https://maps.app.goo.gl/QpfCBbPG4BsePanQ9" target="_blank" rel="noopener">Ver no Google Maps</a></p>
-      </div>
-    </section>
-
-    <section class="quote-section">
-      <div class="container quote-box">
-        <div>
-          <span class="eyebrow light">VAMOS PRODUZIR?</span>
-          <h2>Conte o que você precisa.</h2>
-          <p>Envie sua ideia, arquivo ou referência. A gente conversa sobre a melhor solução.</p>
-        </div>
-
-        <a class="button white" href="https://wa.me/5531985268205" target="_blank" rel="noopener">
-          Pedir orçamento pelo WhatsApp →
-        </a>
-      </div>
-    </section>
-
-    <section id="contato" class="contact section">
-      <div class="container contact-grid">
-        <div>
-          <span class="eyebrow">FALE COM A GENTE</span>
-          <h2>Paperpel <span>Gráfica.</span></h2>
-          <p>Estamos em Belo Horizonte para cuidar dos seus materiais impressos e personalizados.</p>
-        </div>
-
-        <div class="contact-card">
-          <div>
-            <small>WHATSAPP</small>
-            <a href="https://wa.me/5531985268205" target="_blank" rel="noopener">(31) 98526-8205</a>
-          </div>
-
-          <div>
-            <small>ENDEREÇO</small>
-            <p>Av. Bernarda Silvestre, 410 — Loja 3<br>Rio Branco — Belo Horizonte/MG</p>
-          </div>
-
-          <div>
-            <small>HORÁRIO DE ATENDIMENTO</small>
-            <p>De segunda a sexta de 9:30 às 18:00 h</p>
-          </div>
-
-          <div>
-            <small>HORÁRIO DE ATENDIMENTO</small>
-            <p>De segunda a sexta de 9:30 às 18:00 h</p>
+            <strong>5,0</strong>
+            <span class="stars" aria-label="5 estrelas">★★★★★</span>
+            <span>+200 avaliações no Google</span>
           </div>
         </div>
       </div>
-    </section>
-  </main>
 
-  <footer class="footer">
-    <div class="container footer-inner">
-      <img src="assets/logo-paperpel.svg" alt="Paperpel Gráfica">
-      <span>© 2026 Paperpel Gráfica. Todos os direitos reservados.</span>
-      <a href="#inicio">Voltar ao topo ↑</a>
+      <div class="reviews-carousel">
+        <button class="review-arrow prev" type="button" aria-label="Avaliações anteriores">‹</button>
+        <div class="reviews-track" id="reviewsTrack"></div>
+        <button class="review-arrow next" type="button" aria-label="Próximas avaliações">›</button>
+      </div>
+
+      <div class="review-dots" id="reviewDots" aria-label="Navegação das avaliações"></div>
     </div>
-  </footer>
+  </section>
 
-  <script src="config.js"></script>
-  <script src="script.js"></script>
+  <section class="quote-section">
+    <div class="container quote-box">
+      <div>
+        <span class="eyebrow light">VAMOS PRODUZIR?</span>
+        <h2>Conte o que você precisa.</h2>
+        <p>Envie sua ideia, arquivo ou referência. A gente conversa sobre a melhor solução.</p>
+      </div>
+
+      <a class="button white" href="https://wa.me/5531985268205" target="_blank" rel="noopener">
+        Pedir orçamento pelo WhatsApp →
+      </a>
+    </div>
+  </section>
+
+  <section id="contato" class="contact section">
+    <div class="container contact-grid">
+      <div>
+        <span class="eyebrow">FALE COM A GENTE</span>
+        <h2>Paperpel <span>Gráfica.</span></h2>
+        <p>Somos uma gráfica em Belo Horizonte, na região do Rio Branco, para cuidar dos seus materiais impressos e personalizados.</p>
+      </div>
+
+      <div class="contact-card">
+        <div>
+          <small>WHATSAPP</small>
+          <a href="https://wa.me/5531985268205" target="_blank" rel="noopener">(31) 98526-8205</a>
+        </div>
+
+        <div>
+          <small>ENDEREÇO</small>
+          <p>Av. Bernarda Silvestre, 410 — Loja 3<br>Rio Branco — Belo Horizonte/MG</p>
+            <a class="maps-link" href="https://www.google.com/maps/search/?api=1&query=Av.%20Bernarda%20Silvestre%2C%20410%20Belo%20Horizonte%20MG" target="_blank" rel="noopener" aria-label="Abrir a localização da Paperpel no Google Maps">
+              <svg class="maps-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#EA4335" d="M12 2.5a7 7 0 0 0-7 7c0 5.2 7 12 7 12s7-6.8 7-12a7 7 0 0 0-7-7Zm0 10.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4Z"/>
+                <circle cx="12" cy="9.5" r="1.7" fill="#4285F4"/>
+              </svg>
+              <span>Ver localização no Google Maps</span>
+            </a>
+        </div>
+
+        <div>
+          <small>HORÁRIO DE ATENDIMENTO</small>
+          <p>De segunda a sexta de 9:30 às 18:00 h</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <img src="assets/logo-paperpel.svg?v=4" alt="Paperpel Gráfica">
+    <span>© 2026 Paperpel Gráfica. Todos os direitos reservados.</span>
+    <a href="#inicio">Voltar ao topo ↑</a>
+  </div>
+</footer>
+
+<script src="script.js?v=20260831-33"></script>
 </body>
 </html>

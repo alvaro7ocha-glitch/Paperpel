@@ -105,9 +105,9 @@ button{
 
 .menu a{
   white-space:nowrap;
-  font-size:14px;
-  font-weight:600;
-  color:#42586b;
+  font-size:18px;
+  font-weight:400;
+  color:#556979;
   transition:color .2s ease;
 }
 

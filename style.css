@@ -1,3 +1,12 @@
+/* PAPERPEL — Poppins local
+   Pesos escolhidos: 400 Regular, 500 Medium, 600 SemiBold, 700 Bold, 800 ExtraBold.
+   Nenhuma estrutura/layout do site foi alterada. */
+@font-face{font-family:'Poppins';src:url('assets/fonts/Poppins-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:'Poppins';src:url('assets/fonts/Poppins-Medium.ttf') format('truetype');font-weight:500;font-style:normal;font-display:swap;}
+@font-face{font-family:'Poppins';src:url('assets/fonts/Poppins-SemiBold.ttf') format('truetype');font-weight:600;font-style:normal;font-display:swap;}
+@font-face{font-family:'Poppins';src:url('assets/fonts/Poppins-Bold.ttf') format('truetype');font-weight:700;font-style:normal;font-display:swap;}
+@font-face{font-family:'Poppins';src:url('assets/fonts/Poppins-ExtraBold.ttf') format('truetype');font-weight:800;font-style:normal;font-display:swap;}
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root{
@@ -27,7 +36,7 @@ body{
   width:100%;
   min-width:0;
   overflow-x:hidden;
-  font-family:Inter,Arial,sans-serif;
+  font-family:Poppins,Arial,sans-serif;
   color:var(--ink);
   background:#fff;
   line-height:1.6;
@@ -1774,21 +1783,20 @@ button{
     border-color:#d4e5f1;
   }
 
-  /* SETAS DO CARROSSEL — posição vertical absolutamente fixa */
+  /* SETAS DO CARROSSEL — resposta pequena ao clique/hover */
   .review-arrow{
-    top:50% !important;
-    transform:translateY(-50%) !important;
     transition:
+      transform .22s cubic-bezier(.22,.75,.25,1),
       box-shadow .22s ease,
       background-color .2s ease;
   }
 
   .review-arrow:hover{
-    transform:translateY(-50%) !important;
+    transform:scale(1.05);
   }
 
   .review-arrow:active{
-    transform:translateY(-50%) !important;
+    transform:scale(.96);
   }
 
   /* ÍCONES SOCIAIS — mantém a interação já existente, apenas suaviza */

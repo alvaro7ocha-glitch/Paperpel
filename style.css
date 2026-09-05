@@ -1686,8 +1686,8 @@ button{
   .brand::after{
     content:"";
     position:absolute;
-    left:0;
-    right:0;
+    left:-2px;
+    right:-2px;
     bottom:-6px;
     height:1.5px;
     background:var(--blue);

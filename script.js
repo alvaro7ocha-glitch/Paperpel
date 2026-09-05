@@ -207,8 +207,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function restartAuto() {
     clearInterval(timer);
-    timer = setInterval(() => goToPage(currentPage + 1), 5000);
+    timer = setInterval(() => {
+      if (!isReviewHovered) goToPage(currentPage + 1);
+    }, 5000);
   }
+
+  let isReviewHovered = false;
+
+  const pauseReviews = () => {
+    isReviewHovered = true;
+    clearInterval(timer);
+  };
+
+  const resumeReviews = () => {
+    isReviewHovered = false;
+    restartAuto();
+  };
+
+  const carousel = track.closest(".reviews-carousel") || track;
+  carousel.addEventListener("mouseenter", pauseReviews);
+  carousel.addEventListener("mouseleave", resumeReviews);
 
   prev.addEventListener("click", () => goToPage(currentPage - 1));
   next.addEventListener("click", () => goToPage(currentPage + 1));

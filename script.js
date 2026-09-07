@@ -264,23 +264,28 @@ document.addEventListener("DOMContentLoaded", () => {
     audio.play().catch(() => {});
   };
 
+  /* Menu + logo — usam exatamente o mesmo som */
   document.addEventListener("click", (event) => {
     const menuButton = event.target.closest(".menu a");
-    if (menuButton) {
+    const logoButton = event.target.closest(".brand");
+
+    if (menuButton || logoButton) {
       playSound(menuSound, 0.16);
       return;
     }
 
+    /* Orçamento — botões que levam ao WhatsApp */
     const quoteButton = event.target.closest('a[href*="wa.me"]');
     if (quoteButton) {
       playSound(quoteSound, 0.18);
     }
   });
 
+  /* Avião — volume reduzido, mantendo o mesmo som e a mesma animação */
   const planeCard = document.querySelector(".hero-card");
   if (planeCard) {
     planeCard.addEventListener("mouseenter", () => {
-      playSound(planeSound, 0.18);
+      playSound(planeSound, 0.10);
     });
   }
 });

@@ -244,3 +244,41 @@ document.addEventListener("DOMContentLoaded", () => {
   goToPage(0, false);
   restartAuto();
 });
+
+
+/* PAPERPEL — SONS DE INTERAÇÃO
+   Somente acrescentado. Não altera as funções existentes. */
+document.addEventListener("DOMContentLoaded", () => {
+  const menuSound = new Audio("assets/Manu.mp3");
+  const quoteSound = new Audio("assets/orçamento.mp3");
+  const planeSound = new Audio("assets/Aviao.wav");
+
+  menuSound.preload = "auto";
+  quoteSound.preload = "auto";
+  planeSound.preload = "auto";
+
+  const playSound = (audio, volume = 0.18) => {
+    audio.pause();
+    audio.currentTime = 0;
+    audio.volume = volume;
+    audio.play().catch(() => {});
+  };
+
+  /* 1. Menu — qualquer botão/link do menu */
+  document.querySelectorAll(".menu a").forEach((button) => {
+    button.addEventListener("click", () => playSound(menuSound, 0.16));
+  });
+
+  /* 2. Orçamento — botões que levam ao WhatsApp para orçamento */
+  document.querySelectorAll('a[href*="wa.me"]').forEach((button) => {
+    button.addEventListener("click", () => playSound(quoteSound, 0.18));
+  });
+
+  /* 3. Avião — ao passar o mouse sobre o card onde ele faz a animação */
+  const planeCard = document.querySelector(".hero-card");
+  if (planeCard) {
+    planeCard.addEventListener("mouseenter", () => {
+      playSound(planeSound, 0.18);
+    });
+  }
+});

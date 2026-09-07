@@ -257,24 +257,26 @@ document.addEventListener("DOMContentLoaded", () => {
   quoteSound.preload = "auto";
   planeSound.preload = "auto";
 
-  const playSound = (audio, volume = 0.18) => {
+  const playSound = (audio, volume) => {
     audio.pause();
     audio.currentTime = 0;
     audio.volume = volume;
     audio.play().catch(() => {});
   };
 
-  /* 1. Menu — qualquer botão/link do menu */
-  document.querySelectorAll(".menu a").forEach((button) => {
-    button.addEventListener("click", () => playSound(menuSound, 0.16));
+  document.addEventListener("click", (event) => {
+    const menuButton = event.target.closest(".menu a");
+    if (menuButton) {
+      playSound(menuSound, 0.16);
+      return;
+    }
+
+    const quoteButton = event.target.closest('a[href*="wa.me"]');
+    if (quoteButton) {
+      playSound(quoteSound, 0.18);
+    }
   });
 
-  /* 2. Orçamento — botões que levam ao WhatsApp para orçamento */
-  document.querySelectorAll('a[href*="wa.me"]').forEach((button) => {
-    button.addEventListener("click", () => playSound(quoteSound, 0.18));
-  });
-
-  /* 3. Avião — ao passar o mouse sobre o card onde ele faz a animação */
   const planeCard = document.querySelector(".hero-card");
   if (planeCard) {
     planeCard.addEventListener("mouseenter", () => {

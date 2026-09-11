@@ -8,6 +8,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const reviews = [
     {
+      name: "Gleici",
+      meta: "guia local · 0 comentários · 1 foto · 3 dias atrás",
+      text: "O pessoal da Paperpel sempre me ajuda com minhas loucuras! 🤣 (trabalhos escolares). Eles fazem milagres! São super atenciosos e sempre entregam uma qualidade que supera minhas expectativas.",
+      photo: "assets/reviews/Gleici.png"
+    },
+    {
+      name: "Amanda Ellen Zoroastro",
+      meta: "guia local · 41 comentários · 84 fotos · 10 horas atrás",
+      text: "Tem tudo o que a gente precisa com uma qualidade impressionante! Conseguiram fazer a foto 3x4 da minha bebê removendo o fundo da foto que eu tirei, cortaram no tamanho exato por um preço muito justo. Também foram super pacientes comigo com uma demanda maior que eu tinha pra uns cartões de casamento, precisei de ajustes e de muita paciência deles kkk foram solícitos e me entregaram o material com excelente qualidade. É um privilégio ter um comércio local que presta serviços de gráfica com tanta excelência e bom atendimento 💗",
+      photo: "assets/reviews/Amanda Ellen Zoroastro.png"
+    },
+    {
       name: "Mayana Rodrigues",
       meta: "7 avaliações · 2 semanas atrás",
       text: "Atendimento atencioso e personalizado! Tudo que precisei foi feito super rápido e com a maior qualidade. Indico de olhos fechados 💜",

@@ -631,6 +631,30 @@ button{
   line-height:1.65;
 }
 
+/* Avaliações longas: rolagem somente dentro do comentário.
+   Mantém todos os cards alinhados no desktop/tablet. */
+@media (min-width:561px){
+  .review-card p{
+    max-height:140px;
+    overflow-y:auto;
+    padding-right:8px;
+    scrollbar-width:thin;
+  }
+
+  .review-card p::-webkit-scrollbar{
+    width:5px;
+  }
+
+  .review-card p::-webkit-scrollbar-track{
+    background:transparent;
+  }
+
+  .review-card p::-webkit-scrollbar-thumb{
+    background:#cbd8e2;
+    border-radius:10px;
+  }
+}
+
 .review-arrow{
   position:absolute;
   top:50%;

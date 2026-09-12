@@ -8,6 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const reviews = [
     {
+      name: "Daniela Silva",
+      meta: "guia local · 60 comentários · 78 fotos · 5 semanas atrás",
+      text: "Super recomendo ficou igualzinho que eu solicitei. Fiz pro dia dos pais. Gratidão",
+      photo: "assets/reviews/Daniela Silva.png"
+    },
+    {
       name: "Gleici",
       meta: "guia local · 0 comentários · 1 foto · 3 dias atrás",
       text: "O pessoal da Paperpel sempre me ajuda com minhas loucuras! 🤣 (trabalhos escolares). Eles fazem milagres! São super atenciosos e sempre entregam uma qualidade que supera minhas expectativas.",

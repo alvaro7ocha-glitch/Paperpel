@@ -307,3 +307,111 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+/* =========================================================
+   PAPERPEL — ORÇAMENTO ONLINE
+   BLOCO ACRESCENTADO — NÃO ALTERA AS FUNÇÕES EXISTENTES
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const botaoOrcamento = document.getElementById("paperpel-orcamento-botao");
+  const janelaOrcamento = document.getElementById("paperpel-orcamento-box");
+  const botaoMinimizar = document.getElementById("paperpel-minimizar");
+  const botaoFechar = document.getElementById("paperpel-fechar");
+  const containerTypebot = document.getElementById("paperpel-typebot-container");
+
+  if (
+    !botaoOrcamento ||
+    !janelaOrcamento ||
+    !botaoMinimizar ||
+    !botaoFechar ||
+    !containerTypebot
+  ) {
+    return;
+  }
+
+  let typebotCarregado = false;
+
+  /* ABRIR O ORÇAMENTO */
+
+  botaoOrcamento.addEventListener("click", async () => {
+
+    janelaOrcamento.classList.add("paperpel-aberto");
+    janelaOrcamento.setAttribute("aria-hidden", "false");
+
+    botaoOrcamento.style.display = "none";
+
+    /* Carrega o Typebot somente na primeira abertura */
+
+    if (!typebotCarregado) {
+
+      try {
+
+        const modulo = await import(
+          "https://cdn.jsdelivr.net/npm/@typebot.io/js@0/dist/web.js"
+        );
+
+        const Typebot = modulo.default;
+
+        containerTypebot.innerHTML = `
+          <typebot-standard
+            style="width:100%; height:100%;">
+          </typebot-standard>
+        `;
+
+        Typebot.initStandard({
+          typebot: "my-typebot-r58rvvn"
+        });
+
+        typebotCarregado = true;
+
+      } catch (erro) {
+
+        console.error(
+          "Erro ao carregar o Typebot Paperpel:",
+          erro
+        );
+
+        containerTypebot.innerHTML = `
+          <div style="
+            padding:30px;
+            text-align:center;
+            font-family:Poppins,sans-serif;
+          ">
+            <strong>Não foi possível carregar o orçamento.</strong>
+            <br><br>
+            Tente novamente em alguns instantes.
+          </div>
+        `;
+
+      }
+
+    }
+
+  });
+
+
+  /* MINIMIZAR */
+
+  botaoMinimizar.addEventListener("click", () => {
+
+    janelaOrcamento.classList.remove("paperpel-aberto");
+    janelaOrcamento.setAttribute("aria-hidden", "true");
+
+    botaoOrcamento.style.display = "block";
+
+  });
+
+
+  /* FECHAR */
+
+  botaoFechar.addEventListener("click", () => {
+
+    janelaOrcamento.classList.remove("paperpel-aberto");
+    janelaOrcamento.setAttribute("aria-hidden", "true");
+
+    botaoOrcamento.style.display = "block";
+
+  });
+
+});

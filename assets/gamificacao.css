@@ -1,0 +1,42 @@
+/* PAPERPEL GAMIFICAÇÃO — CSS isolado. Não altera estilos globais do site. */
+:root{--ppg-blue:#0878cc;--ppg-gold:#f3c46c;--ppg-paper:#e8b85d;--ppg-brown:#4b260d;--ppg-deep:#321807}
+*{box-sizing:border-box}
+body{margin:0;background:#d5a34d;font-family:ui-monospace,Consolas,monospace;color:var(--ppg-brown)}
+.ppg-app{width:min(960px,100%);min-height:100vh;margin:0 auto;background:#edc36f;border:2px solid #6d390e;border-radius:28px 28px 0 0;overflow:hidden;box-shadow:inset 0 0 0 5px #f8d887}
+.ppg-windowbar{height:132px;background:var(--ppg-blue);display:flex;align-items:center;justify-content:space-between;padding:20px 28px;color:white;border-bottom:5px solid #8d4a13;gap:15px}
+.ppg-window-title{display:flex;align-items:center;gap:16px;font:bold 40px Arial,sans-serif}
+.ppg-medal{display:grid;place-items:center;width:50px;height:50px;border-radius:50%;background:#f5b52e;color:#7b360b;border:4px ridge #a64f10;font-size:30px}
+.ppg-window-actions{display:flex;gap:10px}
+.ppg-window-actions button{width:78px;height:78px;border:0;border-radius:18px;background:#2586d1;color:white;font:bold 44px Arial;cursor:pointer}
+.ppg-window-actions button:hover{background:#4a9bdd}
+.ppg-card{padding:34px 7% 48px;background-color:#e9b957;background-image:radial-gradient(#9c5b1d22 1px,transparent 1px);background-size:7px 7px}
+.ppg-top{display:grid;grid-template-columns:245px minmax(0,1fr);gap:20px;align-items:center;margin-bottom:28px}
+.ppg-photo-frame{height:260px;width:245px;border:12px ridge #66340f;background:#e7b55b;display:grid;place-items:center;cursor:pointer;color:#5b2d0a;font: bold 24px inherit;overflow:hidden}
+#ppg-photo-preview{width:100%;height:100%;object-fit:cover}
+#ppg-photo-placeholder{display:flex;flex-direction:column;align-items:center;gap:12px}
+.ppg-silhouette{font-size:95px;line-height:1;filter:grayscale(1);color:#60320e}
+.ppg-identity{min-width:0;display:grid;gap:10px}
+.ppg-class-label{font:bold 34px ui-monospace,monospace}
+.ppg-dark-input{width:100%;background:#51270d;color:#ffedc6;border:8px ridge #f0cf80;outline-offset:3px;padding:13px 18px;font:bold 28px ui-monospace,monospace;min-width:0}
+.ppg-class-input{text-transform:uppercase;height:70px}
+.ppg-name-label{font-weight:bold;font-size:14px;margin-top:5px}
+.ppg-name-input{height:70px}
+.ppg-hint{font:12px Arial,sans-serif;margin:0;color:#60320e;overflow-wrap:anywhere}
+.ppg-skills{border:12px ridge #7a4216;padding:16px 22px;margin-bottom:28px}
+.ppg-skill{min-height:78px;display:grid;grid-template-columns:54px minmax(150px,1fr) minmax(220px,260px);align-items:center;gap:12px;border-bottom:4px solid #b37b32;padding:8px 0}
+.ppg-skill:last-child{border-bottom:0}
+.ppg-skill-icon{font-size:35px;text-align:center;color:#532a0c}
+.ppg-skill-name{font:bold 22px ui-monospace,monospace}
+.ppg-stars{display:flex;justify-content:space-around;gap:2px;background:#9a6428;border:4px solid #b17a36;padding:5px}
+.ppg-star{font-size:32px;line-height:1;color:#59300f;text-shadow:1px 1px #301505;background:transparent;border:0;padding:0;cursor:pointer}
+.ppg-star.is-filled{color:#ffcf42;text-shadow:1px 1px #8a3f09,2px 2px #4b230a}
+.ppg-star:focus-visible,.ppg-window-actions button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.ppg-hobbies{position:relative;display:grid;grid-template-columns:52px 1fr;column-gap:14px;align-items:start;background:#51270d;color:#ffe8b5;border:12px ridge #7a4216;padding:22px 26px}
+.ppg-heart{grid-row:span 2;color:#ffc33e;font-size:42px}
+.ppg-hobbies label{font:bold 25px Arial,sans-serif}
+.ppg-hobbies textarea{width:100%;resize:none;min-height:58px;max-height:58px;background:transparent;border:0;color:#ffedc6;font:bold 21px ui-monospace,monospace;line-height:1.35;outline:1px dashed #d6a25b;padding:5px 0}
+.ppg-hobbies textarea::placeholder{color:#d9b77d}
+.ppg-hobbies small{grid-column:2;font:11px Arial,sans-serif;color:#d9b77d;text-align:right}
+.ppg-status{min-height:20px;margin:12px 0 0;font:bold 13px Arial,sans-serif;color:#4d270d}
+.ppg-app.ppg-minimized .ppg-card{display:none}
+@media(max-width:680px){.ppg-app{border-radius:0}.ppg-windowbar{height:88px;padding:12px}.ppg-window-title{font-size:26px;gap:8px}.ppg-medal{width:38px;height:38px;font-size:22px}.ppg-window-actions button{width:46px;height:46px;border-radius:10px;font-size:28px}.ppg-card{padding:20px 12px}.ppg-top{grid-template-columns:110px minmax(0,1fr);gap:12px}.ppg-photo-frame{width:110px;height:145px;border-width:7px}.ppg-silhouette{font-size:52px}.ppg-class-label{font-size:22px}.ppg-dark-input{font-size:18px;padding:9px;border-width:5px}.ppg-class-input,.ppg-name-input{height:52px}.ppg-skills{padding:8px;border-width:7px}.ppg-skill{grid-template-columns:28px minmax(0,1fr) 128px;gap:5px;min-height:58px}.ppg-skill-icon{font-size:22px}.ppg-skill-name{font-size:13px}.ppg-stars{padding:3px;border-width:2px}.ppg-star{font-size:22px}.ppg-hobbies{padding:14px 10px;border-width:7px;grid-template-columns:28px 1fr}.ppg-heart{font-size:27px}.ppg-hobbies label{font-size:18px}.ppg-hobbies textarea{font-size:15px}.ppg-hobbies small{font-size:9px}}

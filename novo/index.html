@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nova ficha — Paperpel</title>
+<link rel="stylesheet" href="../assets/gamificacao.css">
+</head>
+<body>
+<main class="ppg-app" aria-label="Cadastro de funcionário">
+  <header class="ppg-windowbar">
+    <div class="ppg-window-title"><span class="ppg-medal">★</span><span>Ficha</span></div>
+    <div class="ppg-window-actions">
+      <button type="button" id="ppg-save" title="Salvar ficha" aria-label="Salvar ficha">▣</button>
+      <button type="button" id="ppg-minimize" title="Minimizar" aria-label="Minimizar">−</button>
+      <button type="button" id="ppg-close" title="Fechar" aria-label="Fechar">×</button>
+    </div>
+  </header>
+  <section class="ppg-card">
+    <div class="ppg-top">
+      <button type="button" class="ppg-photo-frame" id="ppg-photo-button" aria-label="Escolher foto do computador">
+        <img id="ppg-photo-preview" alt="" hidden>
+        <span id="ppg-photo-placeholder"><span class="ppg-silhouette">●</span><strong>Foto</strong></span>
+      </button>
+      <input type="file" id="ppg-photo-file" accept="image/*" hidden>
+      <div class="ppg-identity">
+        <label class="ppg-class-label" for="ppg-class">Classe:</label>
+        <input id="ppg-class" class="ppg-dark-input ppg-class-input" maxlength="3" autocomplete="off" placeholder="A, B, S, SS..." aria-label="Classe com até três letras">
+        <label class="ppg-name-label" for="ppg-name">Primeiro nome</label>
+        <input id="ppg-name" class="ppg-dark-input ppg-name-input" maxlength="24" autocomplete="off" placeholder="Digite o primeiro nome" required>
+        <p class="ppg-hint">Esse nome será usado no endereço da ficha, por exemplo: /daniel</p>
+      </div>
+    </div>
+    <section class="ppg-skills" aria-label="Habilidades">
+      <div class="ppg-skill" data-skill="Atendimento"><span class="ppg-skill-icon">◎</span><span class="ppg-skill-name">Atendimento:</span><div class="ppg-stars" role="group" aria-label="Atendimento, de zero a cinco estrelas"></div></div>
+      <div class="ppg-skill" data-skill="Informática"><span class="ppg-skill-icon">▣</span><span class="ppg-skill-name">Informática:</span><div class="ppg-stars" role="group" aria-label="Informática, de zero a cinco estrelas"></div></div>
+      <div class="ppg-skill" data-skill="CorelDraw"><span class="ppg-skill-icon">✎</span><span class="ppg-skill-name">CorelDraw:</span><div class="ppg-stars" role="group" aria-label="CorelDraw, de zero a cinco estrelas"></div></div>
+      <div class="ppg-skill" data-skill="Impressora"><span class="ppg-skill-icon">▤</span><span class="ppg-skill-name">Impressora:</span><div class="ppg-stars" role="group" aria-label="Impressora, de zero a cinco estrelas"></div></div>
+      <div class="ppg-skill" data-skill="Disposição"><span class="ppg-skill-icon">✿</span><span class="ppg-skill-name">Disposição:</span><div class="ppg-stars" role="group" aria-label="Disposição, de zero a cinco estrelas"></div></div>
+      <div class="ppg-skill" data-skill="Design"><span class="ppg-skill-icon">♧</span><span class="ppg-skill-name">Design:</span><div class="ppg-stars" role="group" aria-label="Design, de zero a cinco estrelas"></div></div>
+      <div class="ppg-skill" data-skill="Atenção"><span class="ppg-skill-icon">◆</span><span class="ppg-skill-name">Atenção:</span><div class="ppg-stars" role="group" aria-label="Atenção, de zero a cinco estrelas"></div></div>
+      <div class="ppg-skill" data-skill="Carisma"><span class="ppg-skill-icon">▰</span><span class="ppg-skill-name">Carisma:</span><div class="ppg-stars" role="group" aria-label="Carisma, de zero a cinco estrelas"></div></div>
+      <div class="ppg-skill" data-skill="Trab. Equipe"><span class="ppg-skill-icon">♟</span><span class="ppg-skill-name">Trab. Equipe:</span><div class="ppg-stars" role="group" aria-label="Trabalho em equipe, de zero a cinco estrelas"></div></div>
+    </section>
+    <section class="ppg-hobbies">
+      <span class="ppg-heart">♥</span>
+      <label for="ppg-hobbies">Hobbies:</label>
+      <textarea id="ppg-hobbies" rows="2" maxlength="110" placeholder="Digite os hobbies (até 2 linhas)"></textarea>
+      <small>Máximo de 2 linhas.</small>
+    </section>
+    <p id="ppg-status" class="ppg-status" role="status" aria-live="polite"></p>
+  </section>
+</main>
+<script src="../assets/gamificacao.js"></script>
+</body>
+</html>

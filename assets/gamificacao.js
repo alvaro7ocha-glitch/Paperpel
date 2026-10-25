@@ -94,6 +94,7 @@
         status.textContent = `Ficha de ${name} salva com sucesso! Endereço: /${slug}`;
         window.history.pushState({}, "", `/${slug}`);
       } else {
+        // Mostra o erro exato que veio do servidor (ex: mensagem do PostgreSQL)
         status.textContent = `Erro do servidor: ${result.erro || "Desconhecido"}`;
       }
     } catch (err) {

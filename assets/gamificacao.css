@@ -6,14 +6,8 @@
 }
 
 :root{--ink:#48250d;--edge:#63320d;--gold:#f8d37a}*{box-sizing:border-box}
-body {
-    margin: 0;
-    min-height: 100vh;
-    /* Substitui o background antigo pela sua imagem de pergaminho */
-    background: url('pecas-retro/24_fundo_pergaminho.png') center center / cover fixed no-repeat;
-    font-family: 'Retro Gaming', 'Roboto Slab', Georgia, serif;
-    color: var::(--ink);
-}
+body{margin:0;min-height:100vh;background:#f7f7f7 url('background-paper.png') center center / cover fixed no-repeat;font-family:'Retro Gaming','Roboto Slab',Georgia,serif;color:var(--ink)}
+button,input,textarea{font:inherit}
 
 .ppg-app{width:390px;max-width:calc(100vw - 24px);margin:24px auto;background:#bd7b29;border:4px solid #5d2d0a;border-radius:13px;box-shadow:0 0 0 3px #e7ad4a,0 12px 28px #39220a44;overflow:hidden}
 
@@ -23,7 +17,15 @@ body {
 .ppg-window-actions{display:flex;gap:5px}
 .ppg-window-actions button{width:33px;height:33px;background:linear-gradient(#198ee4,#0354a9);color:#fff;font-size:24px;line-height:1;border:2px solid #c0e4ff;border-radius:6px;box-shadow:inset 0 0 0 2px #06427e;cursor:pointer}
 
-.ppg-card{position:relative;padding:17px 15px 14px;background:repeating-linear-gradient(0deg,transparent 0 6px,#aa6b1510 7px 8px),linear-gradient(110deg,#e8b965,#ffe5a1 48%,#e5b05a);border:7px ridge #a86a21;outline:2px solid #552707;outline-offset:-11px}
+/* Fundo da ficha utilizando o pergaminho (pecas-retro/24_fundo_pergaminho.png) */
+.ppg-card{
+    position: relative;
+    padding: 17px 15px 14px;
+    background: url('pecas-retro/24_fundo_pergaminho.png') center/100% 100% no-repeat !important;
+    border: 7px ridge #a86a21;
+    outline: 2px solid #552707;
+    outline-offset: -11px;
+}
 .ppg-card:before,.ppg-card:after{content:'❧';position:absolute;color:#7c420e;font-size:28px;line-height:1;pointer-events:none}
 .ppg-card:before{left:9px;top:3px}
 .ppg-card:after{right:9px;bottom:1px;transform:rotate(180deg)}
@@ -50,7 +52,7 @@ body {
     box-shadow: none !important;
 }
 
-/* NOME com HUD um pouco maior e cor #FDF0B9 */
+/* NOME com HUD maior e cor #FDF0B9 */
 #ppg-name {
     width: 100% !important;
     height: 38px !important;

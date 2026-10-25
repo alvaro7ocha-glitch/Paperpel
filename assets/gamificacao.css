@@ -28,24 +28,38 @@ button,input,textarea{font:inherit}
 .ppg-photo-frame img[hidden]{display:none}
 .ppg-photo-frame #ppg-photo-placeholder{display:none}
 
-.ppg-identity{display:flex;flex-direction:column;gap:3px;min-width:0;position:relative;top:2px}
+.ppg-identity{display:flex;flex-direction:column;gap:5px;min-width:0;position:relative;top:2px}
 .ppg-identity label{font-size:13px;font-weight:800;color:#5a3825}
 
-/* HUD do nome forçada com pecas-retro/19_campo_texto.png */
-.ppg-identity input{
+/* CLASSE limpa, sem HUD */
+#ppg-class {
+    width: 65px !important;
+    height: 28px !important;
+    border: 2px solid #a86b27 !important;
+    border-radius: 2px !important;
+    background: #5a2c12 !important;
+    color: #FDF0B9 !important;
+    padding: 2px 6px !important;
+    font-size: 1.1rem !important;
+    outline: none !important;
+}
+
+/* NOME com HUD maior e cor #FDF0B9 */
+#ppg-name {
     width: 100% !important;
-    height: 32px !important;
+    height: 36px !important;
     border: 0 !important;
     border-radius: 0 !important;
-    padding: 4px 10px !important;
+    padding: 6px 12px !important;
     background: transparent url('pecas-retro/19_campo_texto.png') center/100% 100% no-repeat !important;
-    color: #5a3825 !important;
-    font-size: 0.85rem !important;
+    color: #FDF0B9 !important;
+    font-size: 0.95rem !important;
     outline: none !important;
     font-family: 'Retro Gaming', monospace !important;
     box-shadow: none !important;
 }
-.ppg-identity input::placeholder{color:#a57a55}
+
+.ppg-identity input::placeholder{color:#d9b48b}
 .ppg-hint{display:none}
 
 .ppg-skills{border:5px ridge #9e611d;box-shadow:0 0 0 2px #532707;background:#f5d48c;padding:8px 7px;margin:0 3px 15px}
@@ -72,7 +86,7 @@ button,input,textarea{font:inherit}
 .ppg-star:not(.is-filled){background-image:url('pecas-retro/07_estrelas_vazias.png');color:transparent}
 .ppg-star:hover{filter:brightness(1.12)}
 
-/* Painel de Hobbies: zera completamente qualquer caixa marrom extra e usa o painel PNG */
+/* Painel de Hobbies limpo */
 .ppg-hobbies{
     display: flex !important;
     gap: 0 !important;

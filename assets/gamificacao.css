@@ -30,7 +30,8 @@ button,input,textarea{font:inherit}
 
 .ppg-identity{display:flex;flex-direction:column;gap:3px;min-width:0;position:relative;top:2px}
 .ppg-identity label{font-size:13px;font-weight:800;color:#5a3825}
-.ppg-identity input{width:100%;height:32px;border:0;border-radius:2px;padding:4px 10px;background:url('pecas-retro/19_campo_texto.png') center/100% 100% no-repeat;color:#FDF0B9;font-size:0.9rem;outline:none;font-family:'Retro Gaming',monospace}
+/* HUD do nome ajustada apontando corretamente para pecas-retro/19_campo_texto.png */
+.ppg-identity input{width:100%;height:32px;border:0 !important;border-radius:2px;padding:4px 10px;background:#5a2c12 url('pecas-retro/19_campo_texto.png') center/100% 100% no-repeat !important;color:#FDF0B9;font-size:0.9rem;outline:none;font-family:'Retro Gaming',monospace;box-shadow:none !important;}
 .ppg-identity input::placeholder{color:#e3bf8d}
 .ppg-hint{display:none}
 
@@ -39,7 +40,7 @@ button,input,textarea{font:inherit}
 .ppg-skill:last-child{border-bottom:0}
 .ppg-skill-icon{font-size:0;width:27px;height:27px;background-size:100% 100%;background-position:center;background-repeat:no-repeat}
 
-/* Ícones das Habilidades (com Destreza no lugar de Impressora) */
+/* Ícones das Habilidades */
 .ppg-skill:nth-child(1) .ppg-skill-icon{background-image:url('pecas-retro/08_icone_atendimento.png')}
 .ppg-skill:nth-child(2) .ppg-skill-icon{background-image:url('pecas-retro/09_icone_informatica.png')}
 .ppg-skill:nth-child(3) .ppg-skill-icon{background-image:url('pecas-retro/10_icone_coreldraw.png')}
@@ -58,12 +59,12 @@ button,input,textarea{font:inherit}
 .ppg-star:not(.is-filled){background-image:url('pecas-retro/07_estrelas_vazias.png');color:transparent}
 .ppg-star:hover{filter:brightness(1.12)}
 
-/* Hobbies limpo sem caixa marrom indesejada de fundo */
-.ppg-hobbies{display:flex;gap:10px;min-height:85px;margin:0 3px;border:5px ridge #a66a23;box-shadow:none;background:#50250f url('pecas-retro/20_painel_hobbies.png') center/100% 100% no-repeat;color:#ffebad;padding:9px}
+/* Painel de Hobbies limpo sem a caixa marrom indesejada de fundo */
+.ppg-hobbies{display:flex;gap:10px;min-height:85px;margin:0 3px;border:0 !important;outline:0 !important;box-shadow:none !important;background:#50250f url('pecas-retro/20_painel_hobbies.png') center/100% 100% no-repeat !important;color:#ffebad;padding:9px}
 .ppg-heart{display:none}
-.ppg-hobby-fields{flex:1;min-width:0;background:none !important;border:none !important;box-shadow:none !important}
+.ppg-hobby-fields{flex:1;min-width:0;background:none !important;border:none !important;box-shadow:none !important;outline:none !important}
 .ppg-hobby-fields label{display:none}
-.ppg-hobbies textarea{display:block;width:88%;height:43px;resize:none;border:0;outline:0;background:transparent;color:#FDF0B9;font-size:0.85rem;line-height:1.4;margin:18px auto 0 auto;font-family:'Retro Gaming',monospace}
+.ppg-hobbies textarea{display:block;width:88%;height:43px;resize:none;border:0 !important;outline:0 !important;background:transparent !important;box-shadow:none !important;color:#FDF0B9;font-size:0.85rem;line-height:1.4;margin:18px auto 0 auto;font-family:'Retro Gaming',monospace}
 .ppg-hobbies textarea::placeholder{color:#d9b48b}
 
 #ppg-status{min-height:14px;margin:9px 6px 0;font-size:10px;font-weight:700;line-height:1.3}

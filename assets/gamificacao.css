@@ -31,26 +31,26 @@ button,input,textarea{font:inherit}
 .ppg-identity{display:flex;flex-direction:column;gap:5px;min-width:0;position:relative;top:2px}
 .ppg-identity label{font-size:13px;font-weight:800;color:#5a3825}
 
-/* CLASSE limpa, sem HUD */
+/* CLASSE sem caixa marrom (fundo transparente) e com cor da fonte #5a3825 */
 #ppg-class {
     width: 65px !important;
     height: 28px !important;
-    border: 2px solid #a86b27 !important;
-    border-radius: 2px !important;
-    background: #5a2c12 !important;
-    color: #FDF0B9 !important;
-    padding: 2px 6px !important;
+    border: none !important;
+    background: transparent !important;
+    color: #5a3825 !important;
+    padding: 2px 4px !important;
     font-size: 1.1rem !important;
     outline: none !important;
+    box-shadow: none !important;
 }
 
-/* NOME com HUD maior e cor #FDF0B9 */
+/* NOME com HUD um pouco maior e cor #FDF0B9 */
 #ppg-name {
     width: 100% !important;
-    height: 36px !important;
+    height: 38px !important;
     border: 0 !important;
     border-radius: 0 !important;
-    padding: 6px 12px !important;
+    padding: 6px 14px !important;
     background: transparent url('pecas-retro/19_campo_texto.png') center/100% 100% no-repeat !important;
     color: #FDF0B9 !important;
     font-size: 0.95rem !important;

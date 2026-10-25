@@ -8,7 +8,9 @@
   };
   const skills = [...document.querySelectorAll(".ppg-skill")];
   let photoData = "";
-  const API_URL = "https://paperpel-api.onrender.com";
+  
+  // Atualizado para o novo Web Service isolado na Render (mantendo o bot do Typebot 100% intacto)
+  const API_URL = "https://paperpel-api-ficha.onrender.com";
 
   // Inicialização das Estrelas
   skills.forEach(row => {

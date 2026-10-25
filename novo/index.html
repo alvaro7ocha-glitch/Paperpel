@@ -1,4 +1,11 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nova ficha — Paperpel</title><link rel="stylesheet" href="../assets/gamificacao.css?v=20261024-pecas1"><style>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nova ficha — Paperpel</title>
+<link rel="stylesheet" href="../assets/gamificacao.css?v=20261024-pecas1">
+<style>
 @font-face {
     font-family: 'Retro Gaming';
     src: url('../assets/fonts/Retro Gaming.ttf') format('truetype');
@@ -16,13 +23,98 @@ body, input, textarea, button, .ppg-app {
     height: 100%;
     object-fit: cover;
 }
-/* Correção da proporção das estrelas */
-.ppg-stars img, .ppg-stars svg, .ppg-stars span {
-    width: 18px;
-    height: 18px;
-    object-fit: contain;
+
+/* ==========================================================================
+   MELHORIAS E AJUSTES DE LAYOUT (CONFORME SOLICITADO)
+   ========================================================================== */
+
+/* Translação leve de toda a área de conteúdo para a direita para dar mais harmonia */
+.ppg-card {
+    padding-left: 12px !important;
 }
-</style></head><body>
-<main class="ppg-app" aria-label="Ficha de funcionário"><header class="ppg-windowbar" style="background-color: #2b5797;"><div class="ppg-window-title"><span class="ppg-medal">★</span> Ficha</div><div class="ppg-window-actions"><button id="ppg-save" title="Salvar ficha" aria-label="Salvar ficha">▣</button><button id="ppg-minimize" title="Minimizar" aria-label="Minimizar">−</button><button id="ppg-close" title="Fechar" aria-label="Fechar">×</button></div></header>
-<div class="ppg-card"><section class="ppg-top"><button class="ppg-photo-frame" id="ppg-photo-button" type="button" title="Escolher foto"><img id="ppg-photo-preview" alt="Foto escolhida" hidden></button><input id="ppg-photo-file" type="file" accept="image/*" hidden><div class="ppg-identity"><div style="display: flex; align-items: center; gap: 6px;"><label for="ppg-class" style="margin: 0; font-weight: bold; color: #5a3825;">CLASSE</label><input id="ppg-class" maxlength="3" placeholder="S" autocomplete="off" style="border: none; background: transparent; outline: none; width: 60px; font-size: 1.2rem; font-weight: bold; color: #5a3825; font-family: 'Retro Gaming', monospace;"></div><div style="margin-top: 6px; background-image: url('../assets/19_campo_texto.png'); background-size: 100% 100%; background-repeat: no-repeat; padding: 4px 10px; width: 175px; height: 30px; display: flex; align-items: center;"><input id="ppg-name" maxlength="24" placeholder="Alvaro" autocomplete="off" style="border: none; background: transparent; outline: none; width: 100%; font-size: 0.85rem; color: #5a3825; font-family: 'Retro Gaming', monospace;"></div><!-- Nome usado na futura URL da ficha --></div></section>
-<section class="ppg-skills" aria-label="Habilidades"><div class="ppg-skill" data-skill="Atendimento"><span class="ppg-skill-icon">◎</span><span class="ppg-skill-name">ATENDIMENTO</span><div class="ppg-stars" role="group" aria-label="ATENDIMENTO: até cinco estrelas"></div></div><div class="ppg-skill" data-skill="Informática"><span class="ppg-skill-icon">▣</span><span class="ppg-skill-name">INFORMÁTICA</span><div class="ppg-stars" role="group" aria-label="INFORMÁTICA: até cinco estrelas"></div></div><div class="ppg-skill" data-skill="CorelDraw"><span class="ppg-skill-icon">✎</span><span class="ppg-skill-name">CORELDRAW</span><div class="ppg-stars" role="group" aria-label="CORELDRAW: até cinco estrelas"></div></div><div class="ppg-skill" data-skill="Destreza"><span class="ppg-skill-icon">▤</span><span class="ppg-skill-name">DESTREZA</span><div class="ppg-stars" role="group" aria-label="DESTREZA: até cinco estrelas"></div></div><div class="ppg-skill" data-skill="Disposição"><span class="ppg-skill-icon">✦</span><span class="ppg-skill-name">DISPOSIÇÃO</span><div class="ppg-stars" role="group" aria-label="DISPOSIÇÃO: até cinco estrelas"></div></div><div class="ppg-skill" data-skill="Design"><span class="ppg-skill-icon">✿</span><span class="ppg-skill-name">DESIGN</span><div class="ppg-stars" role="group" aria-label="DESIGN: até cinco estrelas"></div></div><div class="ppg-skill" data-skill="Atenção"><span class="ppg-skill-icon">◈</span><span class="ppg-skill-name">ATENÇÃO</span><div class="ppg-stars" role="group" aria-label="ATENÇÃO: até cinco estrelas"></div></div><div class="ppg-skill" data-skill="Carisma"><span class="ppg-skill-icon">☻</span><span class="ppg-skill-name">CARISMA</span><div class="ppg-stars" role="group" aria-label="CARISMA: até cinco estrelas"></div></div><div class="ppg-skill" data-skill="Trab. Equipe"><span class="ppg-skill-icon">♟</span><span class="ppg-skill-name">TRAB. EQUIPE</span><div class="ppg-stars" role="group" aria-label="TRAB. EQUIPE: até cinco estrelas"></div></div></section><section class="ppg-hobbies"><div class="ppg-hobby-fields" style="background: none; border: none; padding: 0;"><textarea id="ppg-hobbies" rows="2" maxlength="110" placeholder="Digite seus hobbies..." style="border: none; background: transparent; outline: none; width: 88%; resize: none; display: block; margin: 12px auto 0 auto; color: #FDF0B9; font-size: 0.85rem; font-family: 'Retro Gaming', monospace;"></textarea></div></section><p id="ppg-status" role="status" aria-live="polite"></p></div></main><script src="../assets/gamificacao.js?v=20261024-pecas1"></script></body></html>
+
+/* Ajuste fino dos blocos de habilidades e estrelas para desachatar */
+.ppg-skills {
+    width: 96% !important; /* Puxa levemente para a esquerda */
+}
+.ppg-skill {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 5px !important;
+}
+.ppg-stars {
+    display: flex !important;
+    gap: 3px !important;
+}
+.ppg-stars img, .ppg-stars svg, .ppg-stars span {
+    width: 20px !important;   /* Ampliado de 18px para 20px para desachatar */
+    height: 20px !important;  /* Proporção corrigida das estrelas */
+    object-fit: contain !important;
+}
+
+/* Remoção completa da faixa/fundo marrom indesejada no rodapé */
+.ppg-hobbies {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+</style>
+</head>
+<body>
+<main class="ppg-app" aria-label="Ficha de funcionário">
+<header class="ppg-windowbar" style="background-color: #2b5797;">
+    <div class="ppg-window-title"><span class="ppg-medal">★</span> Ficha</div>
+    <div class="ppg-window-actions">
+        <button id="ppg-save" title="Salvar ficha" aria-label="Salvar ficha">▣</button>
+        <button id="ppg-minimize" title="Minimizar" aria-label="Minimizar">−</button>
+        <button id="ppg-close" title="Fechar" aria-label="Fechar">×</button>
+    </div>
+</header>
+
+<div class="ppg-card">
+    <section class="ppg-top">
+        <button class="ppg-photo-frame" id="ppg-photo-button" type="button" title="Escolher foto">
+            <img id="ppg-photo-preview" alt="Foto escolhida" hidden>
+        </button>
+        <input id="ppg-photo-file" type="file" accept="image/*" hidden>
+        
+        
+            <!-- Classe S: Adicionado margin-top para mover um pouco mais para baixo -->
+            <div style="display: flex; align-items: center; gap: 6px; margin-top: 10px;">
+                <label for="ppg-class" style="margin: 0; font-weight: bold; color: #5a3825;">CLASSE</label>
+                <input id="ppg-class" maxlength="3" placeholder="S" autocomplete="off" style="border: none; background: transparent; outline: none; width: 60px; font-size: 1.2rem; font-weight: bold; color: #5a3825; font-family: 'Retro Gaming', monospace;">
+            </div>
+            
+            <!-- Caixa do Nome HUD: Alterada a cor da fonte para #FDF0B9 (creme) para dar sentido ao fundo escuro -->
+            <div style="margin-top: 8px; background-image: url('../assets/19_campo_texto.png'); background-size: 100% 100%; background-repeat: no-repeat; padding: 4px 10px; width: 175px; height: 30px; display: flex; align-items: center;">
+                <input id="ppg-name" maxlength="24" placeholder="Alvaro" autocomplete="off" style="border: none; background: transparent; outline: none; width: 100%; font-size: 0.85rem; color: #FDF0B9; font-family: 'Retro Gaming', monospace;">
+            </div>
+        </div>
+    </section>
+
+    <section class="ppg-skills" aria-label="Habilidades">
+        <div class="ppg-skill" data-skill="Atendimento"><span class="ppg-skill-icon">◎</span><span class="ppg-skill-name">ATENDIMENTO</span><div class="ppg-stars" role="group" aria-label="ATENDIMENTO: até cinco estrelas"></div></div>
+        <div class="ppg-skill" data-skill="Informática"><span class="ppg-skill-icon">▣</span><span class="ppg-skill-name">INFORMÁTICA</span><div class="ppg-stars" role="group" aria-label="INFORMÁTICA: até cinco estrelas"></div></div>
+        <div class="ppg-skill" data-skill="CorelDraw"><span class="ppg-skill-icon">✎</span><span class="ppg-skill-name">CORELDRAW</span><div class="ppg-stars" role="group" aria-label="CORELDRAW: até cinco estrelas"></div></div>
+        <div class="ppg-skill" data-skill="Destreza"><span class="ppg-skill-icon">▤</span><span class="ppg-skill-name">DESTREZA</span><div class="ppg-stars" role="group" aria-label="DESTREZA: até cinco estrelas"></div></div>
+        <div class="ppg-skill" data-skill="Disposição"><span class="ppg-skill-icon">✦</span><span class="ppg-skill-name">DISPOSIÇÃO</span><div class="ppg-stars" role="group" aria-label="DISPOSIÇÃO: até cinco estrelas"></div></div>
+        <div class="ppg-skill" data-skill="Design"><span class="ppg-skill-icon">✿</span><span class="ppg-skill-name">DESIGN</span><div class="ppg-stars" role="group" aria-label="DESIGN: até cinco estrelas"></div></div>
+        <div class="ppg-skill" data-skill="Atenção"><span class="ppg-skill-icon">◈</span><span class="ppg-skill-name">ATENÇÃO</span><div class="ppg-stars" role="group" aria-label="ATENÇÃO: até cinco estrelas"></div></div>
+        <div class="ppg-skill" data-skill="Carisma"><span class="ppg-skill-icon">☻</span><span class="ppg-skill-name">CARISMA</span><div class="ppg-stars" role="group" aria-label="CARISMA: até cinco estrelas"></div></div>
+        <div class="ppg-skill" data-skill="Trab. Equipe"><span class="ppg-skill-icon">♟</span><span class="ppg-skill-name">TRAB. EQUIPE</span><div class="ppg-stars" role="group" aria-label="TRAB. EQUIPE: até cinco estrelas"></div></div>
+    </section>
+
+    <section class="ppg-hobbies">
+        <div class="ppg-hobby-fields" style="background: none; border: none; padding: 0;">
+            <!-- Hobbies: margem superior alterada de 12px para 32px para empurrar o texto perfeitamente para baixo -->
+            <textarea id="ppg-hobbies" rows="2" maxlength="110" placeholder="Digite seus hobbies..." style="border: none; background: transparent; outline: none; width: 88%; resize: none; display: block; margin: 32px auto 0 auto; color: #FDF0B9; font-size: 0.85rem; font-family: 'Retro Gaming', monospace;"></textarea>
+        </div>
+    </section>
+
+    <p id="ppg-status" role="status" aria-live="polite"></p>
+</div>
+</main>
+<script src="../assets/gamificacao.js?v=20261024-pecas1"></script>
+</body>
+</html>

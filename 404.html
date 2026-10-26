@@ -1,161 +1,72 @@
-/* PAPERPEL GAMIFICAÇÃO — Integração com API e Neon */
-(() => {
-  const $ = (id) => document.getElementById(id);
-  const app = document.querySelector(".ppg-app");
-  const status = $("ppg-status");
-  const fields = {
-    name: $("ppg-name"), classe: $("ppg-class"), hobbies: $("ppg-hobbies")
-  };
-  const skills = [...document.querySelectorAll(".ppg-skill")];
-  let photoData = "";
-  
-  // Atualizado para o novo Web Service isolado na Render (mantendo o bot do Typebot 100% intacto)
-const API_URL = "https://paperpel-api.onrender.com";
-
-  // Inicialização das Estrelas
-  skills.forEach(row => {
-    const group = row.querySelector(".ppg-stars");
-    for (let n = 1; n <= 5; n++) {
-      const star = document.createElement("button");
-      star.type = "button"; star.className = "ppg-star"; star.textContent = "★";
-      star.setAttribute("aria-label", `${n} de 5 estrelas`);
-      star.setAttribute("aria-pressed", "false");
-      star.addEventListener("click", () => {
-        if (app.classList.contains("ppg-readonly")) return; // Impede edição em modo somente leitura
-        const current = Number(group.dataset.value || 0);
-        const value = current === n ? 0 : n;
-        group.dataset.value = String(value);
-        [...group.children].forEach((s, i) => {
-          s.classList.toggle("is-filled", i < value);
-          s.setAttribute("aria-pressed", String(i < value));
-        });
-      });
-      group.appendChild(star);
-    }
-  });
-
-  // Upload da Foto
-  const photoBtn = $("ppg-photo-button");
-  const photoFile = $("ppg-photo-file");
-  if (photoBtn && photoFile) {
-    photoBtn.addEventListener("click", () => photoFile.click());
-    photoFile.addEventListener("change", e => {
-      const file = e.target.files?.[0]; if (!file) return;
-      if (!file.type.startsWith("image/")) { status.textContent = "Selecione um arquivo de imagem."; return; }
-      if (file.size > 3 * 1024 * 1024) { status.textContent = "A foto deve ter até 3 MB."; return; }
-      const reader = new FileReader();
-      reader.onload = () => {
-        photoData = String(reader.result);
-        $("ppg-photo-preview").src = photoData;
-        $("ppg-photo-preview").hidden = false;
-        $("ppg-photo-placeholder").hidden = true;
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-
-  // Validação dos Inputs
-  fields.classe.addEventListener("input", () => {
-    fields.classe.value = fields.classe.value.replace(/[^a-z]/gi, "").slice(0, 3).toUpperCase();
-  });
-  fields.hobbies.addEventListener("input", () => {
-    const lines = fields.hobbies.value.split(/\r?\n/).slice(0, 2);
-    fields.hobbies.value = lines.join("\n");
-  });
-
-  const slugify = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-
-  // Ação do Botão Salvar
-  $("ppg-save").addEventListener("click", async () => {
-    const name = fields.name.value.trim(), slug = slugify(name);
-    if (!name || !slug) { status.textContent = "Digite o primeiro nome antes de salvar."; fields.name.focus(); return; }
-
-    const ratings = {};
-    skills.forEach(row => ratings[row.dataset.skill] = Number(row.querySelector(".ppg-stars").dataset.value || 0));
-
-    const record = {
-      name, slug,
-      classe: fields.classe.value.trim().slice(0, 3),
-      hobbies: fields.hobbies.value,
-      ratings,
-      photo: photoData,
-      updatedAt: new Date().toISOString()
-    };
-
-    status.textContent = "A salvar na nuvem (Neon)...";
-
-    try {
-      const response = await fetch(`${API_URL}/api/fichas`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(record)
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        status.textContent = `Ficha de ${name} salva com sucesso! Endereço: /${slug}`;
-        window.history.pushState({}, "", `/${slug}`);
-      } else {
-        // Mostra o erro exato que veio do servidor (ex: mensagem do PostgreSQL)
-        status.textContent = `Erro do servidor: ${result.erro || "Desconhecido"}`;
-      }
-    } catch (err) {
-      console.error(err);
-      status.textContent = `Erro de rede: ${err.message}`;
-    }
-  });
-
-  $("ppg-minimize").addEventListener("click", () => app.classList.toggle("ppg-minimized"));
-  $("ppg-close").addEventListener("click", () => {
-    if (confirm("Fechar a ficha?")) location.href = "../";
-  });
-
-  // Leitura e Busca por Slug na Nuvem (Ex: /alvaro)
-  const pathSegments = location.pathname.split("/").filter(Boolean);
-  const requested = decodeURIComponent(pathSegments.pop() || "");
-
-  if (requested && requested !== "novo") {
-    status.textContent = "A carregar ficha da nuvem...";
-    fetch(`${API_URL}/api/fichas/${slugify(requested)}`)
-      .then(res => {
-        if (!res.ok) throw new Error("Ficha não encontrada");
-        return res.json();
-      })
-      .then(rec => {
-        fields.name.value = rec.name;
-        fields.classe.value = rec.classe || "";
-        fields.hobbies.value = rec.hobbies || "";
-        photoData = rec.photo || "";
-
-        if (photoData) {
-          $("ppg-photo-preview").src = photoData;
-          $("ppg-photo-preview").hidden = false;
-          $("ppg-photo-placeholder").hidden = true;
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha Retrô — Paperpel</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        body {
+            background-color: #0d1b2a;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
         }
+        .ppg-app {
+            background: #2b1d0c;
+            border: 4px solid #d4af37;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+        }
+        .ppg-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .ppg-status {
+            color: #d4af37;
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
 
-        skills.forEach(row => {
-          const v = Number(rec.ratings?.[row.dataset.skill] || 0);
-          const g = row.querySelector(".ppg-stars");
-          g.dataset.value = v;
-          [...g.children].forEach((s, i) => {
-            s.classList.toggle("is-filled", i < v);
-            s.setAttribute("aria-pressed", String(i < v));
-          });
-        });
+    <div class="ppg-app" id="ppg-app">
+        <div class="ppg-header">
+            <h2>Ficha do Aventureiro</h2>
+        </div>
+        
+        <div id="ppg-status" class="ppg-status">A carregar ficha da nuvem...</div>
 
-        // Modo somente leitura
-        app.classList.add("ppg-readonly");
-        fields.name.setAttribute("readonly", true);
-        fields.classe.setAttribute("readonly", true);
-        fields.hobbies.setAttribute("readonly", true);
-        if (photoBtn) photoBtn.style.display = "none";
-        $("ppg-save").style.display = "none";
+        <!-- Estrutura simplificada para renderização dos dados da API -->
+        <div style="margin-top: 20px;">
+            <label><strong>Nome:</strong></label>
+            <input type="text" id="ppg-nome" readonly style="width: 100%; padding: 5px; margin-top: 5px; background: #1a1107; color: #d4af37; border: 1px solid #d4af37;">
+        </div>
 
-        status.textContent = `A visualizar ficha de ${rec.name}`;
-      })
-      .catch(err => {
-        console.error(err);
-        status.textContent = "Ficha não encontrada na nuvem.";
-      });
-  }
-})();
+        <div style="margin-top: 15px;">
+            <label><strong>Classe:</strong></label>
+            <input type="text" id="ppg-classe" readonly style="width: 100%; padding: 5px; margin-top: 5px; background: #1a1107; color: #d4af37; border: 1px solid #d4af37;">
+        </div>
+
+        <div style="margin-top: 15px;">
+            <label><strong>Hobbies:</strong></label>
+            <textarea id="ppg-hobbies" readonly style="width: 100%; padding: 5px; margin-top: 5px; background: #1a1107; color: #d4af37; border: 1px solid #d4af37; resize: none;"></textarea>
+        </div>
+    </div>
+
+    <!-- Script de gamificação que faz a requisição à API da Render -->
+    <script src="../gamificacao.js"></script>
+</body>
+</html>

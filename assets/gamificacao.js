@@ -10,7 +10,7 @@
   let photoData = "";
   
   // Atualizado para o novo Web Service isolado na Render (mantendo o bot do Typebot 100% intacto)
-  const API_URL = "https://paperpel-api-ficha.onrender.com";
+const API_URL = "https://paperpel-api.onrender.com";
 
   // Inicialização das Estrelas
   skills.forEach(row => {

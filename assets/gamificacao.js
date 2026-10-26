@@ -10,7 +10,7 @@
   let photoData = "";
   
   // Atualizado para o novo Web Service isolado na Render (mantendo o bot do Typebot 100% intacto)
-const API_URL = "https://paperpel-api.onrender.com";
+  const API_URL = "https://paperpel-api.onrender.com";
 
   // Inicialização das Estrelas
   skills.forEach(row => {
@@ -96,7 +96,6 @@ const API_URL = "https://paperpel-api.onrender.com";
         status.textContent = `Ficha de ${name} salva com sucesso! Endereço: /${slug}`;
         window.history.pushState({}, "", `/${slug}`);
       } else {
-        // Mostra o erro exato que veio do servidor (ex: mensagem do PostgreSQL)
         status.textContent = `Erro do servidor: ${result.erro || "Desconhecido"}`;
       }
     } catch (err) {
@@ -110,11 +109,15 @@ const API_URL = "https://paperpel-api.onrender.com";
     if (confirm("Fechar a ficha?")) location.href = "../";
   });
 
-  // Leitura e Busca por Slug na Nuvem (Ex: /alvaro)
+  // Leitura e Busca por Slug na Nuvem (Ex: /alvaro) com segurança para o GitHub Pages
   const pathSegments = location.pathname.split("/").filter(Boolean);
-  const requested = decodeURIComponent(pathSegments.pop() || "");
+  let requested = pathSegments.pop() || "";
+  if (requested.endsWith(".html")) {
+    requested = pathSegments.pop() || "";
+  }
+  requested = decodeURIComponent(requested);
 
-  if (requested && requested !== "novo") {
+  if (requested && requested !== "novo" && requested !== "Paperpel") {
     status.textContent = "A carregar ficha da nuvem...";
     fetch(`${API_URL}/api/fichas/${slugify(requested)}`)
       .then(res => {

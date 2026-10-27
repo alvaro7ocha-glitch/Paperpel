@@ -9,7 +9,7 @@
   const skills = [...document.querySelectorAll(".ppg-skill")];
   let photoData = "";
   
-  // Atualizado para o novo Web Service isolado na Render (mantendo o bot do Typebot 100% intacto)
+  // Atualizado para o novo Web Service isolado na Render
   const API_URL = "https://paperpel-api.onrender.com";
 
   // Inicialização das Estrelas
@@ -46,9 +46,13 @@
       const reader = new FileReader();
       reader.onload = () => {
         photoData = String(reader.result);
-        $("ppg-photo-preview").src = photoData;
-        $("ppg-photo-preview").hidden = false;
-        $("ppg-photo-placeholder").hidden = true;
+        const preview = $("ppg-photo-preview");
+        if (preview) {
+          preview.src = photoData;
+          preview.hidden = false;
+        }
+        const placeholder = $("ppg-photo-placeholder");
+        if (placeholder) placeholder.hidden = true;
       };
       reader.readAsDataURL(file);
     });
@@ -65,7 +69,7 @@
 
   const slugify = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
-  // Ação do Botão Salvar (Corrigida para contar visualmente as estrelas preenchidas)
+  // Ação do Botão Salvar
   $("ppg-save").addEventListener("click", async () => {
     const name = fields.name.value.trim(), slug = slugify(name);
     if (!name || !slug) { status.textContent = "Digite o primeiro nome antes de salvar."; fields.name.focus(); return; }
@@ -115,7 +119,7 @@
     if (confirm("Fechar a ficha?")) location.href = "../";
   });
 
-  // Leitura e Busca por Slug na Nuvem (Ex: /alvaro) com segurança para o GitHub Pages
+  // Leitura e Busca por Slug na Nuvem (Ex: /alvaro)
   const pathSegments = location.pathname.split("/").filter(Boolean);
   let requested = pathSegments.pop() || "";
   if (requested.endsWith(".html")) {
@@ -137,9 +141,13 @@
         photoData = rec.photo || "";
 
         if (photoData) {
-          $("ppg-photo-preview").src = photoData;
-          $("ppg-photo-preview").hidden = false;
-          $("ppg-photo-placeholder").hidden = true;
+          const preview = $("ppg-photo-preview");
+          if (preview) {
+            preview.src = photoData;
+            preview.hidden = false;
+          }
+          const placeholder = $("ppg-photo-placeholder");
+          if (placeholder) placeholder.hidden = true;
         }
 
         skills.forEach(row => {

@@ -9,7 +9,7 @@
   const skills = [...document.querySelectorAll(".ppg-skill")];
   let photoData = "";
   
-  // Atualizado para o novo Web Service isolado na Render
+  // URL do Web Service isolado na Render
   const API_URL = "https://paperpel-api.onrender.com";
 
   // Inicialização das Estrelas
@@ -50,6 +50,7 @@
         if (preview) {
           preview.src = photoData;
           preview.hidden = false;
+          preview.style.display = "block";
         }
         const placeholder = $("ppg-photo-placeholder");
         if (placeholder) placeholder.hidden = true;
@@ -145,6 +146,7 @@
           if (preview) {
             preview.src = photoData;
             preview.hidden = false;
+            preview.style.display = "block";
           }
           const placeholder = $("ppg-photo-placeholder");
           if (placeholder) placeholder.hidden = true;

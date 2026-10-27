@@ -137,13 +137,18 @@
         }
 
         skills.forEach(row => {
-          const v = Number(rec.ratings?.[row.dataset.skill] || 0);
+          const skillName = row.dataset.skill;
+          // Lê a pontuação de forma segura contemplando variações de maiúsculas/minúsculas
+          const v = Number(rec.ratings?.[skillName] || rec.ratings?.[skillName.toLowerCase()] || rec.ratings?.[skillName.toUpperCase()] || 0);
           const g = row.querySelector(".ppg-stars");
-          g.dataset.value = v;
-          [...g.children].forEach((s, i) => {
-            s.classList.toggle("is-filled", i < v);
-            s.setAttribute("aria-pressed", String(i < v));
-          });
+          
+          if (g) {
+            g.dataset.value = v;
+            [...g.children].forEach((s, i) => {
+              s.classList.toggle("is-filled", i < v);
+              s.setAttribute("aria-pressed", String(i < v));
+            });
+          }
         });
 
         // Modo somente leitura

@@ -9,8 +9,11 @@
   const skills = [...document.querySelectorAll(".ppg-skill")];
   let photoData = "";
   
-  // URL do Web Service isolado na Render
+  // URL do Web Service na Render
   const API_URL = "https://paperpel-api.onrender.com";
+
+  // Função auxiliar para encontrar a imagem de pré-visualização de forma segura
+  const getPhotoElement = () => $("ppg-photo-preview") || document.querySelector(".ppg-photo img") || document.querySelector(".ppg-avatar img");
 
   // Inicialização das Estrelas
   skills.forEach(row => {
@@ -46,7 +49,7 @@
       const reader = new FileReader();
       reader.onload = () => {
         photoData = String(reader.result);
-        const preview = $("ppg-photo-preview");
+        const preview = getPhotoElement();
         if (preview) {
           preview.src = photoData;
           preview.hidden = false;
@@ -120,7 +123,7 @@
     if (confirm("Fechar a ficha?")) location.href = "../";
   });
 
-  // Leitura e Busca por Slug na Nuvem (Ex: /alvaro)
+  // Leitura e Busca por Slug na Nuvem (Ex: /alvim)
   const pathSegments = location.pathname.split("/").filter(Boolean);
   let requested = pathSegments.pop() || "";
   if (requested.endsWith(".html")) {
@@ -142,7 +145,7 @@
         photoData = rec.photo || "";
 
         if (photoData) {
-          const preview = $("ppg-photo-preview");
+          const preview = getPhotoElement();
           if (preview) {
             preview.src = photoData;
             preview.hidden = false;

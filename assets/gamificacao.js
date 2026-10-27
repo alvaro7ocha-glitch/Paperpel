@@ -65,13 +65,19 @@
 
   const slugify = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
-  // Ação do Botão Salvar
+  // Ação do Botão Salvar (Corrigida para contar visualmente as estrelas preenchidas)
   $("ppg-save").addEventListener("click", async () => {
     const name = fields.name.value.trim(), slug = slugify(name);
     if (!name || !slug) { status.textContent = "Digite o primeiro nome antes de salvar."; fields.name.focus(); return; }
 
     const ratings = {};
-    skills.forEach(row => ratings[row.dataset.skill] = Number(row.querySelector(".ppg-stars").dataset.value || 0));
+    skills.forEach(row => {
+      const skillName = row.dataset.skill;
+      const group = row.querySelector(".ppg-stars");
+      const filledStars = group ? group.querySelectorAll(".ppg-star.is-filled, .is-filled").length : 0;
+      ratings[skillName] = filledStars;
+      if (group) group.dataset.value = String(filledStars);
+    });
 
     const record = {
       name, slug,
@@ -138,7 +144,6 @@
 
         skills.forEach(row => {
           const skillName = row.dataset.skill;
-          // Lê a pontuação de forma segura contemplando variações de maiúsculas/minúsculas
           const v = Number(rec.ratings?.[skillName] || rec.ratings?.[skillName.toLowerCase()] || rec.ratings?.[skillName.toUpperCase()] || 0);
           const g = row.querySelector(".ppg-stars");
           

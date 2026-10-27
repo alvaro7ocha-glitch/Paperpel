@@ -12,18 +12,28 @@
   // URL do Web Service na Render
   const API_URL = "https://paperpel-api.onrender.com";
 
-  // Função robusta para encontrar ou criar a imagem de pré-visualização
-  const getOrCreatePhotoElement = () => {
-    let preview = $("ppg-photo-preview") || document.querySelector(".ppg-photo img") || document.querySelector(".ppg-avatar img");
-    if (!preview) {
-      const container = document.querySelector(".ppg-photo") || document.querySelector(".ppg-avatar");
-      if (container) {
-        preview = document.createElement("img");
-        preview.id = "ppg-photo-preview";
-        container.appendChild(preview);
-      }
-    }
-    return preview;
+  // Função ultra-robusta para encontrar a imagem na ficha
+  const applyPhotoToUI = (base64String) => {
+    if (!base64String) return;
+    
+    // Procura por ID, por classes comuns ou por qualquer <img> dentro da área de perfil
+    const possibleImgs = [
+      $("ppg-photo-preview"),
+      document.querySelector(".ppg-photo img"),
+      document.querySelector(".ppg-avatar img"),
+      document.querySelector(".ppg-card img"),
+      ...document.querySelectorAll("img")
+    ].filter(Boolean);
+
+    possibleImgs.forEach(img => {
+      img.src = base64String;
+      img.hidden = false;
+      img.style.display = "block";
+      img.style.visibility = "visible";
+    });
+
+    const placeholder = $("ppg-photo-placeholder");
+    if (placeholder) placeholder.hidden = true;
   };
 
   // Inicialização das Estrelas
@@ -60,14 +70,7 @@
       const reader = new FileReader();
       reader.onload = () => {
         photoData = String(reader.result);
-        const preview = getOrCreatePhotoElement();
-        if (preview) {
-          preview.src = photoData;
-          preview.hidden = false;
-          preview.style.display = "block";
-        }
-        const placeholder = $("ppg-photo-placeholder");
-        if (placeholder) placeholder.hidden = true;
+        applyPhotoToUI(photoData);
       };
       reader.readAsDataURL(file);
     });
@@ -150,22 +153,13 @@
         return res.json();
       })
       .then(rec => {
-        console.log("Ficha recebida da nuvem:", rec); // Para inspecionar na consola (F12)
-        
         fields.name.value = rec.name;
         fields.classe.value = rec.classe || "";
         fields.hobbies.value = rec.hobbies || "";
         photoData = rec.photo || "";
 
         if (photoData) {
-          const preview = getOrCreatePhotoElement();
-          if (preview) {
-            preview.src = photoData;
-            preview.hidden = false;
-            preview.style.display = "block";
-          }
-          const placeholder = $("ppg-photo-placeholder");
-          if (placeholder) placeholder.hidden = true;
+          applyPhotoToUI(photoData);
         }
 
         skills.forEach(row => {

@@ -12,26 +12,28 @@
   // URL do Web Service na Render
   const API_URL = "https://paperpel-api.onrender.com";
 
-  // Função ultra-robusta para encontrar a imagem na ficha
+  // Função universal para aplicar a foto na interface (suporta <img> e div com background)
   const applyPhotoToUI = (base64String) => {
     if (!base64String) return;
     
-    // Procura por ID, por classes comuns ou por qualquer <img> dentro da área de perfil
-    const possibleImgs = [
-      $("ppg-photo-preview"),
-      document.querySelector(".ppg-photo img"),
-      document.querySelector(".ppg-avatar img"),
-      document.querySelector(".ppg-card img"),
-      ...document.querySelectorAll("img")
-    ].filter(Boolean);
+    // 1. Se houver uma tag <img> dentro da área de foto
+    const imgElement = document.querySelector(".ppg-photo img") || document.querySelector(".ppg-avatar img") || $("ppg-photo-preview");
+    if (imgElement) {
+      imgElement.src = base64String;
+      imgElement.hidden = false;
+      imgElement.style.display = "block";
+    }
 
-    possibleImgs.forEach(img => {
-      img.src = base64String;
-      img.hidden = false;
-      img.style.display = "block";
-      img.style.visibility = "visible";
-    });
+    // 2. Se a própria caixa .ppg-photo for um container de fundo
+    const photoDiv = document.querySelector(".ppg-photo") || document.querySelector(".ppg-avatar");
+    if (photoDiv) {
+      photoDiv.style.backgroundImage = `url(${base64String})`;
+      photoDiv.style.backgroundSize = "cover";
+      photoDiv.style.backgroundPosition = "center";
+      photoDiv.style.backgroundRepeat = "no-repeat";
+    }
 
+    // Esconde o placeholder de texto se existir
     const placeholder = $("ppg-photo-placeholder");
     if (placeholder) placeholder.hidden = true;
   };

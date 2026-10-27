@@ -12,8 +12,19 @@
   // URL do Web Service na Render
   const API_URL = "https://paperpel-api.onrender.com";
 
-  // Função auxiliar para encontrar a imagem de pré-visualização de forma segura
-  const getPhotoElement = () => $("ppg-photo-preview") || document.querySelector(".ppg-photo img") || document.querySelector(".ppg-avatar img");
+  // Função robusta para encontrar ou criar a imagem de pré-visualização
+  const getOrCreatePhotoElement = () => {
+    let preview = $("ppg-photo-preview") || document.querySelector(".ppg-photo img") || document.querySelector(".ppg-avatar img");
+    if (!preview) {
+      const container = document.querySelector(".ppg-photo") || document.querySelector(".ppg-avatar");
+      if (container) {
+        preview = document.createElement("img");
+        preview.id = "ppg-photo-preview";
+        container.appendChild(preview);
+      }
+    }
+    return preview;
+  };
 
   // Inicialização das Estrelas
   skills.forEach(row => {
@@ -24,7 +35,7 @@
       star.setAttribute("aria-label", `${n} de 5 estrelas`);
       star.setAttribute("aria-pressed", "false");
       star.addEventListener("click", () => {
-        if (app.classList.contains("ppg-readonly")) return; // Impede edição em modo somente leitura
+        if (app.classList.contains("ppg-readonly")) return;
         const current = Number(group.dataset.value || 0);
         const value = current === n ? 0 : n;
         group.dataset.value = String(value);
@@ -49,7 +60,7 @@
       const reader = new FileReader();
       reader.onload = () => {
         photoData = String(reader.result);
-        const preview = getPhotoElement();
+        const preview = getOrCreatePhotoElement();
         if (preview) {
           preview.src = photoData;
           preview.hidden = false;
@@ -123,7 +134,7 @@
     if (confirm("Fechar a ficha?")) location.href = "../";
   });
 
-  // Leitura e Busca por Slug na Nuvem (Ex: /alvim)
+  // Leitura e Busca por Slug na Nuvem
   const pathSegments = location.pathname.split("/").filter(Boolean);
   let requested = pathSegments.pop() || "";
   if (requested.endsWith(".html")) {
@@ -139,13 +150,15 @@
         return res.json();
       })
       .then(rec => {
+        console.log("Ficha recebida da nuvem:", rec); // Para inspecionar na consola (F12)
+        
         fields.name.value = rec.name;
         fields.classe.value = rec.classe || "";
         fields.hobbies.value = rec.hobbies || "";
         photoData = rec.photo || "";
 
         if (photoData) {
-          const preview = getPhotoElement();
+          const preview = getOrCreatePhotoElement();
           if (preview) {
             preview.src = photoData;
             preview.hidden = false;

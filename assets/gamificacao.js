@@ -12,20 +12,24 @@
   // URL do Web Service na Render
   const API_URL = "https://paperpel-api.onrender.com";
 
-  // Função universal para aplicar a foto na interface (suporta <img> e div com background)
-  // Função universal para aplicar a foto na interface (suporta <img> e div com background)
+    // Função universal para aplicar a foto na interface (suporta <img> e div com background)
   const applyPhotoToUI = (base64String) => {
     if (!base64String) return;
     
-    // 1. Se houver uma tag <img> dentro da área de foto
-    const imgElement = document.querySelector(".ppg-photo img") || document.querySelector(".ppg-avatar img") || $("ppg-photo-preview");
-    if (imgElement) {
-      // CORREÇÃO: Remove totalmente o atributo 'src' problemático antes de aplicar o novo limpo
-      imgElement.removeAttribute("src"); 
+    // 1. Localiza a tag de imagem bugada que veio do servidor
+    const oldImg = $("ppg-photo-preview");
+    if (oldImg && oldImg.parentNode) {
+      const parent = oldImg.parentNode;
       
-      imgElement.src = base64String;
-      imgElement.hidden = false;
-      imgElement.style.display = "block";
+      // Cria um elemento do zero totalmente limpo e sem duplicidades
+      const newImg = document.createElement("img");
+      newImg.id = "ppg-photo-preview";
+      newImg.alt = "Foto escolhida";
+      newImg.src = base64String;
+      newImg.style.display = "block";
+      
+      // Substitui a tag velha e duplicada pela tag nova e funcional
+      parent.replaceChild(newImg, oldImg);
     }
 
     // 2. Se a própria caixa .ppg-photo for um container de fundo
@@ -41,7 +45,6 @@
     const placeholder = $("ppg-photo-placeholder");
     if (placeholder) placeholder.hidden = true;
   };
-
 
   // Inicialização das Estrelas
   skills.forEach(row => {

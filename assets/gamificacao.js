@@ -13,38 +13,42 @@
   const API_URL = "https://paperpel-api.onrender.com";
 
     // Função universal para aplicar a foto na interface (suporta <img> e div com background)
-  const applyPhotoToUI = (base64String) => {
-    if (!base64String) return;
-    
-    // 1. Localiza a tag de imagem bugada que veio do servidor
-    const oldImg = $("ppg-photo-preview");
-    if (oldImg && oldImg.parentNode) {
-      const parent = oldImg.parentNode;
-      
-      // Cria um elemento do zero totalmente limpo e sem duplicidades
-      const newImg = document.createElement("img");
-      newImg.id = "ppg-photo-preview";
-      newImg.alt = "Foto escolhida";
-      newImg.src = base64String;
-      newImg.style.display = "block";
-      
-      // Substitui a tag velha e duplicada pela tag nova e funcional
-      parent.replaceChild(newImg, oldImg);
-    }
+ const applyPhotoToUI = (base64String) => {
+  const img = document.getElementById("ppg-photo-preview");
 
-    // 2. Se a própria caixa .ppg-photo for um container de fundo
-    const photoDiv = document.querySelector(".ppg-photo") || document.querySelector(".ppg-avatar");
-    if (photoDiv) {
-      photoDiv.style.backgroundImage = `url(${base64String})`;
-      photoDiv.style.backgroundSize = "cover";
-      photoDiv.style.backgroundPosition = "center";
-      photoDiv.style.backgroundRepeat = "no-repeat";
-    }
+  if (!img || !base64String) {
+    console.warn("Foto não encontrada ou conteúdo vazio.");
+    return;
+  }
 
-    // Esconde o placeholder de texto se existir
-    const placeholder = $("ppg-photo-placeholder");
-    if (placeholder) placeholder.hidden = true;
+  img.onload = () => {
+    img.hidden = false;
+    img.style.display = "block";
   };
+
+  img.onerror = () => {
+    console.error("Não foi possível exibir a foto.");
+    status.textContent = "Erro ao carregar a foto.";
+  };
+
+  img.src = base64String;
+
+  // Exibe a imagem e mantém o enquadramento original.
+  img.hidden = false;
+  img.style.display = "block";
+  img.style.width = "100%";
+  img.style.height = "100%";
+  img.style.objectFit = "cover";
+
+  const placeholder = document.getElementById(
+    "ppg-photo-placeholder"
+  );
+
+  if (placeholder) {
+    placeholder.hidden = true;
+  }
+};
+
 
   // Inicialização das Estrelas
   skills.forEach(row => {

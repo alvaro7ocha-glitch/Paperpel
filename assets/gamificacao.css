@@ -156,6 +156,7 @@ textarea {
 }
 
 /* CORREÇÃO: quadro da foto com dimensões fixas */
+
 .ppg-photo-frame {
   display: block;
   width: 100px;
@@ -179,6 +180,7 @@ textarea {
   height: 100%;
   object-fit: cover;
 }
+
 
 #ppg-photo-preview[hidden] {
   display: none !important;

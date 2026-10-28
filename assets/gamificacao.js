@@ -1,208 +1,328 @@
-/* PAPERPEL GAMIFICAÇÃO — Integração com API e Neon */
+
+/* PAPERPEL GAMIFICAÇÃO — API, fichas e fotos */
 (() => {
-  const $ = (id) => document.getElementById(id);
+  "use strict";
+
+  const $ = id => document.getElementById(id);
   const app = document.querySelector(".ppg-app");
   const status = $("ppg-status");
+
   const fields = {
-    name: $("ppg-name"), classe: $("ppg-class"), hobbies: $("ppg-hobbies")
+    name: $("ppg-name"),
+    classe: $("ppg-class"),
+    hobbies: $("ppg-hobbies")
   };
+
   const skills = [...document.querySelectorAll(".ppg-skill")];
-  let photoData = "";
-  
-  // URL do Web Service na Render
+  const photoBtn = $("ppg-photo-button");
+  const photoFile = $("ppg-photo-file");
+  const photoImg = $("ppg-photo-preview");
+  const saveBtn = $("ppg-save");
+
   const API_URL = "https://paperpel-api.onrender.com";
+  let photoData = "";
 
-    // Função universal para aplicar a foto na interface (suporta <img> e div com background)
- const applyPhotoToUI = (base64String) => {
-  const img = document.getElementById("ppg-photo-preview");
-
-  if (!img || !base64String) {
-    console.warn("Foto não encontrada ou conteúdo vazio.");
-    return;
+  function setStatus(message) {
+    if (status) status.textContent = message;
   }
 
-  img.onload = () => {
-    img.hidden = false;
-    img.style.display = "block";
-  };
-
-  img.onerror = () => {
-    console.error("Não foi possível exibir a foto.");
-    status.textContent = "Erro ao carregar a foto.";
-  };
-
-  img.src = base64String;
-
-  // Exibe a imagem e mantém o enquadramento original.
-  img.hidden = false;
-  img.style.display = "block";
-  img.style.width = "100%";
-  img.style.height = "100%";
-  img.style.objectFit = "cover";
-
-  const placeholder = document.getElementById(
-    "ppg-photo-placeholder"
-  );
-
-  if (placeholder) {
-    placeholder.hidden = true;
+  function slugify(value) {
+    return value
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
   }
-};
 
+  // Exibe a foto sem recriar o elemento HTML.
+  function applyPhotoToUI(data) {
+    if (!photoImg || !data || typeof data !== "string") {
+      if (photoImg) {
+        photoImg.removeAttribute("src");
+        photoImg.hidden = true;
+      }
+      return;
+    }
 
-  // Inicialização das Estrelas
+    photoImg.onload = () => {
+      photoImg.hidden = false;
+      photoImg.style.display = "block";
+      photoImg.style.width = "100%";
+      photoImg.style.height = "100%";
+      photoImg.style.objectFit = "cover";
+    };
+
+    photoImg.onerror = () => {
+      photoImg.hidden = true;
+      setStatus("Não foi possível exibir esta foto.");
+      console.error("Falha ao carregar a imagem da ficha.");
+    };
+
+    photoImg.src = data;
+    photoImg.hidden = false;
+    photoImg.style.display = "block";
+    photoImg.style.width = "100%";
+    photoImg.style.height = "100%";
+    photoImg.style.objectFit = "cover";
+  }
+
+  // Inicializa as estrelas.
   skills.forEach(row => {
     const group = row.querySelector(".ppg-stars");
+    if (!group) return;
+
+    group.replaceChildren();
+
     for (let n = 1; n <= 5; n++) {
       const star = document.createElement("button");
-      star.type = "button"; star.className = "ppg-star"; star.textContent = "★";
+      star.type = "button";
+      star.className = "ppg-star";
+      star.textContent = "★";
       star.setAttribute("aria-label", `${n} de 5 estrelas`);
       star.setAttribute("aria-pressed", "false");
+
       star.addEventListener("click", () => {
         if (app.classList.contains("ppg-readonly")) return;
+
         const current = Number(group.dataset.value || 0);
         const value = current === n ? 0 : n;
+
         group.dataset.value = String(value);
-        [...group.children].forEach((s, i) => {
-          s.classList.toggle("is-filled", i < value);
-          s.setAttribute("aria-pressed", String(i < value));
+
+        [...group.children].forEach((element, index) => {
+          element.classList.toggle("is-filled", index < value);
+          element.setAttribute(
+            "aria-pressed",
+            String(index < value)
+          );
         });
       });
+
       group.appendChild(star);
     }
   });
 
-  // Upload da Foto
-  const photoBtn = $("ppg-photo-button");
-  const photoFile = $("ppg-photo-file");
+  // Selecionar e ler a foto.
   if (photoBtn && photoFile) {
-    photoBtn.addEventListener("click", () => photoFile.click());
-    photoFile.addEventListener("change", e => {
-      const file = e.target.files?.[0]; if (!file) return;
-      if (!file.type.startsWith("image/")) { status.textContent = "Selecione um arquivo de imagem."; return; }
-      if (file.size > 3 * 1024 * 1024) { status.textContent = "A foto deve ter até 3 MB."; return; }
+    photoBtn.addEventListener("click", () => {
+      if (!app.classList.contains("ppg-readonly")) {
+        photoFile.click();
+      }
+    });
+
+    photoFile.addEventListener("change", event => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      if (!file.type.startsWith("image/")) {
+        setStatus("Selecione um arquivo de imagem.");
+        photoFile.value = "";
+        return;
+      }
+
+      if (file.size > 3 * 1024 * 1024) {
+        setStatus("A foto deve ter até 3 MB.");
+        photoFile.value = "";
+        return;
+      }
+
       const reader = new FileReader();
+
       reader.onload = () => {
         photoData = String(reader.result);
         applyPhotoToUI(photoData);
+        setStatus("Foto selecionada. Salve a ficha para guardar as alterações.");
       };
+
+      reader.onerror = () => {
+        setStatus("Não foi possível ler o arquivo da foto.");
+      };
+
       reader.readAsDataURL(file);
     });
   }
 
-  // Validação dos Inputs
-  fields.classe.addEventListener("input", () => {
-    fields.classe.value = fields.classe.value.replace(/[^a-z]/gi, "").slice(0, 3).toUpperCase();
-  });
-  fields.hobbies.addEventListener("input", () => {
-    const lines = fields.hobbies.value.split(/\r?\n/).slice(0, 2);
-    fields.hobbies.value = lines.join("\n");
-  });
-
-  const slugify = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-
-  // Ação do Botão Salvar
-  $("ppg-save").addEventListener("click", async () => {
-    const name = fields.name.value.trim(), slug = slugify(name);
-    if (!name || !slug) { status.textContent = "Digite o primeiro nome antes de salvar."; fields.name.focus(); return; }
-
-    const ratings = {};
-    skills.forEach(row => {
-      const skillName = row.dataset.skill;
-      const group = row.querySelector(".ppg-stars");
-      const filledStars = group ? group.querySelectorAll(".ppg-star.is-filled, .is-filled").length : 0;
-      ratings[skillName] = filledStars;
-      if (group) group.dataset.value = String(filledStars);
+  // Validação da classe.
+  if (fields.classe) {
+    fields.classe.addEventListener("input", () => {
+      fields.classe.value = fields.classe.value
+        .replace(/[^a-z]/gi, "")
+        .slice(0, 3)
+        .toUpperCase();
     });
+  }
 
-    const record = {
-      name, slug,
-      classe: fields.classe.value.trim().slice(0, 3),
-      hobbies: fields.hobbies.value,
-      ratings,
-      photo: photoData,
-      updatedAt: new Date().toISOString()
-    };
+  // Limita os hobbies a duas linhas.
+  if (fields.hobbies) {
+    fields.hobbies.addEventListener("input", () => {
+      const lines = fields.hobbies.value.split(/\r?\n/).slice(0, 2);
+      fields.hobbies.value = lines.join("\n");
+    });
+  }
 
-    status.textContent = "A salvar na nuvem (Neon)...";
+  // Salva na API e mantém o endereço da ficha.
+  if (saveBtn) {
+    saveBtn.addEventListener("click", async () => {
+      const name = fields.name.value.trim();
+      const slug = slugify(name);
 
-    try {
-      const response = await fetch(`${API_URL}/api/fichas`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(record)
+      if (!name || !slug) {
+        setStatus("Digite o primeiro nome antes de salvar.");
+        fields.name.focus();
+        return;
+      }
+
+      const ratings = {};
+
+      skills.forEach(row => {
+        const group = row.querySelector(".ppg-stars");
+        ratings[row.dataset.skill] = Number(group?.dataset.value || 0);
       });
 
-      const result = await response.json();
-      if (response.ok) {
-        status.textContent = `Ficha de ${name} salva com sucesso! Endereço: /${slug}`;
-        window.history.pushState({}, "", `/${slug}`);
-      } else {
-        status.textContent = `Erro do servidor: ${result.erro || "Desconhecido"}`;
-      }
-    } catch (err) {
-      console.error(err);
-      status.textContent = `Erro de rede: ${err.message}`;
-    }
-  });
+      const record = {
+        name,
+        slug,
+        classe: fields.classe.value.trim().slice(0, 3),
+        hobbies: fields.hobbies.value,
+        ratings,
+        photo: photoData,
+        updatedAt: new Date().toISOString()
+      };
 
-  $("ppg-minimize").addEventListener("click", () => app.classList.toggle("ppg-minimized"));
-  $("ppg-close").addEventListener("click", () => {
-    if (confirm("Fechar a ficha?")) location.href = "../";
-  });
+      saveBtn.disabled = true;
+      setStatus("Salvando ficha na nuvem...");
 
-  // Leitura e Busca por Slug na Nuvem
-  const pathSegments = location.pathname.split("/").filter(Boolean);
-  let requested = pathSegments.pop() || "";
-  if (requested.endsWith(".html")) {
-    requested = pathSegments.pop() || "";
-  }
-  requested = decodeURIComponent(requested);
-
-  if (requested && requested !== "novo" && requested !== "Paperpel") {
-    status.textContent = "A carregar ficha da nuvem...";
-    fetch(`${API_URL}/api/fichas/${slugify(requested)}`)
-      .then(res => {
-        if (!res.ok) throw new Error("Ficha não encontrada");
-        return res.json();
-      })
-      .then(rec => {
-        fields.name.value = rec.name;
-        fields.classe.value = rec.classe || "";
-        fields.hobbies.value = rec.hobbies || "";
-        photoData = rec.photo || "";
-
-        if (photoData) {
-          applyPhotoToUI(photoData);
-        }
-
-        skills.forEach(row => {
-          const skillName = row.dataset.skill;
-          const v = Number(rec.ratings?.[skillName] || rec.ratings?.[skillName.toLowerCase()] || rec.ratings?.[skillName.toUpperCase()] || 0);
-          const g = row.querySelector(".ppg-stars");
-          
-          if (g) {
-            g.dataset.value = v;
-            [...g.children].forEach((s, i) => {
-              s.classList.toggle("is-filled", i < v);
-              s.setAttribute("aria-pressed", String(i < v));
-            });
-          }
+      try {
+        const response = await fetch(`${API_URL}/api/fichas`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(record)
         });
 
-        // Modo somente leitura
-        app.classList.add("ppg-readonly");
-        fields.name.setAttribute("readonly", true);
-        fields.classe.setAttribute("readonly", true);
-        fields.hobbies.setAttribute("readonly", true);
-        if (photoBtn) photoBtn.style.display = "none";
-        $("ppg-save").style.display = "none";
+        const result = await response.json().catch(() => ({}));
 
-        status.textContent = `A visualizar ficha de ${rec.name}`;
-      })
-      .catch(err => {
-        console.error(err);
-        status.textContent = "Ficha não encontrada na nuvem.";
-      });
+        if (!response.ok) {
+          throw new Error(
+            result.erro || result.error ||
+            `O servidor respondeu com HTTP ${response.status}.`
+          );
+        }
+
+        setStatus(`Ficha de ${name} salva com sucesso! Endereço: /${slug}`);
+        history.pushState({}, "", `/${slug}`);
+      } catch (error) {
+        console.error("Erro ao salvar ficha:", error);
+        setStatus(`Não foi possível salvar na nuvem: ${error.message}`);
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
   }
+
+  // Minimizar a ficha.
+  const minimizeBtn = $("ppg-minimize");
+
+  if (minimizeBtn && app) {
+    minimizeBtn.addEventListener("click", () => {
+      app.classList.toggle("ppg-minimized");
+    });
+  }
+
+  // Fechar a ficha.
+  const closeBtn = $("ppg-close");
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      if (confirm("Fechar a ficha?")) {
+        location.href = "/";
+      }
+    });
+  }
+
+  // Carrega a ficha correspondente ao endereço /nome.
+  async function loadRequestedRecord() {
+    const segments = location.pathname.split("/").filter(Boolean);
+    let requested = segments.pop() || "";
+
+    if (requested.endsWith(".html")) {
+      requested = segments.pop() || "";
+    }
+
+    requested = decodeURIComponent(requested);
+
+    if (!requested || requested.toLowerCase() === "novo") return;
+
+    setStatus("Carregando ficha da nuvem...");
+
+    try {
+      const response = await fetch(
+        `${API_URL}/api/fichas/${encodeURIComponent(slugify(requested))}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Ficha não encontrada (HTTP ${response.status}).`);
+      }
+
+      const rec = await response.json();
+
+      fields.name.value = rec.name || "";
+      fields.classe.value = rec.classe || "";
+      fields.hobbies.value = rec.hobbies || "";
+
+      photoData = typeof rec.photo === "string" ? rec.photo : "";
+
+      if (photoData) {
+        applyPhotoToUI(photoData);
+      } else if (photoImg) {
+        photoImg.removeAttribute("src");
+        photoImg.hidden = true;
+      }
+
+      skills.forEach(row => {
+        const group = row.querySelector(".ppg-stars");
+        if (!group) return;
+
+        const key = row.dataset.skill;
+        const ratings = rec.ratings || {};
+        const value = Number(
+          ratings[key] ??
+          ratings[key.toLowerCase()] ??
+          ratings[key.toUpperCase()] ??
+          0
+        );
+
+        group.dataset.value = String(value);
+
+        [...group.children].forEach((star, index) => {
+          star.classList.toggle("is-filled", index < value);
+          star.setAttribute("aria-pressed", String(index < value));
+        });
+      });
+
+      app.classList.add("ppg-readonly");
+
+      fields.name.readOnly = true;
+      fields.classe.readOnly = true;
+      fields.hobbies.readOnly = true;
+
+      if (photoBtn) photoBtn.style.cursor = "default";
+      if (photoFile) photoFile.disabled = true;
+      if (saveBtn) saveBtn.style.display = "none";
+
+      setStatus(
+        photoData
+          ? `A visualizar ficha de ${rec.name}.`
+          : `Ficha de ${rec.name} carregada, mas não há foto salva.`
+      );
+    } catch (error) {
+      console.error("Erro ao carregar ficha:", error);
+      setStatus(`Não foi possível carregar a ficha: ${error.message}`);
+    }
+  }
+
+  loadRequestedRecord();
 })();

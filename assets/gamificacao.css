@@ -31,8 +31,31 @@ button,input,textarea{font:inherit}
 .ppg-card:after{right:9px;bottom:1px;transform:rotate(180deg)}
 
 .ppg-top{display:grid;grid-template-columns:100px minmax(0,1fr);gap:13px;align-items:start;margin:7px 4px 15px;position:relative;left:2px}
-.ppg-photo-frame{height:111px;padding:5px;border:0;background:url('pecas-retro/18_quadro_foto.png') center/100% 100% no-repeat;box-shadow:none;cursor:pointer;overflow:hidden}
-.ppg-photo-frame img{width:100%;height:100%;object-fit:cover}
+
+.ppg-photo-frame {
+    display: block;
+    width: 100px;
+    height: 111px;
+    min-width: 100px;
+    min-height: 111px;
+    flex-shrink: 0;
+    padding: 5px;
+    border: 0;
+    background: url('pecas-retro/18_quadro_foto.png') center/100% 100% no-repeat;
+    box-shadow: none;
+    cursor: pointer;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+
+.ppg-photo-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .ppg-photo-frame #ppg-photo-placeholder{display:none}
 
 .ppg-identity{display:flex;flex-direction:column;gap:5px;min-width:0;position:relative;top:2px}

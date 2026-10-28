@@ -1,183 +1,472 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700;800&display=swap');
 
 @font-face {
-    font-family: 'Retro Gaming';
-    src: url('fonts/Retro Gaming.ttf') format('truetype');
+  font-family: 'Retro Gaming';
+  src: url('fonts/Retro Gaming.ttf') format('truetype');
 }
 
-:root{--ink:#48250d;--edge:#63320d;--gold:#f8d37a}*{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:#f7f7f7 url('background-paper.png') center center / cover fixed no-repeat;font-family:'Retro Gaming','Roboto Slab',Georgia,serif;color:var(--ink)}
-button,input,textarea{font:inherit}
-
-.ppg-app{width:390px;max-width:calc(100vw - 24px);margin:24px auto;background:#bd7b29;border:4px solid #5d2d0a;border-radius:13px;box-shadow:0 0 0 3px #e7ad4a,0 12px 28px #39220a44;overflow:hidden}
-
-.ppg-windowbar{height:52px;background:linear-gradient(#1588dc,#075cb2 58%,#064489);border-bottom:5px ridge #8b4b15;display:flex;align-items:center;justify-content:space-between;padding:6px 10px;color:#fff;text-shadow:1px 2px #143b76}
-.ppg-window-title{display:flex;align-items:center;gap:9px;font-weight:800;font-size:22px}
-.ppg-medal{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;border:3px solid #ffdb71;background:#b97212;color:#ffdc51;font-size:18px}
-.ppg-window-actions{display:flex;gap:5px}
-.ppg-window-actions button{width:33px;height:33px;background:linear-gradient(#198ee4,#0354a9);color:#fff;font-size:24px;line-height:1;border:2px solid #c0e4ff;border-radius:6px;box-shadow:inset 0 0 0 2px #06427e;cursor:pointer}
-
-/* Fundo da ficha utilizando o pergaminho (pecas-retro/24_fundo_pergaminho.png) */
-.ppg-card{
-    position: relative;
-    padding: 17px 15px 14px;
-    background: url('pecas-retro/24_fundo_pergaminho.png') center/100% 100% no-repeat !important;
-    border: 7px ridge #a86a21;
-    outline: 2px solid #552707;
-    outline-offset: -11px;
+:root {
+  --ink: #48250d;
+  --edge: #63320d;
+  --gold: #f8d37a;
 }
-.ppg-card:before,.ppg-card:after{content:'❧';position:absolute;color:#7c420e;font-size:28px;line-height:1;pointer-events:none}
-.ppg-card:before{left:9px;top:3px}
-.ppg-card:after{right:9px;bottom:1px;transform:rotate(180deg)}
 
-.ppg-top{display:grid;grid-template-columns:100px minmax(0,1fr);gap:13px;align-items:start;margin:7px 4px 15px;position:relative;left:2px}
+* {
+  box-sizing: border-box;
+}
 
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #f7f7f7 url('background-paper.png') center center / cover fixed no-repeat;
+  font-family: 'Retro Gaming', 'Roboto Slab', Georgia, serif;
+  color: var(--ink);
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.ppg-app {
+  width: 390px;
+  max-width: calc(100vw - 24px);
+  margin: 24px auto;
+  background: #bd7b29;
+  border: 4px solid #5d2d0a;
+  border-radius: 13px;
+  box-shadow: 0 0 0 3px #e7ad4a, 0 12px 28px #39220a44;
+  overflow: hidden;
+}
+
+.ppg-windowbar {
+  height: 52px;
+  background: url('pecas-retro/02_barra_titulo_ficha.png') center / 100% 100% no-repeat;
+  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px 6px 15px;
+  color: #fff;
+  position: relative;
+}
+
+.ppg-window-title {
+  visibility: hidden;
+  position: relative;
+}
+
+.ppg-window-title::before {
+  content: '';
+  visibility: visible;
+  position: absolute;
+  left: 13px;
+  top: 4px;
+  width: calc(100% - 26px);
+  height: 44px;
+  background: url('pecas-retro/02_barra_titulo_ficha.png') center / 100% 100% no-repeat;
+  pointer-events: none;
+}
+
+.ppg-medal {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 3px solid #ffdb71;
+  background: #b97212;
+  color: #ffdc51;
+  font-size: 18px;
+}
+
+.ppg-window-actions {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 3px;
+}
+
+.ppg-window-actions button {
+  width: 35px;
+  height: 35px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: transparent;
+  background-position: center;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  font-size: 0;
+  cursor: pointer;
+}
+
+#ppg-save {
+  background-image: url('pecas-retro/03_botao_maximizar.png');
+}
+
+#ppg-minimize {
+  background-image: url('pecas-retro/04_botao_minimizar.png');
+}
+
+#ppg-close {
+  background-image: url('pecas-retro/05_botao_fechar.png');
+}
+
+.ppg-card {
+  position: relative;
+  padding: 17px 15px 14px;
+  background: url('pecas-retro/24_fundo_pergaminho.png') center / 100% 100% no-repeat;
+  border: 7px ridge #a86a21;
+  outline: 2px solid #552707;
+  outline-offset: -11px;
+}
+
+.ppg-card::before,
+.ppg-card::after {
+  content: '❧';
+  position: absolute;
+  color: #7c420e;
+  font-size: 28px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.ppg-card::before {
+  left: 9px;
+  top: 3px;
+}
+
+.ppg-card::after {
+  right: 9px;
+  bottom: 1px;
+  transform: rotate(180deg);
+}
+
+.ppg-top {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  gap: 13px;
+  align-items: start;
+  margin: 7px 4px 15px;
+  position: relative;
+  left: 2px;
+}
+
+/* CORREÇÃO: quadro da foto com dimensões fixas */
 .ppg-photo-frame {
-    display: block;
-    width: 100px;
-    height: 111px;
-    min-width: 100px;
-    min-height: 111px;
-    flex-shrink: 0;
-    padding: 5px;
-    border: 0;
-    background: url('pecas-retro/18_quadro_foto.png') center/100% 100% no-repeat;
-    box-shadow: none;
-    cursor: pointer;
-    overflow: hidden;
-    box-sizing: border-box;
+  display: block;
+  width: 100px;
+  height: 111px;
+  min-width: 100px;
+  min-height: 111px;
+  flex-shrink: 0;
+  padding: 5px;
+  border: 0;
+  box-sizing: border-box;
+  background: url('pecas-retro/18_quadro_foto.png') center / 100% 100% no-repeat;
+  box-shadow: none;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
 }
-
 
 .ppg-photo-frame img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.ppg-photo-frame #ppg-photo-placeholder{display:none}
+#ppg-photo-preview[hidden] {
+  display: none !important;
+}
 
-.ppg-identity{display:flex;flex-direction:column;gap:5px;min-width:0;position:relative;top:2px}
-.ppg-identity label{font-size:13px;font-weight:800;color:#5a3825}
+.ppg-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  position: relative;
+  top: 2px;
+}
 
-/* CLASSE sem caixa marrom (fundo transparente) e com cor da fonte #5a3825 */
+.ppg-identity label {
+  font-size: 13px;
+  font-weight: 800;
+  color: #5a3825;
+}
+
 #ppg-class {
-    width: 65px !important;
-    height: 28px !important;
-    border: none !important;
-    background: transparent !important;
-    color: #5a3825 !important;
-    padding: 2px 4px !important;
-    font-size: 1.1rem !important;
-    outline: none !important;
-    box-shadow: none !important;
+  width: 65px !important;
+  height: 28px !important;
+  border: none !important;
+  background: transparent !important;
+  color: #5a3825 !important;
+  padding: 2px 4px !important;
+  font-size: 1.1rem !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
-/* NOME com HUD maior e cor #FDF0B9 */
 #ppg-name {
-    width: 100% !important;
-    height: 38px !important;
-    border: 0 !important;
-    border-radius: 0 !important;
-    padding: 6px 14px !important;
-    background: transparent url('pecas-retro/19_campo_texto.png') center/100% 100% no-repeat !important;
-    color: #FDF0B9 !important;
-    font-size: 0.95rem !important;
-    outline: none !important;
-    font-family: 'Retro Gaming', monospace !important;
-    box-shadow: none !important;
+  width: 100% !important;
+  height: 38px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 6px 14px !important;
+  background: transparent url('pecas-retro/19_campo_texto.png') center / 100% 100% no-repeat !important;
+  color: #FDF0B9 !important;
+  font-size: 0.95rem !important;
+  outline: none !important;
+  font-family: 'Retro Gaming', monospace !important;
+  box-shadow: none !important;
 }
 
-.ppg-identity input::placeholder{color:#d9b48b}
-.ppg-hint{display:none}
-
-.ppg-skills{border:5px ridge #9e611d;box-shadow:0 0 0 2px #532707;background:#f5d48c;padding:8px 7px;margin:0 3px 15px}
-.ppg-skill{display:grid;grid-template-columns:27px minmax(0,1fr) 120px;gap:4px;align-items:center;min-height:34px;border-bottom:1px solid #ad793f;padding:2px 4px}
-.ppg-skill:last-child{border-bottom:0}
-.ppg-skill-icon{font-size:0;width:27px;height:27px;background-size:100% 100%;background-position:center;background-repeat:no-repeat}
-
-/* Ícones das Habilidades */
-.ppg-skill:nth-child(1) .ppg-skill-icon{background-image:url('pecas-retro/08_icone_atendimento.png')}
-.ppg-skill:nth-child(2) .ppg-skill-icon{background-image:url('pecas-retro/09_icone_informatica.png')}
-.ppg-skill:nth-child(3) .ppg-skill-icon{background-image:url('pecas-retro/10_icone_coreldraw.png')}
-.ppg-skill:nth-child(4) .ppg-skill-icon{background-image:url('pecas-retro/11_icone_impressora.png')}
-.ppg-skill:nth-child(5) .ppg-skill-icon{background-image:url('pecas-retro/12_icone_disposicao.png')}
-.ppg-skill:nth-child(6) .ppg-skill-icon{background-image:url('pecas-retro/13_icone_design.png')}
-.ppg-skill:nth-child(7) .ppg-skill-icon{background-image:url('pecas-retro/14_icone_atencao.png')}
-.ppg-skill:nth-child(8) .ppg-skill-icon{background-image:url('pecas-retro/15_icone_carisma.png')}
-.ppg-skill:nth-child(9) .ppg-skill-icon{background-image:url('pecas-retro/16_icone_trabalho_equipe.png')}
-
-.ppg-skill-name{font-size:11px;font-weight:800;white-space:nowrap;letter-spacing:-.3px;text-transform:uppercase}
-
-.ppg-stars{display:flex;align-items:center;justify-content:space-between;gap:3px;background:transparent;border:0;padding:0;height:28px}
-.ppg-star{appearance:none;display:grid;place-items:center;width:20px;height:20px;min-width:0;padding:0;border:0;background:transparent;font-size:0;cursor:pointer;background-repeat:no-repeat;background-position:center;background-size:100% 100%}
-.ppg-star.is-filled{background-image:url('pecas-retro/06_estrelas_preenchidas.png');color:transparent}
-.ppg-star:not(.is-filled){background-image:url('pecas-retro/07_estrelas_vazias.png');color:transparent}
-.ppg-star:hover{filter:brightness(1.12)}
-
-/* Painel de Hobbies limpo */
-.ppg-hobbies{
-    display: flex !important;
-    gap: 0 !important;
-    min-height: 85px !important;
-    margin: 0 3px !important;
-    border: 0 !important;
-    outline: 0 !important;
-    box-shadow: none !important;
-    background: transparent url('pecas-retro/20_painel_hobbies.png') center/100% 100% no-repeat !important;
-    color: #ffebad !important;
-    padding: 9px !important;
+.ppg-identity input::placeholder,
+.ppg-hobbies textarea::placeholder {
+  color: #d9b48b;
 }
-.ppg-heart{display:none !important;}
-.ppg-hobby-fields{
-    flex: 1 !important;
-    min-width: 0 !important;
-    background: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    outline: none !important;
+
+.ppg-hint {
+  display: none;
 }
-.ppg-hobby-fields label{display:none !important;}
-.ppg-hobbies textarea{
-    display: block !important;
-    width: 88% !important;
-    height: 43px !important;
-    resize: none !important;
-    border: 0 !important;
-    outline: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    color: #FDF0B9 !important;
-    font-size: 0.85rem !important;
-    line-height: 1.4 !important;
-    margin: 18px auto 0 auto !important;
-    font-family: 'Retro Gaming', monospace !important;
+
+.ppg-skills {
+  border: 5px ridge #9e611d;
+  box-shadow: 0 0 0 2px #532707;
+  background: #f5d48c;
+  padding: 8px 7px;
+  margin: 0 3px 15px;
 }
-.ppg-hobbies textarea::placeholder{color:#d9b48b}
 
-#ppg-status{min-height:14px;margin:9px 6px 0;font-size:10px;font-weight:700;line-height:1.3}
-.ppg-minimized .ppg-card{display:none}
-.ppg-minimized .ppg-windowbar{border-bottom:0}
-button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #168cff;outline-offset:2px}
+.ppg-skill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  min-height: 34px;
+  border-bottom: 1px solid #ad793f;
+  padding: 2px 4px;
+}
 
-/* PEÇAS PNG RETRO: barra de título e botões */
-.ppg-windowbar{background: url('pecas-retro/02_barra_titulo_ficha.png') center/100% 100% no-repeat; border:0; height:52px; padding:5px 10px 6px 15px;}
-.ppg-window-title{visibility:hidden;}
-.ppg-window-title:before{content:'';visibility:visible;position:absolute;left:13px;top:4px;width:calc(100% - 26px);height:44px;background:url('pecas-retro/02_barra_titulo_ficha.png') center/100% 100% no-repeat;pointer-events:none;}
-.ppg-window-title{position:relative;}
-.ppg-window-actions{position:relative;z-index:2;gap:3px;}
-.ppg-window-actions button{width:35px;height:35px;border:0;border-radius:0;box-shadow:none;background-color:transparent;background-position:center;background-size:100% 100%;background-repeat:no-repeat;font-size:0;}
-#ppg-save{background-image:url('pecas-retro/03_botao_maximizar.png')}
-#ppg-minimize{background-image:url('pecas-retro/04_botao_minimizar.png')}
-#ppg-close{background-image:url('pecas-retro/05_botao_fechar.png')}
+.ppg-skill:last-child {
+  border-bottom: 0;
+}
 
-@media(max-width:420px){
-  .ppg-app{margin:12px auto}
-  .ppg-card{padding:14px 10px 12px}
-  .ppg-top{grid-template-columns:90px minmax(0,1fr);gap:10px}
-  .ppg-skill{grid-template-columns:23px minmax(0,1fr) 112px;gap:3px}
-  .ppg-skill-name{font-size:11px}
-  .ppg-stars{padding:0}
-  .ppg-star{width:18px;height:18px}
+.ppg-skill-icon {
+  flex: 0 0 27px;
+  font-size: 0;
+  width: 27px;
+  height: 27px;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.ppg-skill:nth-child(1) .ppg-skill-icon {
+  background-image: url('pecas-retro/08_icone_atendimento.png');
+}
+
+.ppg-skill:nth-child(2) .ppg-skill-icon {
+  background-image: url('pecas-retro/09_icone_informatica.png');
+}
+
+.ppg-skill:nth-child(3) .ppg-skill-icon {
+  background-image: url('pecas-retro/10_icone_coreldraw.png');
+}
+
+.ppg-skill:nth-child(4) .ppg-skill-icon {
+  background-image: url('pecas-retro/11_icone_impressora.png');
+}
+
+.ppg-skill:nth-child(5) .ppg-skill-icon {
+  background-image: url('pecas-retro/12_icone_disposicao.png');
+}
+
+.ppg-skill:nth-child(6) .ppg-skill-icon {
+  background-image: url('pecas-retro/13_icone_design.png');
+}
+
+.ppg-skill:nth-child(7) .ppg-skill-icon {
+  background-image: url('pecas-retro/14_icone_atencao.png');
+}
+
+.ppg-skill:nth-child(8) .ppg-skill-icon {
+  background-image: url('pecas-retro/15_icone_carisma.png');
+}
+
+.ppg-skill:nth-child(9) .ppg-skill-icon {
+  background-image: url('pecas-retro/16_icone_trabalho_equipe.png');
+}
+
+.ppg-skill-name {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+  letter-spacing: -.3px;
+  text-transform: uppercase;
+}
+
+.ppg-stars {
+  flex: 0 0 120px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  height: 28px;
+}
+
+.ppg-star {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  min-width: 0;
+  flex: 0 0 20px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 0;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+}
+
+.ppg-star.is-filled {
+  background-image: url('pecas-retro/06_estrelas_preenchidas.png');
+  color: transparent;
+}
+
+.ppg-star:not(.is-filled) {
+  background-image: url('pecas-retro/07_estrelas_vazias.png');
+  color: transparent;
+}
+
+.ppg-star:hover {
+  filter: brightness(1.12);
+}
+
+.ppg-hobbies {
+  display: flex;
+  gap: 0;
+  min-height: 85px;
+  margin: 0 3px;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  background: transparent url('pecas-retro/20_painel_hobbies.png') center / 100% 100% no-repeat;
+  color: #ffebad;
+  padding: 9px;
+}
+
+.ppg-heart {
+  display: none !important;
+}
+
+.ppg-hobby-fields {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+  outline: none;
+}
+
+.ppg-hobby-fields label {
+  display: none !important;
+}
+
+.ppg-hobbies textarea {
+  display: block;
+  width: 88%;
+  height: 43px;
+  resize: none;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #FDF0B9;
+  padding: 0;
+  font-size: .85rem;
+  line-height: 1.4;
+  margin: 18px auto 0;
+  font-family: 'Retro Gaming', monospace;
+}
+
+#ppg-status {
+  min-height: 14px;
+  margin: 9px 6px 0;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.ppg-minimized .ppg-card {
+  display: none;
+}
+
+.ppg-minimized .ppg-windowbar {
+  border-bottom: 0;
+}
+
+.ppg-readonly .ppg-star {
+  cursor: default;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #168cff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 420px) {
+  .ppg-app {
+    margin: 12px auto;
+  }
+
+  .ppg-card {
+    padding: 14px 10px 12px;
+  }
+
+  .ppg-top {
+    grid-template-columns: 100px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .ppg-skill {
+    gap: 3px;
+    padding: 2px 4px;
+  }
+
+  .ppg-skill-icon {
+    flex-basis: 23px;
+    width: 23px;
+  }
+
+  .ppg-skill-name {
+    font-size: 10px;
+  }
+
+  .ppg-stars {
+    flex-basis: 112px;
+  }
+
+  .ppg-star {
+    width: 18px;
+    height: 18px;
+    flex-basis: 18px;
+  }
 }

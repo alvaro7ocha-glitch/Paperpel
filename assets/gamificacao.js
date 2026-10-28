@@ -13,12 +13,16 @@
   const API_URL = "https://paperpel-api.onrender.com";
 
   // Função universal para aplicar a foto na interface (suporta <img> e div com background)
+  // Função universal para aplicar a foto na interface (suporta <img> e div com background)
   const applyPhotoToUI = (base64String) => {
     if (!base64String) return;
     
     // 1. Se houver uma tag <img> dentro da área de foto
     const imgElement = document.querySelector(".ppg-photo img") || document.querySelector(".ppg-avatar img") || $("ppg-photo-preview");
     if (imgElement) {
+      // CORREÇÃO: Remove totalmente o atributo 'src' problemático antes de aplicar o novo limpo
+      imgElement.removeAttribute("src"); 
+      
       imgElement.src = base64String;
       imgElement.hidden = false;
       imgElement.style.display = "block";
@@ -37,6 +41,7 @@
     const placeholder = $("ppg-photo-placeholder");
     if (placeholder) placeholder.hidden = true;
   };
+
 
   // Inicialização das Estrelas
   skills.forEach(row => {

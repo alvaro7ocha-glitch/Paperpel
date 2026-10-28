@@ -70,7 +70,7 @@ body, input, textarea, button, .ppg-app {
         </div>
 
         <div class="ppg-window-actions">
-            <button id="ppg-save" title="Salvar ficha" aria-label="Salvar ficha">▣</button>
+            < id="ppg-save" title="Salvar ficha" aria-label="Salvar ficha">▣</>
             <button id="ppg-minimize" title="Minimizar" aria-label="Minimizar">−</button>
             <button id="ppg-close" title="Fechar" aria-label="Fechar">×</button>
         </div>
@@ -80,19 +80,14 @@ body, input, textarea, button, .ppg-app {
 
         <section class="ppg-top" style="position: relative; left: 2px;">
 
-            <button
-                class="ppg-photo-frame"
-                id="ppg-photo-button"
-                type="button"
-                title="Escolher foto"
-            >
-                <!-- A foto será carregada pelo gamificacao.js -->
-                <img
-                    id="ppg-photo-preview"
-                    alt="Foto escolhida"
-                    hidden
-                >
-            </button>
+        <button
+    class="ppg-photo-frame"
+    id="ppg-photo-button"
+    type="button"
+    title="Escolher foto"
+>
+    <img id="ppg-photo-preview" alt="Foto escolhida" hidden>
+</button>
 
             <input
                 id="ppg-photo-file"

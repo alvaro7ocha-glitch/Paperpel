@@ -72,24 +72,33 @@
   }
 
   function packRectangles(rectangles, areaW, areaH, gap){
-    let free=[{x:0,y:0,w:areaW,h:areaH}];
+    // MaxRects: mantém vários espaços livres e escolhe a melhor posição para cada peça.
+    let free=[{x:0,y:0,w:areaW+gap,h:areaH+gap}];
     const placed=[];
     for(const rect of rectangles){
+      const rw=rect.w+gap, rh=rect.h+gap;
       let best=-1, bestScore=Infinity, bestX=0, bestY=0;
       for(let i=0;i<free.length;i++){
         const f=free[i];
-        if(rect.w<=f.w+1e-7 && rect.h<=f.h+1e-7){
-          const score=Math.min(f.w-rect.w,f.h-rect.h)*10000+Math.max(f.w-rect.w,f.h-rect.h);
+        if(rw<=f.w+1e-7 && rh<=f.h+1e-7){
+          const leftoverW=f.w-rw, leftoverH=f.h-rh;
+          const score=Math.min(leftoverW,leftoverH)*10000+Math.max(leftoverW,leftoverH);
           if(score<bestScore){best=i;bestScore=score;bestX=f.x;bestY=f.y;}
         }
       }
       if(best<0) continue;
-      const f=free.splice(best,1)[0];
       placed.push({item:rect.item,x:bestX,y:bestY,w:rect.w,h:rect.h});
-      const rightW=f.w-rect.w-gap, bottomH=f.h-rect.h-gap;
-      if(rightW>0) free.push({x:bestX+rect.w+gap,y:bestY,w:rightW,h:rect.h});
-      if(bottomH>0) free.push({x:f.x,y:bestY+rect.h+gap,w:f.w,h:bottomH});
-      free=free.filter((a,i,all)=>a.w>0&&a.h>0&&!all.some((b,j)=>j!==i&&b.x<=a.x&&b.y<=a.y&&b.x+b.w>=a.x+a.w&&b.y+b.h>=a.y+a.h));
+      const used={x:bestX,y:bestY,w:rw,h:rh};
+      const next=[];
+      for(const f of free){
+        const intersects=used.x<f.x+f.w-1e-7 && used.x+used.w>f.x+1e-7 && used.y<f.y+f.h-1e-7 && used.y+used.h>f.y+1e-7;
+        if(!intersects){next.push(f);continue;}
+        if(used.x>f.x+1e-7) next.push({x:f.x,y:f.y,w:used.x-f.x,h:f.h});
+        if(used.x+used.w<f.x+f.w-1e-7) next.push({x:used.x+used.w,y:f.y,w:f.x+f.w-(used.x+used.w),h:f.h});
+        if(used.y>f.y+1e-7) next.push({x:f.x,y:f.y,w:f.w,h:used.y-f.y});
+        if(used.y+used.h<f.y+f.h-1e-7) next.push({x:f.x,y:used.y+used.h,w:f.w,h:f.y+f.h-(used.y+used.h)});
+      }
+      free=next.filter((r,i,arr)=>r.w>1e-7&&r.h>1e-7&&!arr.some((q,j)=>j!==i&&q.x<=r.x+1e-7&&q.y<=r.y+1e-7&&q.x+q.w>=r.x+r.w-1e-7&&q.y+q.h>=r.y+r.h-1e-7));
     }
     return placed;
   }
@@ -273,7 +282,9 @@
   }
 
   $("fileInput").addEventListener("change",e=>{addFiles(e.target.files);e.target.value="";});
-  ["copies","fit","cutLines","smartFill"].forEach(id=>$(id).addEventListener("input",updatePreview));
+  ["copies","fit","cutLines"].forEach(id=>$(id).addEventListener("input",updatePreview));
+  $("smartFill").addEventListener("change",updatePreview);
+  $("smartFill").addEventListener("input",updatePreview);
   document.querySelectorAll(".paper-tab").forEach(btn=>btn.addEventListener("click",()=>{
     state.paper=btn.dataset.paper;
     document.querySelectorAll(".paper-tab").forEach(b=>b.classList.toggle("active",b===btn));

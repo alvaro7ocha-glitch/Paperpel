@@ -108,7 +108,7 @@
 
     const [pw,ph]=paperSizes[state.paper];
     const margin=state.paper==="10x15"?0.2:1;
-    const gap=$("cutLines").checked?0:0.5;
+    const gap=$("cutLines").checked?0:0.2;
     const hasCustom=state.images.some(i=>i.customW>0&&i.customH>0);
     const base=hasCustom?null:chooseGridLayout();
     const dimensions=state.images.map(item=>({

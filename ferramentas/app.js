@@ -9,7 +9,7 @@
   function cmText(n){ return (Math.round(n*100)/100).toLocaleString("pt-BR",{maximumFractionDigits:2})+" cm"; }
   function totalCopies(){ return state.images.length * Math.max(1,Math.min(500,parseInt($("copies").value,10)||1)); }
 
-  function chooseLayout(){
+  function chooseGridLayout(){
     const count = totalCopies();
     if(!count) return null;
     const cut = $("cutLines").checked;
@@ -71,6 +71,57 @@
     return candidates[0] || null;
   }
 
+  function packRectangles(rectangles, areaW, areaH, gap){
+    let free=[{x:0,y:0,w:areaW,h:areaH}];
+    const placed=[];
+    for(const rect of rectangles){
+      let best=-1, bestScore=Infinity, bestX=0, bestY=0;
+      for(let i=0;i<free.length;i++){
+        const f=free[i];
+        if(rect.w<=f.w+1e-7 && rect.h<=f.h+1e-7){
+          const score=Math.min(f.w-rect.w,f.h-rect.h)*10000+Math.max(f.w-rect.w,f.h-rect.h);
+          if(score<bestScore){best=i;bestScore=score;bestX=f.x;bestY=f.y;}
+        }
+      }
+      if(best<0) continue;
+      const f=free.splice(best,1)[0];
+      placed.push({item:rect.item,x:bestX,y:bestY,w:rect.w,h:rect.h});
+      const rightW=f.w-rect.w-gap, bottomH=f.h-rect.h-gap;
+      if(rightW>0) free.push({x:bestX+rect.w+gap,y:bestY,w:rightW,h:rect.h});
+      if(bottomH>0) free.push({x:f.x,y:bestY+rect.h+gap,w:f.w,h:bottomH});
+      free=free.filter((a,i,all)=>a.w>0&&a.h>0&&!all.some((b,j)=>j!==i&&b.x<=a.x&&b.y<=a.y&&b.x+b.w>=a.x+a.w&&b.y+b.h>=a.y+a.h));
+    }
+    return placed;
+  }
+
+  function chooseLayout(){
+    if(!$('smartFill').checked) return chooseGridLayout();
+    const [pw,ph]=paperSizes[state.paper];
+    const margin=state.paper==='10x15'?0.2:1;
+    const gap=$('cutLines').checked?0:0.5;
+    const copies=Math.max(1,Math.min(500,parseInt($('copies').value,10)||1));
+    const hasCustom=state.images.some(i=>i.customW>0&&i.customH>0);
+    const base=hasCustom?null:chooseGridLayout();
+    const rects=[];
+    state.images.forEach(item=>{
+      const w=item.customW>0&&item.customH>0?item.customW:(base?.cellW||5);
+      const h=item.customW>0&&item.customH>0?item.customH:(base?.cellH||7);
+      for(let i=0;i<copies;i++) rects.push({item,w,h});
+    });
+    rects.sort((a,b)=>(b.w*b.h-a.w*a.h)||Math.max(b.w,b.h)-Math.max(a.w,a.h));
+    const options=[];
+    for(const orientation of ['portrait','landscape']){
+      const sw=orientation==='portrait'?pw:ph, sh=orientation==='portrait'?ph:pw;
+      const packed=packRectangles(rects,sw-2*margin,sh-2*margin,gap);
+      const usedArea=packed.reduce((sum,p)=>sum+p.w*p.h,0);
+      options.push({orientation,sw,sh,margin,gap,placements:packed,capacity:packed.length,requested:rects.length,usedArea,smart:true});
+    }
+    options.sort((a,b)=>(b.capacity-a.capacity)||(b.usedArea-a.usedArea));
+    const best=options[0];
+    best.placements.forEach(p=>{p.x+=margin;p.y+=margin;});
+    return best;
+  }
+
   function makeOrderedCopies(){
     const copies=Math.max(1,Math.min(500,parseInt($("copies").value,10)||1));
     const arr=[];
@@ -101,6 +152,23 @@
     const c=targetCanvas.getContext("2d");
     c.fillStyle="#ffffff"; c.fillRect(0,0,targetCanvas.width,targetCanvas.height);
     const images=makeOrderedCopies();
+    if(layout.smart){
+      layout.placements.forEach(p=>{
+        const x=p.x*scale,y=p.y*scale,w=p.w*scale,h=p.h*scale;
+        c.save();c.beginPath();c.rect(x,y,w,h);c.clip();
+        const iw=p.item.image.naturalWidth,ih=p.item.image.naturalHeight;
+        const cover=$("fit").checked;
+        if(cover){const s=Math.max(w/iw,h/ih),sw= w/s,sh=h/s;c.drawImage(p.item.image,(iw-sw)/2,(ih-sh)/2,sw,sh,x,y,w,h);}
+        else{const s=Math.min(w/iw,h/ih),dw=iw*s,dh=ih*s;c.drawImage(p.item.image,x+(w-dw)/2,y+(h-dh)/2,dw,dh);}
+        c.restore();
+      });
+      if($("cutLines").checked){
+        c.save();c.strokeStyle="#D2D3D5";c.lineWidth=Math.max(forExport?0.5:1,0.02*scale);
+        layout.placements.forEach(p=>{const x=p.x*scale,y=p.y*scale,w=p.w*scale,h=p.h*scale;c.strokeRect(x,y,w,h);});
+        c.restore();
+      }
+      return;
+    }
     const x0=layout.margin*scale, y0=layout.margin*scale;
     const cellW=layout.cellW*scale, cellH=layout.cellH*scale, gap=layout.gap*scale;
     const gridW=layout.cols*cellW+(layout.cols-1)*gap;
@@ -153,16 +221,19 @@
     canvas.style.display="block";$("emptyState").style.display="none";
     const orient=layout.orientation==="portrait"?"Retrato":"Paisagem";
     $("paperInfo").textContent=`${state.paper} • ${orient}`;
-    $("sizeInfo").textContent=`Imagem: ${cmText(layout.cellW)} × ${cmText(layout.cellH)} • ${totalCopies()} unidades`;
-    const mode=$("cutLines").checked?"linha de corte":"espaçamento de 0,5 cm";
+    $("sizeInfo").textContent=layout.smart?`${layout.capacity} de ${layout.requested} unidades aproveitadas`:`Imagem: ${cmText(layout.cellW)} × ${cmText(layout.cellH)} • ${totalCopies()} unidades`;
+    const mode=layout.smart?"aproveitamento inteligente":($("cutLines").checked?"linha de corte":"espaçamento de 0,5 cm");
     const margin=state.paper==="10x15"?"0,2 cm":"1 cm";
     const custom=state.images.some(i=>i.customW>0&&i.customH>0);
     const over=custom && (layout.overflow || totalCopies()>layout.capacity);
     $("download").disabled=!!over;
-    if(over){
+    if(layout.smart && layout.capacity<layout.requested){
+      $("download").disabled=false;
+      setStatus(`${layout.capacity} de ${layout.requested} imagens couberam na folha. O restante ficou de fora.`,true);
+    }else if(over){
       setStatus(`Quantidade máxima: ${layout.capacity} imagens neste tamanho. Reduza a quantidade ou as dimensões.`,true);
     }else{
-      setStatus(`${totalCopies()} imagens • margem de ${margin} • ${mode}`);
+      setStatus(`${layout.smart?layout.capacity:totalCopies()} imagens • margem de ${margin} • ${mode}`);
     }
   }
 
@@ -202,7 +273,7 @@
   }
 
   $("fileInput").addEventListener("change",e=>{addFiles(e.target.files);e.target.value="";});
-  ["copies","fit","cutLines"].forEach(id=>$(id).addEventListener("input",updatePreview));
+  ["copies","fit","cutLines","smartFill"].forEach(id=>$(id).addEventListener("input",updatePreview));
   document.querySelectorAll(".paper-tab").forEach(btn=>btn.addEventListener("click",()=>{
     state.paper=btn.dataset.paper;
     document.querySelectorAll(".paper-tab").forEach(b=>b.classList.toggle("active",b===btn));

@@ -104,33 +104,63 @@
   }
 
   function chooseLayout(){
-    if(!$('smartFill').checked) return chooseGridLayout();
+    if(!$("smartFill").checked) return chooseGridLayout();
+
     const [pw,ph]=paperSizes[state.paper];
-    const margin=state.paper==='10x15'?0.2:1;
-    const gap=$('cutLines').checked?0:0.5;
-    // No modo inteligente, a quantidade digitada em "Cópias" deixa de limitar
-    // a montagem: a folha recebe o máximo possível de cada imagem.
+    const margin=state.paper==="10x15"?0.2:1;
+    const gap=$("cutLines").checked?0:0.5;
     const hasCustom=state.images.some(i=>i.customW>0&&i.customH>0);
     const base=hasCustom?null:chooseGridLayout();
     const dimensions=state.images.map(item=>({
       item,
       w:item.customW>0&&item.customH>0?item.customW:(base?.cellW||5),
       h:item.customW>0&&item.customH>0?item.customH:(base?.cellH||7)
-    }));
-    const rects=[];
-    // Intercala os arquivos para distribuir espaço entre todos, em vez de
-    // preencher a folha inteira com a primeira imagem da lista.
-    for(let round=0;round<500;round++){
-      dimensions.forEach(d=>rects.push({item:d.item,w:d.w,h:d.h}));
+    })).filter(d=>d.w>0&&d.h>0);
+
+    function packRows(areaW,areaH){
+      const heights=[...new Set(dimensions.map(d=>d.h))].sort((a,b)=>a-b);
+      let best={placements:[],usedArea:0};
+      for(const maxRowH of heights){
+        let y=0, placements=[], usedArea=0;
+        while(y<areaH-1e-6){
+          let x=0, row=[], rowH=0;
+          const remaining=dimensions.slice().sort((a,b)=>(b.w*b.h-a.w*a.h)||(b.h-a.h));
+          while(remaining.length){
+            const fitting=remaining.filter(d=>d.h<=maxRowH+1e-6 && d.w<=areaW-x+1e-6 &&
+              (row.length===0 || x+d.w+gap<=areaW+1e-6));
+            if(!fitting.length) break;
+            const chosen=fitting[0];
+            row.push({item:chosen.item,x,y,w:chosen.w,h:chosen.h});
+            x+=chosen.w+gap;
+            rowH=Math.max(rowH,chosen.h);
+            usedArea+=chosen.w*chosen.h;
+            const idx=remaining.indexOf(chosen);
+            remaining.splice(idx,1);
+            chosen._rowCount=(chosen._rowCount||0)+1;
+            if(chosen._rowCount<500) remaining.push(chosen);
+          }
+          dimensions.forEach(d=>{delete d._rowCount;});
+          if(!row.length) break;
+          placements.push(...row);
+          y+=rowH+gap;
+          if(y+Math.min(...dimensions.map(d=>d.h))>areaH+1e-6) break;
+        }
+        if(usedArea>best.usedArea+1e-6 ||
+          (Math.abs(usedArea-best.usedArea)<1e-6 && placements.length>best.placements.length)){
+          best={placements,usedArea};
+        }
+      }
+      return best;
     }
+
     const options=[];
-    for(const orientation of ['portrait','landscape']){
-      const sw=orientation==='portrait'?pw:ph, sh=orientation==='portrait'?ph:pw;
-      const packed=packRectangles(rects,sw-2*margin,sh-2*margin,gap);
-      const usedArea=packed.reduce((sum,p)=>sum+p.w*p.h,0);
-      options.push({orientation,sw,sh,margin,gap,placements:packed,capacity:packed.length,requested:rects.length,usedArea,smart:true});
+    for(const orientation of ["portrait","landscape"]){
+      const sw=orientation==="portrait"?pw:ph, sh=orientation==="portrait"?ph:pw;
+      const packed=packRows(sw-2*margin,sh-2*margin);
+      options.push({orientation,sw,sh,margin,gap,placements:packed.placements,
+        capacity:packed.placements.length,usedArea:packed.usedArea,smart:true});
     }
-    options.sort((a,b)=>(b.capacity-a.capacity)||(b.usedArea-a.usedArea));
+    options.sort((a,b)=>(b.usedArea-a.usedArea)||(b.capacity-a.capacity));
     const best=options[0];
     best.placements.forEach(p=>{p.x+=margin;p.y+=margin;});
     return best;

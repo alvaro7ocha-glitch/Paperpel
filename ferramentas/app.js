@@ -108,16 +108,21 @@
     const [pw,ph]=paperSizes[state.paper];
     const margin=state.paper==='10x15'?0.2:1;
     const gap=$('cutLines').checked?0:0.5;
-    const copies=Math.max(1,Math.min(500,parseInt($('copies').value,10)||1));
+    // No modo inteligente, a quantidade digitada em "Cópias" deixa de limitar
+    // a montagem: a folha recebe o máximo possível de cada imagem.
     const hasCustom=state.images.some(i=>i.customW>0&&i.customH>0);
     const base=hasCustom?null:chooseGridLayout();
+    const dimensions=state.images.map(item=>({
+      item,
+      w:item.customW>0&&item.customH>0?item.customW:(base?.cellW||5),
+      h:item.customW>0&&item.customH>0?item.customH:(base?.cellH||7)
+    }));
     const rects=[];
-    state.images.forEach(item=>{
-      const w=item.customW>0&&item.customH>0?item.customW:(base?.cellW||5);
-      const h=item.customW>0&&item.customH>0?item.customH:(base?.cellH||7);
-      for(let i=0;i<copies;i++) rects.push({item,w,h});
-    });
-    rects.sort((a,b)=>(b.w*b.h-a.w*a.h)||Math.max(b.w,b.h)-Math.max(a.w,a.h));
+    // Intercala os arquivos para distribuir espaço entre todos, em vez de
+    // preencher a folha inteira com a primeira imagem da lista.
+    for(let round=0;round<500;round++){
+      dimensions.forEach(d=>rects.push({item:d.item,w:d.w,h:d.h}));
+    }
     const options=[];
     for(const orientation of ['portrait','landscape']){
       const sw=orientation==='portrait'?pw:ph, sh=orientation==='portrait'?ph:pw;
@@ -230,19 +235,24 @@
     canvas.style.display="block";$("emptyState").style.display="none";
     const orient=layout.orientation==="portrait"?"Retrato":"Paisagem";
     $("paperInfo").textContent=`${state.paper} • ${orient}`;
-    $("sizeInfo").textContent=layout.smart?`${layout.capacity} de ${layout.requested} unidades aproveitadas`:`Imagem: ${cmText(layout.cellW)} × ${cmText(layout.cellH)} • ${totalCopies()} unidades`;
+    if(layout.smart){
+      const counts=state.images.map(item=>`${item.file.name}: ${layout.placements.filter(p=>p.item===item).length}`).join(" • ");
+      $("sizeInfo").textContent=`${layout.capacity} unidades aproveitadas`;
+      setStatus(`${counts} • aproveitamento inteligente`);
+    }else{
+      $("sizeInfo").textContent=`Imagem: ${cmText(layout.cellW)} × ${cmText(layout.cellH)} • ${totalCopies()} unidades`;
+    }
     const mode=layout.smart?"aproveitamento inteligente":($("cutLines").checked?"linha de corte":"espaçamento de 0,5 cm");
     const margin=state.paper==="10x15"?"0,2 cm":"1 cm";
     const custom=state.images.some(i=>i.customW>0&&i.customH>0);
     const over=custom && (layout.overflow || totalCopies()>layout.capacity);
     $("download").disabled=!!over;
-    if(layout.smart && layout.capacity<layout.requested){
+    if(layout.smart){
       $("download").disabled=false;
-      setStatus(`${layout.capacity} de ${layout.requested} imagens couberam na folha. O restante ficou de fora.`,true);
     }else if(over){
       setStatus(`Quantidade máxima: ${layout.capacity} imagens neste tamanho. Reduza a quantidade ou as dimensões.`,true);
-    }else{
-      setStatus(`${layout.smart?layout.capacity:totalCopies()} imagens • margem de ${margin} • ${mode}`);
+    }else if(!layout.smart){
+      setStatus(`${totalCopies()} imagens • margem de ${margin} • ${mode}`);
     }
   }
 

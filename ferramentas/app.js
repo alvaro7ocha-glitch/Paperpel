@@ -127,7 +127,7 @@
       c.restore();
     });
     if($("cutLines").checked){
-      c.save(); c.strokeStyle="#D2D3D5"; c.lineWidth=Math.max(1,0.12*scale);
+      c.save(); c.strokeStyle="#D2D3D5"; c.lineWidth=Math.max(forExport?0.5:1,0.02*scale);
       // Fine internal cut guides, only between occupied cells.
       for(let col=1;col<layout.cols;col++){
         const x=startX+col*cellW+(col-1)*gap+gap/2;

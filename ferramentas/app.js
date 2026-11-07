@@ -1,11 +1,11 @@
 (() => {
   const $ = id => document.getElementById(id);
-  const paperSizes = { A4:[21,29.7], A3:[29.7,42], SRA3:[32,45] };
+  const paperSizes = { A4:[21,29.7], A3:[29.7,42], SRA3:[32,45], "10x15":[10,15] };
   const presets = [[10,15],[9,13],[8,12],[7,10],[6,9],[5,7]];
   const state = { paper:"A4", images:[], layout:null, busy:false };
   const canvas = $("previewCanvas"), ctx = canvas.getContext("2d");
 
-  function setStatus(message){ $("status").textContent = message; }
+  function setStatus(message, warning=false){ $("status").textContent = message; $("status").classList.toggle("warning",warning); }
   function cmText(n){ return (Math.round(n*100)/100).toLocaleString("pt-BR",{maximumFractionDigits:2})+" cm"; }
   function totalCopies(){ return state.images.length * Math.max(1,Math.min(500,parseInt($("copies").value,10)||1)); }
 
@@ -14,7 +14,35 @@
     if(!count) return null;
     const cut = $("cutLines").checked;
     const gap = cut ? 0 : 0.5;
-    const margin = 1;
+    const margin = state.paper === "10x15" ? 0.2 : 1;
+    const customItems = state.images.filter(item => item.customW > 0 && item.customH > 0);
+    if(customItems.length){
+      const baseW=Math.max(...customItems.map(i=>i.customW));
+      const baseH=Math.max(...customItems.map(i=>i.customH));
+      const [pw0,ph0]=paperSizes[state.paper];
+      const options=[];
+      for(const orientation of ["portrait","landscape"]){
+        const sw=orientation==="portrait"?pw0:ph0, sh=orientation==="portrait"?ph0:pw0;
+        const aw=sw-2*margin, ah=sh-2*margin;
+        for(let cols=1;cols<=count;cols++){
+          const rows=Math.ceil(count/cols), cellW=baseW, cellH=baseH;
+          const usedW=cols*cellW+(cols-1)*gap, usedH=rows*cellH+(rows-1)*gap;
+          if(usedW<=aw+1e-6 && usedH<=ah+1e-6) options.push({orientation,sw,sh,cols,rows,cellW,cellH,gap,margin,custom:true,capacity:cols*Math.floor((ah+gap)/(cellH+gap))});
+        }
+      }
+      if(!options.length){
+        // Keep a layout for previewing the requested size; the capacity warning disables download.
+        const orientation=pw0<=ph0?"portrait":"landscape";
+        const sw=orientation==="portrait"?pw0:ph0, sh=orientation==="portrait"?ph0:pw0;
+        const cols=Math.max(1,Math.floor((sw-2*margin+gap)/(baseW+gap)));
+        const rows=Math.max(1,Math.floor((sh-2*margin+gap)/(baseH+gap)));
+        return {orientation,sw,sh,cols,rows,cellW:baseW,cellH:baseH,gap,margin,custom:true,capacity:cols*rows,overflow:true};
+      }
+      options.sort((a,b)=>(b.cellW*b.cellH-a.cellW*a.cellH)||(b.capacity-a.capacity));
+      const best=options[0];
+      best.capacity=best.cols*Math.floor(((best.sh-2*margin)+gap)/(best.cellH+gap));
+      return best;
+    }
     const [pw,ph] = paperSizes[state.paper];
     const candidates = [];
     for(const orientation of ["portrait","landscape"]){
@@ -86,12 +114,15 @@
       c.beginPath(); c.rect(x,y,cellW,cellH); c.clip();
       const iw=item.image.naturalWidth, ih=item.image.naturalHeight;
       const cover=$("fit").checked;
+      const targetW=item.customW>0&&item.customH>0?item.customW*scale:cellW;
+      const targetH=item.customW>0&&item.customH>0?item.customH*scale:cellH;
+      const dx=x+(cellW-targetW)/2, dy=y+(cellH-targetH)/2;
       if(cover){
-        const s=Math.max(cellW/iw,cellH/ih), sw=cellW/s, sh=cellH/s;
-        c.drawImage(item.image,(iw-sw)/2,(ih-sh)/2,sw,sh,x,y,cellW,cellH);
+        const s=Math.max(targetW/iw,targetH/ih), sw=targetW/s, sh=targetH/s;
+        c.drawImage(item.image,(iw-sw)/2,(ih-sh)/2,sw,sh,dx,dy,targetW,targetH);
       }else{
-        const s=Math.min(cellW/iw,cellH/ih), dw=iw*s, dh=ih*s;
-        c.drawImage(item.image,x+(cellW-dw)/2,y+(cellH-dh)/2,dw,dh);
+        const s=Math.min(targetW/iw,targetH/ih), dw=iw*s, dh=ih*s;
+        c.drawImage(item.image,dx+(targetW-dw)/2,dy+(targetH-dh)/2,dw,dh);
       }
       c.restore();
     });
@@ -123,9 +154,16 @@
     const orient=layout.orientation==="portrait"?"Retrato":"Paisagem";
     $("paperInfo").textContent=`${state.paper} • ${orient}`;
     $("sizeInfo").textContent=`Imagem: ${cmText(layout.cellW)} × ${cmText(layout.cellH)} • ${totalCopies()} unidades`;
-    $("download").disabled=false;
     const mode=$("cutLines").checked?"linha de corte":"espaçamento de 0,5 cm";
-    setStatus(`${totalCopies()} imagens • margem de 1 cm • ${mode}`);
+    const margin=state.paper==="10x15"?"0,2 cm":"1 cm";
+    const custom=state.images.some(i=>i.customW>0&&i.customH>0);
+    const over=custom && (layout.overflow || totalCopies()>layout.capacity);
+    $("download").disabled=!!over;
+    if(over){
+      setStatus(`Quantidade máxima: ${layout.capacity} imagens neste tamanho. Reduza a quantidade ou as dimensões.`,true);
+    }else{
+      setStatus(`${totalCopies()} imagens • margem de ${margin} • ${mode}`);
+    }
   }
 
   function renderFileList(){
@@ -133,10 +171,19 @@
     state.images.forEach((item,index)=>{
       const row=document.createElement("div");row.className="file-item";
       const img=document.createElement("img");img.src=item.url;img.alt="";
+      const meta=document.createElement("div");meta.className="file-meta";
       const name=document.createElement("span");name.className="file-name";name.textContent=item.file.name;
+      const sizes=document.createElement("div");sizes.className="custom-size";
+      const w=document.createElement("input");w.type="number";w.min="0.1";w.max="100";w.step="0.1";w.placeholder="L cm";w.value=item.customW||"";w.setAttribute("aria-label",`Largura personalizada da imagem ${item.file.name}`);
+      const h=document.createElement("input");h.type="number";h.min="0.1";h.max="100";h.step="0.1";h.placeholder="A cm";h.value=item.customH||"";h.setAttribute("aria-label",`Altura personalizada da imagem ${item.file.name}`);
+      const unit=document.createElement("em");unit.textContent="cm";
+      const apply=()=>{item.customW=parseFloat(w.value)>0?parseFloat(w.value):0;item.customH=parseFloat(h.value)>0?parseFloat(h.value):0;updatePreview();};
+      w.addEventListener("change",apply);h.addEventListener("change",apply);
+      sizes.append(w,document.createTextNode("×"),h,unit);
+      meta.append(name,sizes);
       const remove=document.createElement("button");remove.className="remove-file";remove.type="button";remove.textContent="×";remove.title="Remover imagem";
       remove.addEventListener("click",()=>{URL.revokeObjectURL(item.url);state.images.splice(index,1);renderFileList();updatePreview();});
-      row.append(img,name,remove);list.append(row);
+      row.append(img,meta,remove);list.append(row);
     });
   }
 
@@ -148,7 +195,7 @@
       try{
         const image=new Image();
         await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;image.src=url;});
-        state.images.push({file,url,image});
+        state.images.push({file,url,image,customW:0,customH:0});
       }catch(e){URL.revokeObjectURL(url);}
     }
     renderFileList();updatePreview();

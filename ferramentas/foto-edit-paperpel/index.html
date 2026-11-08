@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Foto Edit | Paperpel Gráfica</title>
-<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="styles.css?v=3">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
@@ -17,7 +17,7 @@
 </header>
 <main class="workspace">
  <aside class="panel">
-  <label class="global-qty">Quantidade padrão <input id="defaultQty" type="number" min="1" max="500" value="1"></label>
+  
   <div class="tabs" role="tablist">
    <button class="tab active" data-kind="standard">Padrão</button>
    <button class="tab" data-kind="mini">Mini</button>
@@ -27,21 +27,21 @@
    <h2>Envie uma ou mais imagens</h2>
    <label class="dropzone" id="dropzone"><input id="fileInput" type="file" accept="image/png,image/jpeg,application/pdf" multiple><span class="upload-symbol">▧</span><b>Enviar imagens</b><small>ou arraste os arquivos para cá</small><small class="formats">PNG · JPEG · PDF</small></label>
    <div id="fileList" class="file-list"></div>
-   <div class="magnet-options hidden" id="magnetOptions"><label><input id="colorBorder" type="checkbox"> Borda colorida</label><small>As seis cores serão distribuídas automaticamente.</small></div>
+   <div class="magnet-options hidden" id="borderOptions"><label><input id="colorBorder" type="checkbox"> Borda colorida</label><small>As seis cores serão distribuídas automaticamente.</small></div>
    <label class="auto-color"><input id="autoColor" type="checkbox"> Ajustar automaticamente a cor</label>
   </section>
-  <div class="paper-row"><label for="paperMode">Papel</label><select id="paperMode"></select></div>
+  <select id="paperMode" class="hidden" aria-hidden="true"></select>
   <div class="actions"><button id="downloadPng" class="secondary">BAIXAR PNG</button><button id="downloadPdf" class="primary">BAIXAR PDF</button></div>
-  <p id="status" class="status">Arquivos em alta resolução • saída em 300 DPI</p>
-  <div class="rules" id="rules"></div>
+  <p id="status" class="status hidden"> </p>
+  <div class="rules hidden" id="rules"></div>
  </aside>
  <section class="preview-area">
   <div class="preview-head"><div><h2>Pré-visualização</h2><p id="paperLabel">A4</p></div><div class="page-nav"><button id="prevPage" aria-label="Página anterior">‹</button><span id="pageLabel">Página 1 / 1</span><button id="nextPage" aria-label="Próxima página">›</button></div></div>
   <div class="sheet-stage"><canvas id="preview" width="794" height="1123"></canvas></div>
-  <p class="preview-foot">Pré-visualização proporcional • Arquivo final preparado para 300 DPI</p>
+  
  </section>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"}</script>
-<script src="app.js?v=4"></script>
+<script src="app.js?v=5"></script>
 </body></html>

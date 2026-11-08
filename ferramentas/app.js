@@ -126,52 +126,37 @@
       const areaW=sw-2*margin, areaH=sh-2*margin;
       if(dimensions.some(d=>d.w>areaW+1e-7||d.h>areaH+1e-7)) continue;
 
-      // Primeiro tenta colocar a mesma quantidade de cada imagem.
-      // Depois usa os espaços que sobrarem com cópias adicionais, priorizando as menores.
-      let low=0, high=Math.max(1,Math.ceil((areaW*areaH)/Math.min(...dimensions.map(d=>d.w*d.h)))+1);
-      let balanced=null, balancedCount=0;
-      while(low<=high){
-        const mid=Math.floor((low+high)/2);
-        const rects=[];
-        dimensions.forEach(d=>{for(let n=0;n<mid;n++) rects.push(d);});
-        const packed=packRectangles(rects,areaW,areaH,gap);
-        if(packed){balanced=packed;balancedCount=mid;low=mid+1;}
-        else high=mid-1;
-      }
-      if(!balanced || balancedCount===0) continue;
-
-      let placements=balanced.placed;
-      let free=balanced.free;
-      const extras=[...dimensions].sort((a,b)=>(a.w*a.h-b.w*b.h)||(a.h-b.h));
-      let added=true, safety=0;
-      while(added && safety++<2000){
-        added=false;
-        for(const d of extras){
-          const attempt=packRectangles([...free.map(()=>null).filter(Boolean),d],areaW,areaH,gap);
-          // Reaproveita diretamente os retângulos livres atuais para encontrar a melhor posição.
-          let best=-1,bestScore=Infinity,bx=0,by=0;
-          for(let i=0;i<free.length;i++){
-            const f=free[i],rw=d.w+gap,rh=d.h+gap;
-            if(rw<=f.w+1e-7&&rh<=f.h+1e-7){
-              const score=Math.min(f.w-rw,f.h-rh)*10000+Math.max(f.w-rw,f.h-rh);
-              if(score<bestScore){best=i;bestScore=score;bx=f.x;by=f.y;}
-            }
-          }
-          if(best>=0){
-            const combined=packRectangles([...placements.map(p=>({item:p.item,w:p.w,h:p.h})),d],areaW,areaH,gap);
-            if(combined && combined.placed.length>placements.length){
-              placements=combined.placed;free=combined.free;added=true;
-            }
-          }
+      // Monta fileira por fileira, repetindo a sequência original das imagens
+      // em cada linha. Cada linha é centralizada independentemente.
+      const placements=[];
+      const rows=[];
+      let y=0, safety=0;
+      while(y<areaH-1e-7 && safety++<2000){
+        let x=0, rowH=0, row=[];
+        let sequenceIndex=0, attempts=0;
+        while(attempts<dimensions.length*100 && x<areaW-1e-7){
+          const d=dimensions[sequenceIndex%dimensions.length];
+          if(x+d.w>areaW+1e-7) break;
+          row.push({item:d.item,x,w:d.w,h:d.h});
+          x+=d.w+gap;
+          rowH=Math.max(rowH,d.h);
+          sequenceIndex++;
+          attempts++;
         }
+        if(!row.length || y+rowH>areaH+1e-7) break;
+        // Remove o último espaçamento da largura ocupada e centraliza a fileira.
+        const rowW=x-gap;
+        const offsetX=(areaW-rowW)/2;
+        row.forEach(p=>placements.push({item:p.item,x:margin+offsetX+p.x,y:margin+y,w:p.w,h:p.h}));
+        rows.push({height:rowH});
+        y+=rowH+gap;
       }
+      if(!placements.length) continue;
 
-      // Centraliza o conjunto ocupado na folha, sem alterar os intervalos entre peças.
-      const minX=Math.min(...placements.map(p=>p.x)), minY=Math.min(...placements.map(p=>p.y));
-      const maxX=Math.max(...placements.map(p=>p.x+p.w)), maxY=Math.max(...placements.map(p=>p.y+p.h));
-      const offsetX=(areaW-(maxX-minX))/2-minX+margin;
-      const offsetY=(areaH-(maxY-minY))/2-minY+margin;
-      placements=placements.map(p=>({...p,x:p.x+offsetX,y:p.y+offsetY}));
+      // Centraliza verticalmente o conjunto completo sem mudar a ordem nem os intervalos.
+      const occupiedH=y-gap;
+      const offsetY=(areaH-occupiedH)/2;
+      if(offsetY>0) placements.forEach(p=>p.y+=offsetY);
       options.push({orientation,sw,sh,margin,gap,placements,capacity:placements.length,smart:true,requested:dimensions.length});
     }
     if(!options.length){

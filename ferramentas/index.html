@@ -8,7 +8,19 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="topbar"><span class="brand-mark">P</span><span>Múltiplo por folha</span><span class="brand-name">PAPERPEL GRÁFICA</span></header>
+  <header class="topbar">
+    <div class="brand-wrap">
+      <button class="brand-icon" id="toolMenuBtn" type="button" title="Trocar de ferramenta" aria-label="Trocar de ferramenta" aria-expanded="false">
+        <img src="assets/multiplo-icon.png" alt="">
+      </button>
+      <span class="brand-title">Múltiplo por folha</span>
+      <nav id="toolMenu" class="tool-menu hidden" aria-label="Ferramentas">
+        <a href="./" class="current">Múltiplo por folha</a>
+        <a href="foto-edit-paperpel/">Foto Edit</a>
+      </nav>
+    </div>
+    <span class="brand-name">PAPERPEL GRÁFICA</span>
+  </header>
   <main class="workspace">
     <aside class="sidebar">
       <div class="controls-row">
@@ -21,7 +33,6 @@
         <button class="paper-tab active" data-paper="A4">A4</button>
         <button class="paper-tab" data-paper="A3">A3</button>
         <button class="paper-tab" data-paper="SRA3">SRA3</button>
-        <button class="paper-tab" data-paper="10x15">10 × 15</button>
       </div>
 
       <section class="upload-card">
@@ -33,7 +44,7 @@
           <small>ou arraste os arquivos para cá</small>
         </label>
         <div id="fileList" class="file-list" aria-live="polite"></div>
-        <div class="options-row"><label class="cut-option"><input id="cutLines" type="checkbox"> linha de corte</label><label class="cut-option"><input id="smartFill" type="checkbox"> Aproveitamento inteligente</label></div>
+        <label class="cut-option"><input id="cutLines" type="checkbox"> linha de corte</label>
         <p class="formats">Formatos suportados: PNG | JPEG</p>
       </section>
 
@@ -57,15 +68,32 @@
       </div>
       <div class="sheet-stage">
         <div class="empty-state" id="emptyState">
-          <div class="empty-icon">▧</div>
+          <img class="empty-watermark" src="assets/empty-watermark.png" alt="">
           <strong>Sua folha aparecerá aqui</strong>
           <span>Envie uma ou mais imagens para visualizar a montagem.</span>
         </div>
         <canvas id="previewCanvas" aria-label="Pré-visualização da folha montada"></canvas>
       </div>
-      <div class="preview-footnote">Pré-visualização proporcional • Arquivo final preparado para 300 DPI</div>
     </section>
   </main>
-  <script src="app.js"></script>
+  <script>
+  (() => {
+    const button = document.getElementById('toolMenuBtn');
+    const menu = document.getElementById('toolMenu');
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const opening = menu.classList.contains('hidden');
+      menu.classList.toggle('hidden', !opening);
+      button.setAttribute('aria-expanded', String(opening));
+    });
+    document.addEventListener('click', (event) => {
+      if (!menu.contains(event.target) && !button.contains(event.target)) {
+        menu.classList.add('hidden');
+        button.setAttribute('aria-expanded', 'false');
+      }
+    });
+  })();
+</script>
+<script src="app.js"></script>
 </body>
 </html>

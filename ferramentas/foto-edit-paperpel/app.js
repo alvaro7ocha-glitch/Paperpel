@@ -56,9 +56,9 @@
    const d=pageData.side==='back'&&plan.natal?plan.backDiameter:plan.diameter,pitch=plan.diameter+plan.gap,gridW=plan.cols*pitch-plan.gap,gridH=plan.rows*pitch-plan.gap,startX=(plan.pw-gridW)/2,startY=(plan.ph-gridH)/2;
    for(let i=0;i<plan.cap;i++){const r=Math.floor(i/plan.cols),col=i%plan.cols,cx=(startX+col*pitch+plan.diameter/2)*scale,cy=(startY+r*pitch+plan.diameter/2)*scale,rad=d*scale/2,item=items[i]||null;
     c.save();c.beginPath();c.arc(cx,cy,rad,0,Math.PI*2);c.closePath();c.clip();
-    if(item&&item.image){const src=enhanceImage(item.image),factor=Math.max((rad*2)/src.width,(rad*2)/src.height),zoom=Math.max(.5,Math.min(3,item.zoom||1)),dw=src.width*factor*zoom,dh=src.height*factor*zoom;c.translate(cx+(item.panX||0)*rad/50,cy+(item.panY||0)*rad/50);c.rotate((item.rotation||0)*Math.PI/180);c.drawImage(src,-dw/2,-dh/2,dw,dh);}
+    if(item&&item.image){const src=enhanceImage(item.image),imageDiameter=(pageData.side==='back'&&plan.natal)?plan.diameter:d,factor=Math.max((imageDiameter*scale)/src.width,(imageDiameter*scale)/src.height),zoom=Math.max(.5,Math.min(3,item.zoom||1)),dw=src.width*factor*zoom,dh=src.height*factor*zoom;c.translate(cx+(item.panX||0)*rad/50,cy+(item.panY||0)*rad/50);c.rotate((item.rotation||0)*Math.PI/180);c.drawImage(src,-dw/2,-dh/2,dw,dh);}
     else {c.fillStyle='#fff';c.fillRect(cx-rad,cy-rad,rad*2,rad*2);if(plan.natal&&natalIcon.complete&&natalIcon.naturalWidth){const size=rad*1.18;c.drawImage(natalIcon,cx-size/2,cy-size/2,size,size);}}
-    c.restore();c.save();c.beginPath();c.arc(cx,cy,rad,0,Math.PI*2);c.strokeStyle='#c6c7c9';c.lineWidth=Math.max(1,scale*.012);c.stroke();c.restore();
+    c.restore();if(state.showPhotoGuide){c.save();c.beginPath();c.arc(cx,cy,rad,0,Math.PI*2);c.strokeStyle='#c6c7c9';c.lineWidth=Math.max(1,scale*.012);c.stroke();c.restore();}
    }return;
   }
   const cardW=plan.s.w,cardH=plan.s.h,rowsUsed=plan.rows,gridW=plan.cols*cardW+(plan.cols-1)*plan.gap,gridH=rowsUsed*cardH+(rowsUsed-1)*plan.gap;const startX=(plan.pw-gridW)/2,startY=(plan.ph-gridH)/2;for(let i=0;i<plan.cap;i++){const r=Math.floor(i/plan.cols),col=i%plan.cols;const x=(startX+col*(cardW+plan.gap))*scale,y=(startY+r*(cardH+plan.gap))*scale;drawCard(c,items[i]||null,i+pageIndex*plan.cap,plan,x,y);}

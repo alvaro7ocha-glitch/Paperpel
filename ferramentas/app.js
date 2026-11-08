@@ -108,60 +108,83 @@
 
     const [pw,ph]=paperSizes[state.paper];
     const margin=state.paper==="10x15"?0.2:0.7;
-    const gap=$("cutLines").checked?0:0.1;
-    const hasCustom=state.images.some(i=>i.customW>0&&i.customH>0);
-    const base=hasCustom?null:chooseGridLayout();
+    // Pequeno aumento em relação aos 0,1 cm anteriores, sem voltar aos 0,5 cm.
+    const gap=$("cutLines").checked?0:0.15;
+    const base=chooseGridLayout();
+
+    // No modo inteligente, a altura define o tamanho e a largura segue
+    // a proporção original de cada arquivo.
     const dimensions=state.images.map(item=>{
-      // No modo inteligente, a altura é informada pelo usuário e a largura
-      // acompanha automaticamente a proporção original do arquivo.
       const h=item.customH>0?item.customH:(base?.cellH||7);
       const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
-      const w=h*ratio;
-      return {item,w,h};
+      return {item,w:h*ratio,h};
     }).filter(d=>d.w>0&&d.h>0);
 
-    function packSmart(areaW,areaH){
-      // Cria várias unidades de cada arte e testa diferentes ordens de encaixe.
-      // O MaxRects mantém espaços livres residuais para receber peças menores.
-      const trials=[];
-      const maxCopiesPerImage=500;
-      const expanded=[];
-      dimensions.forEach((d,index)=>{
-        for(let n=0;n<maxCopiesPerImage;n++){
-          expanded.push({item:d.item,w:d.w,h:d.h,sourceIndex:index,copyIndex:n});
-        }
-      });
-
-      const orders=[
-        [...expanded].sort((a,b)=>(b.w*b.h-a.w*a.h)||(Math.max(b.w,b.h)-Math.max(a.w,a.h))),
-        [...expanded].sort((a,b)=>(Math.max(b.w,b.h)-Math.max(a.w,a.h))||(b.w*b.h-a.w*a.h)),
-        [...expanded].sort((a,b)=>(b.h-a.h)||(b.w-a.w)),
-        [...expanded].sort((a,b)=>(b.w-a.w)||(b.h-a.h)),
-        // Ordem alternada entre artes para evitar que uma única arte monopolize o encaixe.
-        [...expanded].sort((a,b)=>a.copyIndex-b.copyIndex||a.sourceIndex-b.sourceIndex)
-      ];
-
-      for(const order of orders){
-        const placements=packRectangles(order,areaW,areaH,gap);
-        const usedArea=placements.reduce((sum,p)=>sum+p.w*p.h,0);
-        const counts=new Map();
-        placements.forEach(p=>counts.set(p.item,(counts.get(p.item)||0)+1));
-        const minCount=counts.size?Math.min(...counts.values()):0;
-        trials.push({placements,usedArea,minCount});
-      }
-      trials.sort((a,b)=>(b.placements.length-a.placements.length)||
-        (b.usedArea-a.usedArea)||(b.minCount-a.minCount));
-      return trials[0]||{placements:[],usedArea:0};
+    const copies=Math.max(1,Math.min(500,parseInt($("copies").value,10)||1));
+    const rectangles=[];
+    for(const d of dimensions){
+      for(let i=0;i<copies;i++) rectangles.push({item:d.item,w:d.w,h:d.h});
     }
 
+    function pack(rects,areaW,areaH,sortMode){
+      let free=[{x:0,y:0,w:areaW+gap,h:areaH+gap}];
+      const placed=[];
+      const sorted=[...rects].sort(sortMode);
+      for(const rect of sorted){
+        const rw=rect.w+gap, rh=rect.h+gap;
+        let bestIndex=-1,bestScore=Infinity,bestX=0,bestY=0;
+        for(let i=0;i<free.length;i++){
+          const f=free[i];
+          if(rw>f.w+1e-7||rh>f.h+1e-7) continue;
+          const dw=f.w-rw,dh=f.h-rh;
+          // Best-short-side-fit com desempate pelo maior espaço residual.
+          const score=Math.min(dw,dh)*1000+Math.max(dw,dh);
+          if(score<bestScore){bestScore=score;bestIndex=i;bestX=f.x;bestY=f.y;}
+        }
+        if(bestIndex<0) continue;
+
+        placed.push({item:rect.item,x:bestX,y:bestY,w:rect.w,h:rect.h});
+        const used={x:bestX,y:bestY,w:rw,h:rh};
+        const next=[];
+        for(const f of free){
+          const intersects=used.x<f.x+f.w-1e-7&&used.x+used.w>f.x+1e-7&&
+            used.y<f.y+f.h-1e-7&&used.y+used.h>f.y+1e-7;
+          if(!intersects){next.push(f);continue;}
+          if(used.x>f.x+1e-7) next.push({x:f.x,y:f.y,w:used.x-f.x,h:f.h});
+          if(used.x+used.w<f.x+f.w-1e-7) next.push({x:used.x+used.w,y:f.y,w:f.x+f.w-(used.x+used.w),h:f.h});
+          if(used.y>f.y+1e-7) next.push({x:f.x,y:f.y,w:f.w,h:used.y-f.y});
+          if(used.y+used.h<f.y+f.h-1e-7) next.push({x:f.x,y:used.y+used.h,w:f.w,h:f.y+f.h-(used.y+used.h)});
+        }
+        free=next.filter((r,i,arr)=>r.w>1e-7&&r.h>1e-7&&
+          !arr.some((q,j)=>j!==i&&q.x<=r.x+1e-7&&q.y<=r.y+1e-7&&
+          q.x+q.w>=r.x+r.w-1e-7&&q.y+q.h>=r.y+r.h-1e-7));
+      }
+      return placed;
+    }
+
+    const sorters=[
+      (a,b)=>(b.w*b.h-a.w*a.h)||(b.h-a.h),
+      (a,b)=>(b.h-a.h)||(b.w-a.w),
+      (a,b)=>(b.w-a.w)||(b.h-a.h),
+      (a,b)=>(Math.max(b.w,b.h)-Math.max(a.w,a.h))||(b.w*b.h-a.w*a.h),
+      (a,b)=>(Math.min(b.w,b.h)-Math.min(a.w,a.h))||(b.w*b.h-a.w*a.h)
+    ];
     const options=[];
     for(const orientation of ["portrait","landscape"]){
-      const sw=orientation==="portrait"?pw:ph, sh=orientation==="portrait"?ph:pw;
-      const packed=packSmart(sw-2*margin,sh-2*margin);
-      options.push({orientation,sw,sh,margin,gap,placements:packed.placements,
-        capacity:packed.placements.length,usedArea:packed.usedArea,smart:true});
+      const sw=orientation==="portrait"?pw:ph,sh=orientation==="portrait"?ph:pw;
+      const areaW=sw-2*margin,areaH=sh-2*margin;
+      for(const sorter of sorters){
+        const placements=pack(rectangles,areaW,areaH,sorter);
+        const usedArea=placements.reduce((sum,p)=>sum+p.w*p.h,0);
+        const right=Math.max(0,...placements.map(p=>p.x+p.w));
+        const bottom=Math.max(0,...placements.map(p=>p.y+p.h));
+        const boundingArea=right*bottom;
+        options.push({orientation,sw,sh,margin,gap,placements,
+          capacity:placements.length,usedArea,boundingArea,smart:true});
+      }
     }
-    options.sort((a,b)=>(b.usedArea-a.usedArea)||(b.capacity-a.capacity));
+    options.sort((a,b)=>(b.capacity-a.capacity)||(b.usedArea-a.usedArea)||
+      (a.boundingArea-b.boundingArea));
     const best=options[0];
     best.placements.forEach(p=>{p.x+=margin;p.y+=margin;});
     return best;
@@ -274,7 +297,7 @@
       $("sizeInfo").textContent=`Imagem: ${cmText(layout.cellW)} × ${cmText(layout.cellH)} • ${totalCopies()} unidades`;
     }
     const mode=layout.smart?"aproveitamento inteligente":($("cutLines").checked?"linha de corte":"espaçamento de 0,5 cm");
-    const margin=state.paper==="10x15"?"0,2 cm":"1 cm";
+    const margin=state.paper==="10x15"?"0,2 cm":(layout.smart?"0,7 cm":"1 cm");
     const custom=state.images.some(i=>i.customW>0&&i.customH>0);
     const over=custom && (layout.overflow || totalCopies()>layout.capacity);
     $("download").disabled=!!over;
@@ -298,27 +321,8 @@
       const w=document.createElement("input");w.type="number";w.min="0.1";w.max="100";w.step="0.1";w.placeholder="L cm";w.value=item.customW||"";w.setAttribute("aria-label",`Largura personalizada da imagem ${item.file.name}`);
       const h=document.createElement("input");h.type="number";h.min="0.1";h.max="100";h.step="0.1";h.placeholder="A cm";h.value=item.customH||"";h.setAttribute("aria-label",`Altura personalizada da imagem ${item.file.name}`);
       const unit=document.createElement("em");unit.textContent="cm";
-      const syncSmartWidth=()=>{
-        const smart=$("smartFill").checked;
-        w.disabled=smart;
-        if(smart){
-          const height=parseFloat(h.value)>0?parseFloat(h.value):(item.customH||0);
-          const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
-          w.value=height>0?(height*ratio).toFixed(2):"";
-          w.placeholder="Auto";
-        }else{
-          w.placeholder="L cm";
-          w.value=item.customW||"";
-        }
-      };
-      const apply=()=>{
-        if(!$("smartFill").checked) item.customW=parseFloat(w.value)>0?parseFloat(w.value):0;
-        item.customH=parseFloat(h.value)>0?parseFloat(h.value):0;
-        syncSmartWidth();
-        updatePreview();
-      };
+      const apply=()=>{item.customW=parseFloat(w.value)>0?parseFloat(w.value):0;item.customH=parseFloat(h.value)>0?parseFloat(h.value):0;updatePreview();};
       w.addEventListener("change",apply);h.addEventListener("change",apply);
-      syncSmartWidth();
       sizes.append(w,document.createTextNode("×"),h,unit);
       meta.append(name,sizes);
       const remove=document.createElement("button");remove.className="remove-file";remove.type="button";remove.textContent="×";remove.title="Remover imagem";
@@ -343,8 +347,8 @@
 
   $("fileInput").addEventListener("change",e=>{addFiles(e.target.files);e.target.value="";});
   ["copies","fit","cutLines"].forEach(id=>$(id).addEventListener("input",updatePreview));
-  $("smartFill").addEventListener("change",()=>{renderFileList();updatePreview();});
-  $("smartFill").addEventListener("input",()=>{renderFileList();updatePreview();});
+  $("smartFill").addEventListener("change",updatePreview);
+  $("smartFill").addEventListener("input",updatePreview);
   document.querySelectorAll(".paper-tab").forEach(btn=>btn.addEventListener("click",()=>{
     state.paper=btn.dataset.paper;
     document.querySelectorAll(".paper-tab").forEach(b=>b.classList.toggle("active",b===btn));

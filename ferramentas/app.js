@@ -108,14 +108,17 @@
 
     const [pw,ph]=paperSizes[state.paper];
     const margin=state.paper==="10x15"?0.2:1;
-    const gap=$("cutLines").checked?0:0.2;
+    const gap=$("cutLines").checked?0:0.5;
     const hasCustom=state.images.some(i=>i.customW>0&&i.customH>0);
     const base=hasCustom?null:chooseGridLayout();
-    const dimensions=state.images.map(item=>({
-      item,
-      w:item.customW>0&&item.customH>0?item.customW:(base?.cellW||5),
-      h:item.customW>0&&item.customH>0?item.customH:(base?.cellH||7)
-    })).filter(d=>d.w>0&&d.h>0);
+    const dimensions=state.images.map(item=>{
+      // No modo inteligente, a altura é informada pelo usuário e a largura
+      // acompanha automaticamente a proporção original do arquivo.
+      const h=item.customH>0?item.customH:(base?.cellH||7);
+      const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
+      const w=h*ratio;
+      return {item,w,h};
+    }).filter(d=>d.w>0&&d.h>0);
 
     function packRows(areaW,areaH){
       const heights=[...new Set(dimensions.map(d=>d.h))].sort((a,b)=>a-b);
@@ -297,8 +300,27 @@
       const w=document.createElement("input");w.type="number";w.min="0.1";w.max="100";w.step="0.1";w.placeholder="L cm";w.value=item.customW||"";w.setAttribute("aria-label",`Largura personalizada da imagem ${item.file.name}`);
       const h=document.createElement("input");h.type="number";h.min="0.1";h.max="100";h.step="0.1";h.placeholder="A cm";h.value=item.customH||"";h.setAttribute("aria-label",`Altura personalizada da imagem ${item.file.name}`);
       const unit=document.createElement("em");unit.textContent="cm";
-      const apply=()=>{item.customW=parseFloat(w.value)>0?parseFloat(w.value):0;item.customH=parseFloat(h.value)>0?parseFloat(h.value):0;updatePreview();};
+      const syncSmartWidth=()=>{
+        const smart=$("smartFill").checked;
+        w.disabled=smart;
+        if(smart){
+          const height=parseFloat(h.value)>0?parseFloat(h.value):(item.customH||0);
+          const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
+          w.value=height>0?(height*ratio).toFixed(2):"";
+          w.placeholder="Auto";
+        }else{
+          w.placeholder="L cm";
+          w.value=item.customW||"";
+        }
+      };
+      const apply=()=>{
+        if(!$("smartFill").checked) item.customW=parseFloat(w.value)>0?parseFloat(w.value):0;
+        item.customH=parseFloat(h.value)>0?parseFloat(h.value):0;
+        syncSmartWidth();
+        updatePreview();
+      };
       w.addEventListener("change",apply);h.addEventListener("change",apply);
+      syncSmartWidth();
       sizes.append(w,document.createTextNode("×"),h,unit);
       meta.append(name,sizes);
       const remove=document.createElement("button");remove.className="remove-file";remove.type="button";remove.textContent="×";remove.title="Remover imagem";
@@ -323,8 +345,8 @@
 
   $("fileInput").addEventListener("change",e=>{addFiles(e.target.files);e.target.value="";});
   ["copies","fit","cutLines"].forEach(id=>$(id).addEventListener("input",updatePreview));
-  $("smartFill").addEventListener("change",updatePreview);
-  $("smartFill").addEventListener("input",updatePreview);
+  $("smartFill").addEventListener("change",()=>{renderFileList();updatePreview();});
+  $("smartFill").addEventListener("input",()=>{renderFileList();updatePreview();});
   document.querySelectorAll(".paper-tab").forEach(btn=>btn.addEventListener("click",()=>{
     state.paper=btn.dataset.paper;
     document.querySelectorAll(".paper-tab").forEach(b=>b.classList.toggle("active",b===btn));

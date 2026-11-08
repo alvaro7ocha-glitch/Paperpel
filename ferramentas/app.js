@@ -108,49 +108,70 @@
 
     const [pw,ph]=paperSizes[state.paper];
     const margin=state.paper==="10x15"?0.2:0.7;
-    const gap=$("cutLines").checked?0:0.15;
+    const gap=$("cutLines").checked?0:0.2;
     const base=chooseGridLayout();
 
-    // No modo inteligente, a altura define o tamanho. A largura é sempre
-    // calculada pela proporção original, ignorando o campo de largura.
+    // A altura informada define o tamanho; a largura acompanha a proporção.
     const dimensions=state.images.map(item=>{
       const h=item.customH>0?item.customH:(base?.cellH||1.5);
       const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
       return {item,w:h*ratio,h};
     }).filter(d=>d.w>0&&d.h>0);
 
-    // Montagem em fileiras regulares: cada fileira usa um formato de imagem.
-    // Isso evita encaixes quebrados, sobreposições e grandes buracos internos.
     function packRows(areaW,areaH,order){
-      let y=0;
-      const placements=[];
-      for(const d of order){
+      const rows=[];
+      let y=0, index=0, guard=0;
+      while(index<500 && guard<5000){
+        guard++;
+        const d=order[rows.length%order.length];
         const cols=Math.floor((areaW+gap)/(d.w+gap));
-        const rows=Math.floor((areaH-y+gap)/(d.h+gap));
-        if(cols<1||rows<1) continue;
-        const capacity=cols*rows;
-        let remaining=500;
-        for(let row=0;row<rows&&remaining>0;row++){
-          const count=Math.min(cols,remaining);
-          for(let col=0;col<count;col++){
-            placements.push({
-              item:d.item,
-              x:col*(d.w+gap),
-              y:y+row*(d.h+gap),
-              w:d.w,h:d.h
-            });
+        if(cols<1 || y+d.h>areaH+1e-7) {
+          // Tenta o próximo formato antes de encerrar a montagem.
+          let found=false;
+          for(let skip=1;skip<order.length;skip++){
+            const candidate=order[(rows.length+skip)%order.length];
+            const candidateCols=Math.floor((areaW+gap)/(candidate.w+gap));
+            if(candidateCols>0 && y+candidate.h<=areaH+1e-7){
+              rows.push({d:candidate,cols:candidateCols});
+              y+=candidate.h+gap;
+              index+=candidateCols;
+              found=true;
+              break;
+            }
           }
-          remaining-=count;
+          if(!found) break;
+          continue;
         }
-        const usedRows=Math.ceil(Math.min(500,capacity)/cols);
-        if(usedRows>0) y+=usedRows*(d.h+gap);
+        rows.push({d,cols});
+        y+=d.h+gap;
+        index+=cols;
       }
+
+      if(rows.length) y-=gap;
+      const totalH=y;
+      let rowY=0;
+      const placements=[];
+      for(const row of rows){
+        const rowW=row.cols*row.d.w+(row.cols-1)*gap;
+        const x0=(areaW-rowW)/2;
+        for(let col=0;col<row.cols;col++){
+          placements.push({
+            item:row.d.item,
+            x:x0+col*(row.d.w+gap),
+            y:rowY,w:row.d.w,h:row.d.h
+          });
+        }
+        rowY+=row.d.h+gap;
+      }
+      const verticalOffset=Math.max(0,(areaH-totalH)/2);
+      placements.forEach(p=>{p.y+=verticalOffset;});
       return placements;
     }
 
     const options=[];
     const orders=dimensions.length>1?
-      [dimensions,[...dimensions].reverse()]:[dimensions];
+      [dimensions,[...dimensions].reverse()]:
+      [dimensions];
     for(const orientation of ["portrait","landscape"]){
       const sw=orientation==="portrait"?pw:ph;
       const sh=orientation==="portrait"?ph:pw;
@@ -274,7 +295,7 @@
       $("sizeInfo").textContent=`Imagem: ${cmText(layout.cellW)} × ${cmText(layout.cellH)} • ${totalCopies()} unidades`;
     }
     const mode=layout.smart?"aproveitamento inteligente":($("cutLines").checked?"linha de corte":"espaçamento de 0,5 cm");
-    const margin=state.paper==="10x15"?"0,2 cm":(layout.smart?"0,7 cm":"1 cm");
+    const margin=state.paper==="10x15"?"0,2 cm":"1 cm";
     const custom=state.images.some(i=>i.customW>0&&i.customH>0);
     const over=custom && (layout.overflow || totalCopies()>layout.capacity);
     $("download").disabled=!!over;

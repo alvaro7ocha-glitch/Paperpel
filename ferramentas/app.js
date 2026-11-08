@@ -72,10 +72,11 @@
   }
 
   function packRectangles(rectangles, areaW, areaH, gap){
-    // MaxRects: mantém vários espaços livres e escolhe a melhor posição para cada peça.
+    // MaxRects: posiciona peças de tamanhos diferentes e conserva os espaços livres.
     let free=[{x:0,y:0,w:areaW+gap,h:areaH+gap}];
     const placed=[];
-    for(const rect of rectangles){
+    const ordered=[...rectangles].sort((a,b)=>(b.w*b.h-a.w*a.h)||(b.h-a.h));
+    for(const rect of ordered){
       const rw=rect.w+gap, rh=rect.h+gap;
       let best=-1, bestScore=Infinity, bestX=0, bestY=0;
       for(let i=0;i<free.length;i++){
@@ -86,7 +87,7 @@
           if(score<bestScore){best=i;bestScore=score;bestX=f.x;bestY=f.y;}
         }
       }
-      if(best<0) continue;
+      if(best<0) return null;
       placed.push({item:rect.item,x:bestX,y:bestY,w:rect.w,h:rect.h});
       const used={x:bestX,y:bestY,w:rw,h:rh};
       const next=[];
@@ -100,7 +101,7 @@
       }
       free=next.filter((r,i,arr)=>r.w>1e-7&&r.h>1e-7&&!arr.some((q,j)=>j!==i&&q.x<=r.x+1e-7&&q.y<=r.y+1e-7&&q.x+q.w>=r.x+r.w-1e-7&&q.y+q.h>=r.y+r.h-1e-7));
     }
-    return placed;
+    return {placed,free};
   }
 
   function chooseLayout(){
@@ -123,55 +124,54 @@
       const sw=orientation==='portrait'?pw:ph;
       const sh=orientation==='portrait'?ph:pw;
       const areaW=sw-2*margin, areaH=sh-2*margin;
-      const rowsByImage=dimensions.map(d=>({
-        ...d,
-        cols:Math.floor((areaW+gap)/(d.w+gap)),
-        rowH:d.h+gap
-      }));
-      if(rowsByImage.some(d=>d.cols<1 || d.rowH>areaH+gap)) continue;
+      if(dimensions.some(d=>d.w>areaW+1e-7||d.h>areaH+1e-7)) continue;
 
-      // Cada tipo de imagem recebe ao menos uma fileira. Depois, as fileiras
-      // restantes são distribuídas por programação dinâmica para maximizar
-      // a quantidade total, sem obrigar imagens largas e estreitas à mesma coluna.
-      const unit=0.01;
-      const available=Math.floor((areaH+gap)/unit);
-      let dp=new Array(available+1).fill(null);
-      dp[0]={count:0,used:0,allocation:[]};
-      for(const d of rowsByImage){
-        const next=new Array(available+1).fill(null);
-        const maxRows=Math.floor((areaH+gap)/d.rowH);
-        for(let used=0;used<=available;used++){
-          const prev=dp[used]; if(!prev) continue;
-          for(let rows=1;rows<=maxRows;rows++){
-            const addH=rows*d.rowH;
-            const add=Math.ceil(addH/unit-1e-8);
-            const total=used+add;
-            if(total>available) break;
-            const candidate={count:prev.count+rows*d.cols,used:prev.used+addH,allocation:[...prev.allocation,rows]};
-            const old=next[total];
-            if(!old || candidate.count>old.count || (candidate.count===old.count && candidate.used<old.used)) next[total]=candidate;
+      // Primeiro tenta colocar a mesma quantidade de cada imagem.
+      // Depois usa os espaços que sobrarem com cópias adicionais, priorizando as menores.
+      let low=0, high=Math.max(1,Math.ceil((areaW*areaH)/Math.min(...dimensions.map(d=>d.w*d.h)))+1);
+      let balanced=null, balancedCount=0;
+      while(low<=high){
+        const mid=Math.floor((low+high)/2);
+        const rects=[];
+        dimensions.forEach(d=>{for(let n=0;n<mid;n++) rects.push(d);});
+        const packed=packRectangles(rects,areaW,areaH,gap);
+        if(packed){balanced=packed;balancedCount=mid;low=mid+1;}
+        else high=mid-1;
+      }
+      if(!balanced || balancedCount===0) continue;
+
+      let placements=balanced.placed;
+      let free=balanced.free;
+      const extras=[...dimensions].sort((a,b)=>(a.w*a.h-b.w*b.h)||(a.h-b.h));
+      let added=true, safety=0;
+      while(added && safety++<2000){
+        added=false;
+        for(const d of extras){
+          const attempt=packRectangles([...free.map(()=>null).filter(Boolean),d],areaW,areaH,gap);
+          // Reaproveita diretamente os retângulos livres atuais para encontrar a melhor posição.
+          let best=-1,bestScore=Infinity,bx=0,by=0;
+          for(let i=0;i<free.length;i++){
+            const f=free[i],rw=d.w+gap,rh=d.h+gap;
+            if(rw<=f.w+1e-7&&rh<=f.h+1e-7){
+              const score=Math.min(f.w-rw,f.h-rh)*10000+Math.max(f.w-rw,f.h-rh);
+              if(score<bestScore){best=i;bestScore=score;bx=f.x;by=f.y;}
+            }
+          }
+          if(best>=0){
+            const combined=packRectangles([...placements.map(p=>({item:p.item,w:p.w,h:p.h})),d],areaW,areaH,gap);
+            if(combined && combined.placed.length>placements.length){
+              placements=combined.placed;free=combined.free;added=true;
+            }
           }
         }
-        dp=next;
       }
-      let best=null;
-      for(const candidate of dp){
-        if(candidate && (!best || candidate.count>best.count || (candidate.count===best.count && candidate.used<best.used))) best=candidate;
-      }
-      if(!best) continue;
 
-      const occupiedH=best.used-gap;
-      let y=margin+(areaH-occupiedH)/2;
-      const placements=[];
-      rowsByImage.forEach((d,index)=>{
-        const rowCount=best.allocation[index];
-        const rowW=d.cols*d.w+(d.cols-1)*gap;
-        const x=(sw-rowW)/2;
-        for(let r=0;r<rowCount;r++){
-          for(let c=0;c<d.cols;c++) placements.push({item:d.item,x:x+c*(d.w+gap),y,w:d.w,h:d.h});
-          y+=d.rowH;
-        }
-      });
+      // Centraliza o conjunto ocupado na folha, sem alterar os intervalos entre peças.
+      const minX=Math.min(...placements.map(p=>p.x)), minY=Math.min(...placements.map(p=>p.y));
+      const maxX=Math.max(...placements.map(p=>p.x+p.w)), maxY=Math.max(...placements.map(p=>p.y+p.h));
+      const offsetX=(areaW-(maxX-minX))/2-minX+margin;
+      const offsetY=(areaH-(maxY-minY))/2-minY+margin;
+      placements=placements.map(p=>({...p,x:p.x+offsetX,y:p.y+offsetY}));
       options.push({orientation,sw,sh,margin,gap,placements,capacity:placements.length,smart:true,requested:dimensions.length});
     }
     if(!options.length){

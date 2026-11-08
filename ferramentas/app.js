@@ -256,7 +256,7 @@
   function updatePreview(){
     if(!state.images.length){
       canvas.style.display="none";$("emptyState").style.display="flex";
-      $("sizeInfo").textContent="Aguardando imagens";$("paperInfo").textContent=state.paper;
+      $("sizeInfo").textContent="";$("paperInfo").textContent=state.paper;
       $("download").disabled=true;return;
     }
     const layout=chooseLayout(); state.layout=layout;

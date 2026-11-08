@@ -104,56 +104,78 @@
   }
 
   function chooseLayout(){
-    if(!$("smartFill").checked) return chooseGridLayout();
+    if(!$('smartFill').checked) return chooseGridLayout();
 
     const [pw,ph]=paperSizes[state.paper];
-    const margin=state.paper==="10x15"?0.2:0.7;
-    const gap=$("cutLines").checked?0:0.2;
-    const copies=Math.max(1,Math.min(500,parseInt($("copies").value,10)||1));
-
-    // No aproveitamento inteligente, a altura informada controla o tamanho;
-    // a largura é sempre calculada pela proporção original do arquivo.
+    const margin=state.paper==='10x15'?0.2:0.7;
+    const gap=$('cutLines').checked?0:0.2;
+    const baseLayout=chooseGridLayout();
     const dimensions=state.images.map(item=>{
-      const h=item.customH>0?item.customH:(chooseGridLayout()?.cellH||7);
       const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
-      return {item,w:h*ratio,h};
+      const h=item.customH>0?item.customH:(baseLayout?.cellH||7);
+      const w=item.customW>0?item.customW:h*ratio;
+      return {item,w,h};
     }).filter(d=>d.w>0&&d.h>0);
     if(!dimensions.length) return null;
 
     const options=[];
-    for(const orientation of ["portrait","landscape"]){
-      const sw=orientation==="portrait"?pw:ph;
-      const sh=orientation==="portrait"?ph:pw;
+    for(const orientation of ['portrait','landscape']){
+      const sw=orientation==='portrait'?pw:ph;
+      const sh=orientation==='portrait'?ph:pw;
       const areaW=sw-2*margin, areaH=sh-2*margin;
-      // Usa a mesma quantidade de colunas em todas as fileiras. Isso evita
-      // que uma imagem pequena tome a folha inteira e deixe outra de fora.
-      const cols=Math.min(...dimensions.map(d=>Math.floor((areaW+gap)/(d.w+gap))));
-      if(cols<1) continue;
-      // Reserva fileiras para cada arquivo, em blocos iguais, como na montagem manual.
-      const oneCycleH=dimensions.reduce((sum,d)=>sum+d.h,0)+dimensions.length*gap;
-      const rows=Math.floor((areaH+gap)/oneCycleH);
-      if(rows<1) continue;
-      const totalRows=rows*dimensions.length;
-      const totalH=rows*dimensions.reduce((sum,d)=>sum+d.h,0)+(totalRows-1)*gap;
-      const placements=[];
-      let y=(areaH-totalH)/2+margin;
-      for(const d of dimensions){
-        const rowW=cols*d.w+(cols-1)*gap;
-        const x=(sw-rowW)/2;
-        for(let r=0;r<rows;r++){
-          for(let c=0;c<cols;c++){
-            placements.push({item:d.item,x:x+c*(d.w+gap),y,w:d.w,h:d.h});
+      const rowsByImage=dimensions.map(d=>({
+        ...d,
+        cols:Math.floor((areaW+gap)/(d.w+gap)),
+        rowH:d.h+gap
+      }));
+      if(rowsByImage.some(d=>d.cols<1 || d.rowH>areaH+gap)) continue;
+
+      // Cada tipo de imagem recebe ao menos uma fileira. Depois, as fileiras
+      // restantes são distribuídas por programação dinâmica para maximizar
+      // a quantidade total, sem obrigar imagens largas e estreitas à mesma coluna.
+      const unit=0.01;
+      const available=Math.floor((areaH+gap)/unit);
+      let dp=new Array(available+1).fill(null);
+      dp[0]={count:0,used:0,allocation:[]};
+      for(const d of rowsByImage){
+        const next=new Array(available+1).fill(null);
+        const maxRows=Math.floor((areaH+gap)/d.rowH);
+        for(let used=0;used<=available;used++){
+          const prev=dp[used]; if(!prev) continue;
+          for(let rows=1;rows<=maxRows;rows++){
+            const addH=rows*d.rowH;
+            const add=Math.ceil(addH/unit-1e-8);
+            const total=used+add;
+            if(total>available) break;
+            const candidate={count:prev.count+rows*d.cols,used:prev.used+addH,allocation:[...prev.allocation,rows]};
+            const old=next[total];
+            if(!old || candidate.count>old.count || (candidate.count===old.count && candidate.used<old.used)) next[total]=candidate;
           }
-          y+=d.h+gap;
         }
+        dp=next;
       }
-      options.push({orientation,sw,sh,margin,gap,placements,
-        capacity:placements.length,smart:true,rows,cols,requested:dimensions.length*copies});
+      let best=null;
+      for(const candidate of dp){
+        if(candidate && (!best || candidate.count>best.count || (candidate.count===best.count && candidate.used<best.used))) best=candidate;
+      }
+      if(!best) continue;
+
+      const occupiedH=best.used-gap;
+      let y=margin+(areaH-occupiedH)/2;
+      const placements=[];
+      rowsByImage.forEach((d,index)=>{
+        const rowCount=best.allocation[index];
+        const rowW=d.cols*d.w+(d.cols-1)*gap;
+        const x=(sw-rowW)/2;
+        for(let r=0;r<rowCount;r++){
+          for(let c=0;c<d.cols;c++) placements.push({item:d.item,x:x+c*(d.w+gap),y,w:d.w,h:d.h});
+          y+=d.rowH;
+        }
+      });
+      options.push({orientation,sw,sh,margin,gap,placements,capacity:placements.length,smart:true,requested:dimensions.length});
     }
     if(!options.length){
-      // Se as dimensões não couberem nem uma vez, ainda mostra a primeira
-      // imagem em tamanho solicitado e impede qualquer falsa indicação de capacidade.
-      return {orientation:"portrait",sw:pw,sh:ph,margin,gap,placements:[],capacity:0,smart:true,overflow:true};
+      return {orientation:'portrait',sw:pw,sh:ph,margin,gap,placements:[],capacity:0,smart:true,overflow:true};
     }
     options.sort((a,b)=>b.capacity-a.capacity);
     return options[0];

@@ -120,32 +120,44 @@
       return {item,w,h};
     }).filter(d=>d.w>0&&d.h>0);
 
-    function packRows(areaW,areaH){
-      // Organiza por arquivo: primeiro completa as fileiras de uma imagem,
-      // depois inicia as fileiras da próxima, como na referência enviada.
-      let y=0, placements=[], usedArea=0;
-      for(const d of dimensions){
-        const cols=Math.max(0,Math.floor((areaW+gap+1e-6)/(d.w+gap)));
-        if(cols<1) continue;
-        const rows=Math.max(0,Math.floor((areaH-y+gap+1e-6)/(d.h+gap)));
-        for(let r=0;r<rows;r++){
-          const rowY=y+r*(d.h+gap);
-          for(let c=0;c<cols;c++){
-            const x=c*(d.w+gap);
-            placements.push({item:d.item,x,y:rowY,w:d.w,h:d.h});
-            usedArea+=d.w*d.h;
-          }
+    function packSmart(areaW,areaH){
+      // Cria várias unidades de cada arte e testa diferentes ordens de encaixe.
+      // O MaxRects mantém espaços livres residuais para receber peças menores.
+      const trials=[];
+      const maxCopiesPerImage=500;
+      const expanded=[];
+      dimensions.forEach((d,index)=>{
+        for(let n=0;n<maxCopiesPerImage;n++){
+          expanded.push({item:d.item,w:d.w,h:d.h,sourceIndex:index,copyIndex:n});
         }
-        if(rows>0) y+=rows*(d.h+gap);
-        if(y>=areaH-1e-6) break;
+      });
+
+      const orders=[
+        [...expanded].sort((a,b)=>(b.w*b.h-a.w*a.h)||(Math.max(b.w,b.h)-Math.max(a.w,a.h))),
+        [...expanded].sort((a,b)=>(Math.max(b.w,b.h)-Math.max(a.w,a.h))||(b.w*b.h-a.w*a.h)),
+        [...expanded].sort((a,b)=>(b.h-a.h)||(b.w-a.w)),
+        [...expanded].sort((a,b)=>(b.w-a.w)||(b.h-a.h)),
+        // Ordem alternada entre artes para evitar que uma única arte monopolize o encaixe.
+        [...expanded].sort((a,b)=>a.copyIndex-b.copyIndex||a.sourceIndex-b.sourceIndex)
+      ];
+
+      for(const order of orders){
+        const placements=packRectangles(order,areaW,areaH,gap);
+        const usedArea=placements.reduce((sum,p)=>sum+p.w*p.h,0);
+        const counts=new Map();
+        placements.forEach(p=>counts.set(p.item,(counts.get(p.item)||0)+1));
+        const minCount=counts.size?Math.min(...counts.values()):0;
+        trials.push({placements,usedArea,minCount});
       }
-      return {placements,usedArea};
+      trials.sort((a,b)=>(b.placements.length-a.placements.length)||
+        (b.usedArea-a.usedArea)||(b.minCount-a.minCount));
+      return trials[0]||{placements:[],usedArea:0};
     }
 
     const options=[];
     for(const orientation of ["portrait","landscape"]){
       const sw=orientation==="portrait"?pw:ph, sh=orientation==="portrait"?ph:pw;
-      const packed=packRows(sw-2*margin,sh-2*margin);
+      const packed=packSmart(sw-2*margin,sh-2*margin);
       options.push({orientation,sw,sh,margin,gap,placements:packed.placements,
         capacity:packed.placements.length,usedArea:packed.usedArea,smart:true});
     }

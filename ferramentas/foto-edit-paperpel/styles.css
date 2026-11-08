@@ -4,3 +4,8 @@
 .pan-controls label{display:flex;align-items:center;gap:5px;min-width:0}
 .pan-controls input[type=range]{width:100%;min-width:35px;accent-color:#8290ff}
 .file-row{grid-template-columns:48px minmax(0,1fr) 25px}
+
+.guide-toggle{display:flex;align-items:center;gap:7px;margin-top:10px;color:#d5d1df;font-size:12px;cursor:pointer}
+.zoom-control{display:grid;grid-template-columns:auto minmax(70px,1fr) 38px;align-items:center;gap:8px;margin-top:7px;color:#d5d1df;font-size:11px}
+.zoom-control input[type=range]{width:100%;min-width:45px;accent-color:#8290ff}
+.zoom-control span{font-variant-numeric:tabular-nums;text-align:right;color:#aaa4ba}

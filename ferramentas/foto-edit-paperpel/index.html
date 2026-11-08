@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Foto Edit | Paperpel Gráfica</title>
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
@@ -29,6 +29,7 @@
    <div id="fileList" class="file-list"></div>
    <div class="magnet-options hidden" id="borderOptions"><label><input id="colorBorder" type="checkbox"> Borda colorida</label><small>As seis cores serão distribuídas automaticamente.</small></div>
    <label class="auto-color"><input id="autoColor" type="checkbox"> Ajustar automaticamente a cor</label>
+   <label class="guide-toggle"><input id="showPhotoGuide" type="checkbox" checked> Mostrar contorno da área da foto</label>
   </section>
   <select id="paperMode" class="hidden" aria-hidden="true"></select>
   <div class="actions"><button id="downloadPng" class="secondary">BAIXAR PNG</button><button id="downloadPdf" class="primary">BAIXAR PDF</button></div>
@@ -43,5 +44,5 @@
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"}</script>
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6"></script>
 </body></html>

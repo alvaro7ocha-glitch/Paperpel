@@ -107,8 +107,8 @@
     if(!$("smartFill").checked) return chooseGridLayout();
 
     const [pw,ph]=paperSizes[state.paper];
-    const margin=state.paper==="10x15"?0.2:1;
-    const gap=$("cutLines").checked?0:0.5;
+    const margin=state.paper==="10x15"?0.2:0.7;
+    const gap=$("cutLines").checked?0:0.1;
     const hasCustom=state.images.some(i=>i.customW>0&&i.customH>0);
     const base=hasCustom?null:chooseGridLayout();
     const dimensions=state.images.map(item=>{
@@ -121,39 +121,25 @@
     }).filter(d=>d.w>0&&d.h>0);
 
     function packRows(areaW,areaH){
-      const heights=[...new Set(dimensions.map(d=>d.h))].sort((a,b)=>a-b);
-      let best={placements:[],usedArea:0};
-      for(const maxRowH of heights){
-        let y=0, placements=[], usedArea=0;
-        while(y<areaH-1e-6){
-          let x=0, row=[], rowH=0;
-          const remaining=dimensions.slice().sort((a,b)=>(b.w*b.h-a.w*a.h)||(b.h-a.h));
-          while(remaining.length){
-            const fitting=remaining.filter(d=>d.h<=maxRowH+1e-6 && d.w<=areaW-x+1e-6 &&
-              (row.length===0 || x+d.w+gap<=areaW+1e-6));
-            if(!fitting.length) break;
-            const chosen=fitting[0];
-            row.push({item:chosen.item,x,y,w:chosen.w,h:chosen.h});
-            x+=chosen.w+gap;
-            rowH=Math.max(rowH,chosen.h);
-            usedArea+=chosen.w*chosen.h;
-            const idx=remaining.indexOf(chosen);
-            remaining.splice(idx,1);
-            chosen._rowCount=(chosen._rowCount||0)+1;
-            if(chosen._rowCount<500) remaining.push(chosen);
+      // Organiza por arquivo: primeiro completa as fileiras de uma imagem,
+      // depois inicia as fileiras da próxima, como na referência enviada.
+      let y=0, placements=[], usedArea=0;
+      for(const d of dimensions){
+        const cols=Math.max(0,Math.floor((areaW+gap+1e-6)/(d.w+gap)));
+        if(cols<1) continue;
+        const rows=Math.max(0,Math.floor((areaH-y+gap+1e-6)/(d.h+gap)));
+        for(let r=0;r<rows;r++){
+          const rowY=y+r*(d.h+gap);
+          for(let c=0;c<cols;c++){
+            const x=c*(d.w+gap);
+            placements.push({item:d.item,x,y:rowY,w:d.w,h:d.h});
+            usedArea+=d.w*d.h;
           }
-          dimensions.forEach(d=>{delete d._rowCount;});
-          if(!row.length) break;
-          placements.push(...row);
-          y+=rowH+gap;
-          if(y+Math.min(...dimensions.map(d=>d.h))>areaH+1e-6) break;
         }
-        if(usedArea>best.usedArea+1e-6 ||
-          (Math.abs(usedArea-best.usedArea)<1e-6 && placements.length>best.placements.length)){
-          best={placements,usedArea};
-        }
+        if(rows>0) y+=rows*(d.h+gap);
+        if(y>=areaH-1e-6) break;
       }
-      return best;
+      return {placements,usedArea};
     }
 
     const options=[];

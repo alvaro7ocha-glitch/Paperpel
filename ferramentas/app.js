@@ -185,7 +185,7 @@
     }
   }
 
-  function drawSheet(targetCanvas, layout, forExport){
+  function drawSheet(targetCanvas, layout, forExport, transparent=false){
     const [pw,ph]=paperSizes[state.paper];
     const sheetW=layout.orientation==="portrait"?pw:ph;
     const sheetH=layout.orientation==="portrait"?ph:pw;
@@ -194,7 +194,7 @@
     targetCanvas.width=Math.round(sheetW*scale);
     targetCanvas.height=Math.round(sheetH*scale);
     const c=targetCanvas.getContext("2d");
-    c.fillStyle="#ffffff"; c.fillRect(0,0,targetCanvas.width,targetCanvas.height);
+    if(!transparent){c.fillStyle="#ffffff"; c.fillRect(0,0,targetCanvas.width,targetCanvas.height);}
     const images=makeOrderedCopies();
     if(layout.smart){
       layout.placements.forEach(p=>{
@@ -339,15 +339,26 @@
     if(!state.images.length||!state.layout)return;
     const btn=$("download");btn.disabled=true;setStatus("Gerando arquivo em alta resolução…");
     try{
-      const output=document.createElement("canvas");drawSheet(output,state.layout,true);
       const format=$("format").value;
+      const output=document.createElement("canvas");
+      drawSheet(output,state.layout,true,format==="png");
+      if(format==="pdf"){
+        if(!window.jspdf?.jsPDF){setStatus("Não foi possível carregar o gerador de PDF. Verifique sua conexão e tente novamente.");btn.disabled=false;return;}
+        const [pw,ph]=paperSizes[state.paper];
+        const sheetW=state.layout.orientation==="portrait"?pw:ph;
+        const sheetH=state.layout.orientation==="portrait"?ph:pw;
+        const {jsPDF}=window.jspdf;
+        const pdf=new jsPDF({orientation:state.layout.orientation,unit:"mm",format:[sheetW*10,sheetH*10],compress:true});
+        pdf.addImage(output.toDataURL("image/jpeg",0.98),"JPEG",0,0,sheetW*10,sheetH*10,undefined,"FAST");
+        pdf.save(`paperpel-${state.paper.toLowerCase()}-300dpi.pdf`);
+        setStatus("Arquivo PDF gerado em 300 DPI.");btn.disabled=false;return;
+      }
       output.toBlob(blob=>{
         if(!blob){setStatus("Não foi possível gerar o arquivo. Tente usar PNG ou reduzir a quantidade de imagens.");btn.disabled=false;return;}
         const a=document.createElement("a"),url=URL.createObjectURL(blob);
         a.href=url;a.download=`paperpel-${state.paper.toLowerCase()}-300dpi.${format==="png"?"png":"jpg"}`;
         document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
-        setStatus(`Arquivo ${format.toUpperCase()} gerado em 300 DPI.`);
-        btn.disabled=false;
+        setStatus(`Arquivo ${format.toUpperCase()} gerado em 300 DPI.`);btn.disabled=false;
       },format==="png"?"image/png":"image/jpeg",format==="jpeg"?0.98:undefined);
     }catch(err){console.error(err);setStatus("O navegador não conseguiu gerar o arquivo. Tente reduzir a quantidade de imagens.");btn.disabled=false;}
   });

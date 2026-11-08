@@ -6,6 +6,7 @@
   <meta name="description" content="Ferramenta Paperpel para organizar múltiplas imagens em uma folha A4, A3 ou SRA3 e baixar em alta resolução.">
   <title>Múltiplo por folha | Paperpel Gráfica</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
   <header class="topbar">
@@ -54,7 +55,7 @@
       <div class="download-area">
         <div class="format-row">
           <label for="format">Formato:</label>
-          <select id="format"><option value="png">PNG</option><option value="jpeg">JPG</option></select>
+          <select id="format"><option value="png">PNG</option><option value="jpeg">JPG</option><option value="pdf">PDF</option></select>
         </div>
         <button id="download" class="download-button" disabled>BAIXAR</button>
         <p id="status" class="status" aria-live="polite">Adicione imagens para começar.</p>

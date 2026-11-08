@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Foto Edit | Paperpel Gráfica</title>
-<link rel="stylesheet" href="styles.css?v=4">
+<link rel="stylesheet" href="styles.css?v=5">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 <header class="topbar">
   <div class="brand-wrap">
     <button class="brand-icon" id="toolMenuBtn" title="Trocar de ferramenta" aria-label="Trocar de ferramenta"><img src="assets/paperpel-icon.jpg" alt="Paperpel"></button>
-    <div><strong>Foto Edit</strong><small>Paperpel Gráfica</small></div>
+    <div><strong>Foto Edit</strong></div>
     <nav id="toolMenu" class="tool-menu hidden"><a href="../">Múltiplo por folha</a><a href="./" class="current">Foto Edit</a></nav>
   </div>
   <span class="top-note">EDIÇÃO E MONTAGEM DE FOTOS</span>
@@ -22,11 +22,17 @@
    <button class="tab active" data-kind="standard">Padrão</button>
    <button class="tab" data-kind="mini">Mini</button>
    <button class="tab" data-kind="magnet">Foto-Ímã</button>
+   <button class="tab" data-kind="circle">Círculo</button>
   </div>
   <section class="upload-card">
    <h2>Envie uma ou mais imagens</h2>
    <label class="dropzone" id="dropzone"><input id="fileInput" type="file" accept="image/png,image/jpeg,application/pdf" multiple><span class="upload-symbol">▧</span><b>Enviar imagens</b><small>ou arraste os arquivos para cá</small><small class="formats">PNG · JPEG · PDF</small></label>
    <div id="fileList" class="file-list"></div>
+   <div class="circle-options hidden" id="circleOptions">
+    <label class="circle-size">Diâmetro do círculo (cm) <input id="circleSize" type="number" min="1" max="30" step="0.1" value="5"></label>
+    <label><input id="christmasBall" type="checkbox"> Bolinha de Natal</label>
+    <small>Espaçamento fixo de 0,5 cm entre os círculos.</small>
+   </div>
    <div class="magnet-options hidden" id="borderOptions"><label><input id="colorBorder" type="checkbox"> Borda colorida</label><small>As seis cores serão distribuídas automaticamente.</small></div>
    <label class="auto-color"><input id="autoColor" type="checkbox"> Ajustar automaticamente a cor</label>
    <label class="guide-toggle"><input id="showPhotoGuide" type="checkbox" checked> Mostrar contorno da área da foto</label>
@@ -44,5 +50,5 @@
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"}</script>
-<script src="app.js?v=6"></script>
+<script src="app.js?v=7"></script>
 </body></html>

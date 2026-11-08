@@ -9,3 +9,5 @@
 .zoom-control{display:grid;grid-template-columns:auto minmax(70px,1fr) 38px;align-items:center;gap:8px;margin-top:7px;color:#d5d1df;font-size:11px}
 .zoom-control input[type=range]{width:100%;min-width:45px;accent-color:#8290ff}
 .zoom-control span{font-variant-numeric:tabular-nums;text-align:right;color:#aaa4ba}
+
+.tabs{grid-template-columns:repeat(4,minmax(0,1fr))}.circle-options{background:#2d2938;border-radius:8px;padding:12px;margin-top:10px;display:flex;flex-direction:column;gap:9px;color:#ddd8e9}.circle-options small{font-size:11px;color:var(--muted)}.circle-size{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px}.circle-size input{width:76px;background:#1d1a26;color:#fff;border:1px solid #514b60;border-radius:4px;padding:7px}.circle-size input:disabled{opacity:.6}

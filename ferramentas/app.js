@@ -108,83 +108,91 @@
 
     const [pw,ph]=paperSizes[state.paper];
     const margin=state.paper==="10x15"?0.2:0.7;
+    // Pequeno aumento em relação aos 0,1 cm anteriores, sem voltar aos 0,5 cm.
     const gap=$("cutLines").checked?0:0.2;
     const base=chooseGridLayout();
 
-    // A altura informada define o tamanho; a largura acompanha a proporção.
+    // No modo inteligente, a altura define o tamanho e a largura segue
+    // a proporção original de cada arquivo.
     const dimensions=state.images.map(item=>{
-      const h=item.customH>0?item.customH:(base?.cellH||1.5);
+      const h=item.customH>0?item.customH:(base?.cellH||7);
       const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
       return {item,w:h*ratio,h};
     }).filter(d=>d.w>0&&d.h>0);
 
-    function packRows(areaW,areaH,order){
-      const rows=[];
-      let y=0, index=0, guard=0;
-      while(index<500 && guard<5000){
-        guard++;
-        const d=order[rows.length%order.length];
-        const cols=Math.floor((areaW+gap)/(d.w+gap));
-        if(cols<1 || y+d.h>areaH+1e-7) {
-          // Tenta o próximo formato antes de encerrar a montagem.
-          let found=false;
-          for(let skip=1;skip<order.length;skip++){
-            const candidate=order[(rows.length+skip)%order.length];
-            const candidateCols=Math.floor((areaW+gap)/(candidate.w+gap));
-            if(candidateCols>0 && y+candidate.h<=areaH+1e-7){
-              rows.push({d:candidate,cols:candidateCols});
-              y+=candidate.h+gap;
-              index+=candidateCols;
-              found=true;
-              break;
-            }
-          }
-          if(!found) break;
-          continue;
-        }
-        rows.push({d,cols});
-        y+=d.h+gap;
-        index+=cols;
-      }
-
-      if(rows.length) y-=gap;
-      const totalH=y;
-      let rowY=0;
-      const placements=[];
-      for(const row of rows){
-        const rowW=row.cols*row.d.w+(row.cols-1)*gap;
-        const x0=(areaW-rowW)/2;
-        for(let col=0;col<row.cols;col++){
-          placements.push({
-            item:row.d.item,
-            x:x0+col*(row.d.w+gap),
-            y:rowY,w:row.d.w,h:row.d.h
-          });
-        }
-        rowY+=row.d.h+gap;
-      }
-      const verticalOffset=Math.max(0,(areaH-totalH)/2);
-      placements.forEach(p=>{p.y+=verticalOffset;});
-      return placements;
+    const copies=Math.max(1,Math.min(500,parseInt($("copies").value,10)||1));
+    const rectangles=[];
+    for(const d of dimensions){
+      for(let i=0;i<copies;i++) rectangles.push({item:d.item,w:d.w,h:d.h});
     }
 
+    function pack(rects,areaW,areaH,sortMode){
+      let free=[{x:0,y:0,w:areaW+gap,h:areaH+gap}];
+      const placed=[];
+      const sorted=[...rects].sort(sortMode);
+      for(const rect of sorted){
+        const rw=rect.w+gap, rh=rect.h+gap;
+        let bestIndex=-1,bestScore=Infinity,bestX=0,bestY=0;
+        for(let i=0;i<free.length;i++){
+          const f=free[i];
+          if(rw>f.w+1e-7||rh>f.h+1e-7) continue;
+          const dw=f.w-rw,dh=f.h-rh;
+          // Best-short-side-fit com desempate pelo maior espaço residual.
+          const score=Math.min(dw,dh)*1000+Math.max(dw,dh);
+          if(score<bestScore){bestScore=score;bestIndex=i;bestX=f.x;bestY=f.y;}
+        }
+        if(bestIndex<0) continue;
+
+        placed.push({item:rect.item,x:bestX,y:bestY,w:rect.w,h:rect.h});
+        const used={x:bestX,y:bestY,w:rw,h:rh};
+        const next=[];
+        for(const f of free){
+          const intersects=used.x<f.x+f.w-1e-7&&used.x+used.w>f.x+1e-7&&
+            used.y<f.y+f.h-1e-7&&used.y+used.h>f.y+1e-7;
+          if(!intersects){next.push(f);continue;}
+          if(used.x>f.x+1e-7) next.push({x:f.x,y:f.y,w:used.x-f.x,h:f.h});
+          if(used.x+used.w<f.x+f.w-1e-7) next.push({x:used.x+used.w,y:f.y,w:f.x+f.w-(used.x+used.w),h:f.h});
+          if(used.y>f.y+1e-7) next.push({x:f.x,y:f.y,w:f.w,h:used.y-f.y});
+          if(used.y+used.h<f.y+f.h-1e-7) next.push({x:f.x,y:used.y+used.h,w:f.w,h:f.y+f.h-(used.y+used.h)});
+        }
+        free=next.filter((r,i,arr)=>r.w>1e-7&&r.h>1e-7&&
+          !arr.some((q,j)=>j!==i&&q.x<=r.x+1e-7&&q.y<=r.y+1e-7&&
+          q.x+q.w>=r.x+r.w-1e-7&&q.y+q.h>=r.y+r.h-1e-7));
+      }
+      return placed;
+    }
+
+    const sorters=[
+      (a,b)=>(b.w*b.h-a.w*a.h)||(b.h-a.h),
+      (a,b)=>(b.h-a.h)||(b.w-a.w),
+      (a,b)=>(b.w-a.w)||(b.h-a.h),
+      (a,b)=>(Math.max(b.w,b.h)-Math.max(a.w,a.h))||(b.w*b.h-a.w*a.h),
+      (a,b)=>(Math.min(b.w,b.h)-Math.min(a.w,a.h))||(b.w*b.h-a.w*a.h)
+    ];
     const options=[];
-    const orders=dimensions.length>1?
-      [dimensions,[...dimensions].reverse()]:
-      [dimensions];
     for(const orientation of ["portrait","landscape"]){
-      const sw=orientation==="portrait"?pw:ph;
-      const sh=orientation==="portrait"?ph:pw;
-      for(const order of orders){
-        const placements=packRows(sw-2*margin,sh-2*margin,order);
+      const sw=orientation==="portrait"?pw:ph,sh=orientation==="portrait"?ph:pw;
+      const areaW=sw-2*margin,areaH=sh-2*margin;
+      for(const sorter of sorters){
+        const placements=pack(rectangles,areaW,areaH,sorter);
         const usedArea=placements.reduce((sum,p)=>sum+p.w*p.h,0);
+        const right=Math.max(0,...placements.map(p=>p.x+p.w));
+        const bottom=Math.max(0,...placements.map(p=>p.y+p.h));
+        const boundingArea=right*bottom;
         options.push({orientation,sw,sh,margin,gap,placements,
-          capacity:placements.length,usedArea,smart:true});
+          capacity:placements.length,usedArea,boundingArea,smart:true});
       }
     }
-    options.sort((a,b)=>(b.capacity-a.capacity)||(b.usedArea-a.usedArea));
+    options.sort((a,b)=>(b.capacity-a.capacity)||(b.usedArea-a.usedArea)||
+      (a.boundingArea-b.boundingArea));
     const best=options[0];
-    best.placements.forEach(p=>{p.x+=margin;p.y+=margin;});
+    // Centraliza o conjunto completo de imagens na área útil da folha.
+    const areaW=best.sw-2*margin, areaH=best.sh-2*margin;
+    const right=Math.max(0,...best.placements.map(p=>p.x+p.w));
+    const bottom=Math.max(0,...best.placements.map(p=>p.y+p.h));
+    const offsetX=Math.max(0,(areaW-right)/2);
+    const offsetY=Math.max(0,(areaH-bottom)/2);
+    best.placements.forEach(p=>{p.x+=margin+offsetX;p.y+=margin+offsetY;});
     return best;
   }
 
@@ -295,7 +303,7 @@
       $("sizeInfo").textContent=`Imagem: ${cmText(layout.cellW)} × ${cmText(layout.cellH)} • ${totalCopies()} unidades`;
     }
     const mode=layout.smart?"aproveitamento inteligente":($("cutLines").checked?"linha de corte":"espaçamento de 0,5 cm");
-    const margin=state.paper==="10x15"?"0,2 cm":"1 cm";
+    const margin=state.paper==="10x15"?"0,2 cm":(layout.smart?"0,7 cm":"1 cm");
     const custom=state.images.some(i=>i.customW>0&&i.customH>0);
     const over=custom && (layout.overflow || totalCopies()>layout.capacity);
     $("download").disabled=!!over;

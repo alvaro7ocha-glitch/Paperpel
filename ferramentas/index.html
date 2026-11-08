@@ -13,13 +13,13 @@
       <button class="brand-icon" id="toolMenuBtn" type="button" title="Trocar de ferramenta" aria-label="Trocar de ferramenta" aria-expanded="false">
         <img src="assets/multiplo-icon.png" alt="">
       </button>
-      <span class="brand-title">Múltiplo por folha</span>
+      <span class="brand-copy"><span class="brand-title">Múltiplo por folha</span><small>Paperpel Gráfica</small></span>
       <nav id="toolMenu" class="tool-menu hidden" aria-label="Ferramentas">
         <a href="./" class="current">Múltiplo por folha</a>
         <a href="foto-edit-paperpel/">Foto Edit</a>
       </nav>
     </div>
-    <span class="brand-name">PAPERPEL GRÁFICA</span>
+
   </header>
   <main class="workspace">
     <aside class="sidebar">
@@ -33,6 +33,7 @@
         <button class="paper-tab active" data-paper="A4">A4</button>
         <button class="paper-tab" data-paper="A3">A3</button>
         <button class="paper-tab" data-paper="SRA3">SRA3</button>
+        <button class="paper-tab" data-paper="10x15">10 × 15</button>
       </div>
 
       <section class="upload-card">
@@ -44,8 +45,10 @@
           <small>ou arraste os arquivos para cá</small>
         </label>
         <div id="fileList" class="file-list" aria-live="polite"></div>
-        <label class="cut-option"><input id="cutLines" type="checkbox"> linha de corte</label>
-        <p class="formats">Formatos suportados: PNG | JPEG</p>
+        <div class="options-row">
+          <label class="cut-option"><input id="cutLines" type="checkbox"> linha de corte</label>
+          <label class="cut-option"><input id="smartFill" type="checkbox"> Aproveitamento inteligente</label>
+        </div>
       </section>
 
       <div class="download-area">

@@ -108,83 +108,60 @@
 
     const [pw,ph]=paperSizes[state.paper];
     const margin=state.paper==="10x15"?0.2:0.7;
-    // Pequeno aumento em relação aos 0,1 cm anteriores, sem voltar aos 0,5 cm.
     const gap=$("cutLines").checked?0:0.15;
     const base=chooseGridLayout();
 
-    // No modo inteligente, a altura define o tamanho e a largura segue
-    // a proporção original de cada arquivo.
+    // No modo inteligente, a altura define o tamanho. A largura é sempre
+    // calculada pela proporção original, ignorando o campo de largura.
     const dimensions=state.images.map(item=>{
-      const h=item.customH>0?item.customH:(base?.cellH||7);
+      const h=item.customH>0?item.customH:(base?.cellH||1.5);
       const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
       return {item,w:h*ratio,h};
     }).filter(d=>d.w>0&&d.h>0);
 
-    const copies=Math.max(1,Math.min(500,parseInt($("copies").value,10)||1));
-    const rectangles=[];
-    for(const d of dimensions){
-      for(let i=0;i<copies;i++) rectangles.push({item:d.item,w:d.w,h:d.h});
-    }
-
-    function pack(rects,areaW,areaH,sortMode){
-      let free=[{x:0,y:0,w:areaW+gap,h:areaH+gap}];
-      const placed=[];
-      const sorted=[...rects].sort(sortMode);
-      for(const rect of sorted){
-        const rw=rect.w+gap, rh=rect.h+gap;
-        let bestIndex=-1,bestScore=Infinity,bestX=0,bestY=0;
-        for(let i=0;i<free.length;i++){
-          const f=free[i];
-          if(rw>f.w+1e-7||rh>f.h+1e-7) continue;
-          const dw=f.w-rw,dh=f.h-rh;
-          // Best-short-side-fit com desempate pelo maior espaço residual.
-          const score=Math.min(dw,dh)*1000+Math.max(dw,dh);
-          if(score<bestScore){bestScore=score;bestIndex=i;bestX=f.x;bestY=f.y;}
+    // Montagem em fileiras regulares: cada fileira usa um formato de imagem.
+    // Isso evita encaixes quebrados, sobreposições e grandes buracos internos.
+    function packRows(areaW,areaH,order){
+      let y=0;
+      const placements=[];
+      for(const d of order){
+        const cols=Math.floor((areaW+gap)/(d.w+gap));
+        const rows=Math.floor((areaH-y+gap)/(d.h+gap));
+        if(cols<1||rows<1) continue;
+        const capacity=cols*rows;
+        let remaining=500;
+        for(let row=0;row<rows&&remaining>0;row++){
+          const count=Math.min(cols,remaining);
+          for(let col=0;col<count;col++){
+            placements.push({
+              item:d.item,
+              x:col*(d.w+gap),
+              y:y+row*(d.h+gap),
+              w:d.w,h:d.h
+            });
+          }
+          remaining-=count;
         }
-        if(bestIndex<0) continue;
-
-        placed.push({item:rect.item,x:bestX,y:bestY,w:rect.w,h:rect.h});
-        const used={x:bestX,y:bestY,w:rw,h:rh};
-        const next=[];
-        for(const f of free){
-          const intersects=used.x<f.x+f.w-1e-7&&used.x+used.w>f.x+1e-7&&
-            used.y<f.y+f.h-1e-7&&used.y+used.h>f.y+1e-7;
-          if(!intersects){next.push(f);continue;}
-          if(used.x>f.x+1e-7) next.push({x:f.x,y:f.y,w:used.x-f.x,h:f.h});
-          if(used.x+used.w<f.x+f.w-1e-7) next.push({x:used.x+used.w,y:f.y,w:f.x+f.w-(used.x+used.w),h:f.h});
-          if(used.y>f.y+1e-7) next.push({x:f.x,y:f.y,w:f.w,h:used.y-f.y});
-          if(used.y+used.h<f.y+f.h-1e-7) next.push({x:f.x,y:used.y+used.h,w:f.w,h:f.y+f.h-(used.y+used.h)});
-        }
-        free=next.filter((r,i,arr)=>r.w>1e-7&&r.h>1e-7&&
-          !arr.some((q,j)=>j!==i&&q.x<=r.x+1e-7&&q.y<=r.y+1e-7&&
-          q.x+q.w>=r.x+r.w-1e-7&&q.y+q.h>=r.y+r.h-1e-7));
+        const usedRows=Math.ceil(Math.min(500,capacity)/cols);
+        if(usedRows>0) y+=usedRows*(d.h+gap);
       }
-      return placed;
+      return placements;
     }
 
-    const sorters=[
-      (a,b)=>(b.w*b.h-a.w*a.h)||(b.h-a.h),
-      (a,b)=>(b.h-a.h)||(b.w-a.w),
-      (a,b)=>(b.w-a.w)||(b.h-a.h),
-      (a,b)=>(Math.max(b.w,b.h)-Math.max(a.w,a.h))||(b.w*b.h-a.w*a.h),
-      (a,b)=>(Math.min(b.w,b.h)-Math.min(a.w,a.h))||(b.w*b.h-a.w*a.h)
-    ];
     const options=[];
+    const orders=dimensions.length>1?
+      [dimensions,[...dimensions].reverse()]:[dimensions];
     for(const orientation of ["portrait","landscape"]){
-      const sw=orientation==="portrait"?pw:ph,sh=orientation==="portrait"?ph:pw;
-      const areaW=sw-2*margin,areaH=sh-2*margin;
-      for(const sorter of sorters){
-        const placements=pack(rectangles,areaW,areaH,sorter);
+      const sw=orientation==="portrait"?pw:ph;
+      const sh=orientation==="portrait"?ph:pw;
+      for(const order of orders){
+        const placements=packRows(sw-2*margin,sh-2*margin,order);
         const usedArea=placements.reduce((sum,p)=>sum+p.w*p.h,0);
-        const right=Math.max(0,...placements.map(p=>p.x+p.w));
-        const bottom=Math.max(0,...placements.map(p=>p.y+p.h));
-        const boundingArea=right*bottom;
         options.push({orientation,sw,sh,margin,gap,placements,
-          capacity:placements.length,usedArea,boundingArea,smart:true});
+          capacity:placements.length,usedArea,smart:true});
       }
     }
-    options.sort((a,b)=>(b.capacity-a.capacity)||(b.usedArea-a.usedArea)||
-      (a.boundingArea-b.boundingArea));
+    options.sort((a,b)=>(b.capacity-a.capacity)||(b.usedArea-a.usedArea));
     const best=options[0];
     best.placements.forEach(p=>{p.x+=margin;p.y+=margin;});
     return best;

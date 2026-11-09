@@ -130,16 +130,19 @@
     if(!$('smartFill').checked) return chooseGridLayout();
 
     const [pw,ph]=sheetDimensions();
-    const margin=state.paper==='10x15'?0.2:(state.paper==='CXSÓ'?0.5:0.7);
+    const margin=state.paper==='10x15'?0.2:0.7;
     const gap=$('cutLines').checked?0:0.2;
-    const baseLayout=chooseGridLayout();
-    const dimensions=state.images.map(item=>{
+
+    // Cada cópia solicitada entra uma única vez no aproveitamento.
+    // A dimensão é calculada individualmente, respeitando a altura do grupo.
+    const dimensions=makeOrderedCopies().map(item=>{
       const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
       const groupSize=effectiveItemSize(item);
-      const h=groupSize.h>0?groupSize.h:(baseLayout?.cellH||7);
+      const h=groupSize.h>0?groupSize.h:7;
       const w=groupSize.w>0?groupSize.w:h*ratio;
       return {item,w,h};
     }).filter(d=>d.w>0&&d.h>0);
+
     if(!dimensions.length) return null;
 
     const options=[];
@@ -149,42 +152,60 @@
       const areaW=sw-2*margin, areaH=sh-2*margin;
       if(dimensions.some(d=>d.w>areaW+1e-7||d.h>areaH+1e-7)) continue;
 
-      // Monta fileira por fileira, repetindo a sequência original das imagens
-      // em cada linha. Cada linha é centralizada independentemente.
       const placements=[];
-      const rows=[];
-      let y=0, safety=0;
-      while(y<areaH-1e-7 && safety++<2000){
-        let x=0, rowH=0, row=[];
-        let sequenceIndex=0, attempts=0;
-        while(attempts<dimensions.length*100 && x<areaW-1e-7){
-          const d=dimensions[sequenceIndex%dimensions.length];
-          if(x+d.w>areaW+1e-7) break;
-          row.push({item:d.item,x,w:d.w,h:d.h});
-          x+=d.w+gap;
+      let y=0, index=0;
+      while(index<dimensions.length){
+        let x=0, rowH=0;
+        const row=[];
+        // Coloca cada item da lista uma única vez. Quando não couber,
+        // encerra a fileira e tenta a próxima sem repetir imagens.
+        while(index<dimensions.length){
+          const d=dimensions[index];
+          const neededW=(row.length?gap:0)+d.w;
+          if(x+neededW>areaW+1e-7) break;
+          row.push({item:d.item,x:x+neededW-(row.length?0:d.w),w:d.w,h:d.h});
+          x+=neededW;
           rowH=Math.max(rowH,d.h);
-          sequenceIndex++;
-          attempts++;
+          index++;
         }
-        if(!row.length || y+rowH>areaH+1e-7) break;
-        // Remove o último espaçamento da largura ocupada e centraliza a fileira.
-        const rowW=x-gap;
+        if(!row.length) break;
+        if(y+rowH>areaH+1e-7) break;
+
+        const rowW=x;
         const offsetX=(areaW-rowW)/2;
-        row.forEach(p=>placements.push({item:p.item,x:margin+offsetX+p.x,y:margin+y,w:p.w,h:p.h}));
-        rows.push({height:rowH});
+        row.forEach(p=>placements.push({
+          item:p.item,
+          x:margin+offsetX+p.x,
+          y:margin+y+(rowH-p.h)/2,
+          w:p.w,
+          h:p.h
+        }));
         y+=rowH+gap;
       }
-      if(!placements.length) continue;
 
-      // Centraliza verticalmente o conjunto completo sem mudar a ordem nem os intervalos.
+      if(!placements.length) continue;
       const occupiedH=y-gap;
-      const offsetY=(areaH-occupiedH)/2;
+      const offsetY=Math.max(0,(areaH-occupiedH)/2);
       if(offsetY>0) placements.forEach(p=>p.y+=offsetY);
-      options.push({orientation,sw,sh,margin,gap,placements,capacity:placements.length,smart:true,requested:dimensions.length});
+
+      options.push({
+        orientation,sw,sh,margin,gap,placements,
+        capacity:placements.length,
+        smart:true,
+        requested:dimensions.length,
+        overflow:placements.length<dimensions.length
+      });
     }
+
     if(!options.length){
-      return {orientation:'portrait',sw:pw,sh:ph,margin,gap,placements:[],capacity:0,smart:true,overflow:true};
+      return {
+        orientation:'portrait',sw:pw,sh:ph,margin,gap,
+        placements:[],capacity:0,smart:true,overflow:true,
+        requested:dimensions.length
+      };
     }
+    // Prioriza a maior quantidade de cópias colocadas; em empate,
+    // escolhe a orientação com melhor aproveitamento da área.
     options.sort((a,b)=>b.capacity-a.capacity);
     return options[0];
   }

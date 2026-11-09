@@ -39,11 +39,13 @@
     else for(let i=0;i<ordered.length;i+=cap){
      const batch=ordered.slice(i,i+cap);
      pages.push({items:batch,side:'front'});
-     // Espelha horizontalmente cada linha, sem inverter a ordem das linhas.
-     // Usa somente os itens existentes na linha, inclusive na última linha incompleta.
+     // Completa a grade inteira com posições vazias antes de espelhar.
+     // Cada linha é invertida por completo, inclusive quando está incompleta.
+     // Ex.: [7, 8, vazio] passa a [vazio, 8, 7].
+     const gridItems=Array.from({length:cap},(_,index)=>batch[index]??null);
      const mirrored=[];
-     for(let start=0;start<batch.length;start+=grid.cols){
-      mirrored.push(...batch.slice(start,start+grid.cols).reverse());
+     for(let start=0;start<cap;start+=grid.cols){
+      mirrored.push(...gridItems.slice(start,start+grid.cols).reverse());
      }
      pages.push({items:mirrored,side:'back'});
     }

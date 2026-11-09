@@ -127,85 +127,155 @@
 
   function chooseLayout(){
     if(state.paper==="CXSÓ") return chooseGridLayout();
-    if(!$('smartFill').checked) return chooseGridLayout();
+    if(!$("smartFill").checked) return chooseGridLayout();
 
     const [pw,ph]=sheetDimensions();
-    const margin=state.paper==='10x15'?0.2:0.7;
-    const gap=$('cutLines').checked?0:0.2;
+    const margin=state.paper==="10x15"?0.2:0.7;
+    const gap=$("cutLines").checked?0:0.2;
+    const baseLayout=chooseGridLayout();
+    if(!baseLayout || !state.images.length) return baseLayout;
 
-    // Cada cópia solicitada entra uma única vez no aproveitamento.
-    // A dimensão é calculada individualmente, respeitando a altura do grupo.
-    const dimensions=makeOrderedCopies().map(item=>{
+    // Mede cada imagem separadamente: a altura do grupo prevalece
+    // sobre as dimensões individuais quando "Ajustar Grupo" está ativo.
+    const dimensions=state.images.map(item=>{
       const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
-      const groupSize=effectiveItemSize(item);
-      const h=groupSize.h>0?groupSize.h:7;
-      const w=groupSize.w>0?groupSize.w:h*ratio;
+      const chosen=effectiveItemSize(item);
+      const h=chosen.h>0?chosen.h:(baseLayout.cellH||7);
+      const w=chosen.w>0?chosen.w:h*ratio;
       return {item,w,h};
     }).filter(d=>d.w>0&&d.h>0);
 
     if(!dimensions.length) return null;
 
+    function tryPack(rectangles, areaW, areaH){
+      let free=[{x:0,y:0,w:areaW+gap,h:areaH+gap}];
+      const placed=[];
+      for(const rect of rectangles){
+        const rw=rect.w+gap, rh=rect.h+gap;
+        let best=-1, bestScore=Infinity, bx=0, by=0;
+        for(let i=0;i<free.length;i++){
+          const f=free[i];
+          if(rw<=f.w+1e-7 && rh<=f.h+1e-7){
+            const leftoverW=f.w-rw, leftoverH=f.h-rh;
+            const score=Math.min(leftoverW,leftoverH)*10000+Math.max(leftoverW,leftoverH);
+            if(score<bestScore){best=i;bestScore=score;bx=f.x;by=f.y;}
+          }
+        }
+        if(best<0) return {placed,free,complete:false};
+
+        placed.push({item:rect.item,x:bx,y:by,w:rect.w,h:rect.h});
+        const used={x:bx,y:by,w:rw,h:rh};
+        const next=[];
+        for(const f of free){
+          const hit=used.x<f.x+f.w-1e-7 && used.x+used.w>f.x+1e-7 &&
+                    used.y<f.y+f.h-1e-7 && used.y+used.h>f.y+1e-7;
+          if(!hit){next.push(f);continue;}
+          if(used.x>f.x+1e-7) next.push({x:f.x,y:f.y,w:used.x-f.x,h:f.h});
+          if(used.x+used.w<f.x+f.w-1e-7) next.push({x:used.x+used.w,y:f.y,w:f.x+f.w-(used.x+used.w),h:f.h});
+          if(used.y>f.y+1e-7) next.push({x:f.x,y:f.y,w:f.w,h:used.y-f.y});
+          if(used.y+used.h<f.y+f.h-1e-7) next.push({x:f.x,y:used.y+used.h,w:f.w,h:f.y+f.h-(used.y+used.h)});
+        }
+        free=next.filter((r,i,arr)=>r.w>1e-7&&r.h>1e-7&&
+          !arr.some((q,j)=>j!==i&&q.x<=r.x+1e-7&&q.y<=r.y+1e-7&&
+            q.x+q.w>=r.x+r.w-1e-7&&q.y+q.h>=r.y+r.h-1e-7));
+      }
+      return {placed,free,complete:true};
+    }
+
     const options=[];
-    for(const orientation of ['portrait','landscape']){
-      const sw=orientation==='portrait'?pw:ph;
-      const sh=orientation==='portrait'?ph:pw;
+    for(const orientation of ["portrait","landscape"]){
+      const sw=orientation==="portrait"?pw:ph;
+      const sh=orientation==="portrait"?ph:pw;
       const areaW=sw-2*margin, areaH=sh-2*margin;
       if(dimensions.some(d=>d.w>areaW+1e-7||d.h>areaH+1e-7)) continue;
 
-      const placements=[];
-      let y=0, index=0;
-      while(index<dimensions.length){
-        let x=0, rowH=0;
-        const row=[];
-        // Coloca cada item da lista uma única vez. Quando não couber,
-        // encerra a fileira e tenta a próxima sem repetir imagens.
-        while(index<dimensions.length){
-          const d=dimensions[index];
-          const neededW=(row.length?gap:0)+d.w;
-          if(x+neededW>areaW+1e-7) break;
-          row.push({item:d.item,x:x+neededW-(row.length?0:d.w),w:d.w,h:d.h});
-          x+=neededW;
-          rowH=Math.max(rowH,d.h);
-          index++;
-        }
-        if(!row.length) break;
-        if(y+rowH>areaH+1e-7) break;
+      // Fase 1: uma unidade de cada imagem, sem repetir nenhuma.
+      // Fase 2: cópias adicionais solicitadas pelo campo "Cópias".
+      // Fase 3: somente depois disso, repete em ciclos para ocupar sobras.
+      const copies=Math.max(1,Math.min(500,parseInt($("copies").value,10)||1));
+      const firstRound=dimensions.slice().sort((a,b)=>(b.w*b.h-a.w*a.h)||(b.h-a.h));
+      let packed=tryPack(firstRound,areaW,areaH);
+      if(!packed.complete) continue;
 
-        const rowW=x;
-        const offsetX=(areaW-rowW)/2;
-        row.forEach(p=>placements.push({
-          item:p.item,
-          x:margin+offsetX+p.x,
-          y:margin+y+(rowH-p.h)/2,
-          w:p.w,
-          h:p.h
-        }));
-        y+=rowH+gap;
+      let allPlaced=packed.placed.slice();
+      let free=packed.free;
+      let requestedCount=dimensions.length*copies;
+      let requestedComplete=true;
+
+      // Coloca as demais cópias solicitadas em rodadas completas.
+      for(let round=1;round<copies;round++){
+        const roundItems=dimensions.slice().sort((a,b)=>(b.w*b.h-a.w*a.h)||(b.h-a.h));
+        const next=tryPackIntoFree(roundItems,free,areaW,areaH);
+        if(!next.complete){requestedComplete=false;break;}
+        allPlaced=allPlaced.concat(next.placed);
+        free=next.free;
       }
 
-      if(!placements.length) continue;
-      const occupiedH=y-gap;
-      const offsetY=Math.max(0,(areaH-occupiedH)/2);
-      if(offsetY>0) placements.forEach(p=>p.y+=offsetY);
+      // Se todas as cópias solicitadas couberam, aproveita o restante.
+      // A repetição começa novamente pelo conjunto completo de imagens.
+      let extraCount=0;
+      if(requestedComplete){
+        let safety=0, keepGoing=true;
+        while(keepGoing && safety++<100){
+          const cycle=dimensions.slice().sort((a,b)=>(b.w*b.h-a.w*a.h)||(b.h-a.h));
+          const next=tryPackIntoFree(cycle,free,areaW,areaH);
+          if(next.placed.length===0) break;
+          allPlaced=allPlaced.concat(next.placed);
+          extraCount+=next.placed.length;
+          free=next.free;
+          if(!next.complete) keepGoing=false;
+        }
+      }
+
+      // Centraliza o conjunto final na folha.
+      const minX=Math.min(...allPlaced.map(p=>p.x));
+      const minY=Math.min(...allPlaced.map(p=>p.y));
+      const maxX=Math.max(...allPlaced.map(p=>p.x+p.w));
+      const maxY=Math.max(...allPlaced.map(p=>p.y+p.h));
+      const offsetX=Math.max(0,(areaW-(maxX-minX))/2)-minX;
+      const offsetY=Math.max(0,(areaH-(maxY-minY))/2)-minY;
+      allPlaced.forEach(p=>{p.x+=margin+offsetX;p.y+=margin+offsetY;});
 
       options.push({
-        orientation,sw,sh,margin,gap,placements,
-        capacity:placements.length,
-        smart:true,
-        requested:dimensions.length,
-        overflow:placements.length<dimensions.length
+        orientation,sw,sh,margin,gap,placements:allPlaced,
+        capacity:allPlaced.length,smart:true,requested:requestedCount,
+        overflow:!requestedComplete,extraCount
       });
     }
 
-    if(!options.length){
-      return {
-        orientation:'portrait',sw:pw,sh:ph,margin,gap,
-        placements:[],capacity:0,smart:true,overflow:true,
-        requested:dimensions.length
-      };
+    function tryPackIntoFree(rectangles,initialFree,areaW,areaH){
+      let free=initialFree.map(r=>({...r}));
+      const placed=[];
+      let complete=true;
+      for(const rect of rectangles){
+        const rw=rect.w+gap, rh=rect.h+gap;
+        let best=-1,bestScore=Infinity,bx=0,by=0;
+        for(let i=0;i<free.length;i++){
+          const f=free[i];
+          if(rw<=f.w+1e-7&&rh<=f.h+1e-7){
+            const lw=f.w-rw,lh=f.h-rh,score=Math.min(lw,lh)*10000+Math.max(lw,lh);
+            if(score<bestScore){best=i;bestScore=score;bx=f.x;by=f.y;}
+          }
+        }
+        if(best<0){complete=false;continue;}
+        placed.push({item:rect.item,x:bx,y:by,w:rect.w,h:rect.h});
+        const used={x:bx,y:by,w:rw,h:rh},next=[];
+        for(const f of free){
+          const hit=used.x<f.x+f.w-1e-7&&used.x+used.w>f.x+1e-7&&used.y<f.y+f.h-1e-7&&used.y+used.h>f.y+1e-7;
+          if(!hit){next.push(f);continue;}
+          if(used.x>f.x+1e-7)next.push({x:f.x,y:f.y,w:used.x-f.x,h:f.h});
+          if(used.x+used.w<f.x+f.w-1e-7)next.push({x:used.x+used.w,y:f.y,w:f.x+f.w-(used.x+used.w),h:f.h});
+          if(used.y>f.y+1e-7)next.push({x:f.x,y:f.y,w:f.w,h:used.y-f.y});
+          if(used.y+used.h<f.y+f.h-1e-7)next.push({x:f.x,y:used.y+used.h,w:f.w,h:f.y+f.h-(used.y+used.h)});
+        }
+        free=next.filter((r,i,arr)=>r.w>1e-7&&r.h>1e-7&&!arr.some((q,j)=>j!==i&&q.x<=r.x+1e-7&&q.y<=r.y+1e-7&&q.x+q.w>=r.x+r.w-1e-7&&q.y+q.h>=r.y+r.h-1e-7));
+      }
+      return {placed,free,complete};
     }
-    // Prioriza a maior quantidade de cópias colocadas; em empate,
-    // escolhe a orientação com melhor aproveitamento da área.
+
+    if(!options.length){
+      return {orientation:"portrait",sw:pw,sh:ph,margin,gap,placements:[],capacity:0,smart:true,overflow:true};
+    }
     options.sort((a,b)=>b.capacity-a.capacity);
     return options[0];
   }
@@ -326,7 +396,7 @@
     if(layout.smart){
       const counts=state.images.map(item=>`${item.file.name}: ${layout.placements.filter(p=>p.item===item).length}`).join(" • ");
       $("sizeInfo").textContent=`${layout.capacity} unidades aproveitadas`;
-      setStatus(`${counts} • aproveitamento inteligente`);
+      setStatus(`${counts} • aproveitamento inteligente${layout.overflow ? " • nem todas as cópias solicitadas couberam" : ""}` , !!layout.overflow);
     }else{
       $("sizeInfo").textContent=layout.cxo
         ? `CXSÓ 5 × 7 cm • ${totalCopies()} de ${layout.capacity} peças`

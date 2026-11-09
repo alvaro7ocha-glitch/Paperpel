@@ -333,7 +333,23 @@
     state.images.forEach((item,index)=>{
       if(item.group!==lastGroup){
         const heading=document.createElement("div");heading.className="file-group-title";
-        heading.textContent=`GRUPO ${item.group}`;list.append(heading);lastGroup=item.group;
+        const title=document.createElement("strong");title.textContent=`GRUPO ${item.group}`;
+        heading.append(title);
+        if($("adjustGroups").checked){
+          const sizeLabel=document.createElement("label");sizeLabel.className="file-group-size";
+          sizeLabel.textContent="Altura:";
+          const sizeInput=document.createElement("input");
+          sizeInput.type="number";sizeInput.min="0.1";sizeInput.max="100";sizeInput.step="0.1";
+          sizeInput.placeholder="cm";sizeInput.value=state.groupHeights[item.group]||"";
+          sizeInput.setAttribute("aria-label",`Altura de todas as imagens do grupo ${item.group}`);
+          sizeInput.addEventListener("change",()=>{
+            state.groupHeights[item.group]=parseFloat(sizeInput.value)>0?parseFloat(sizeInput.value):0;
+            updatePreview();
+          });
+          const unit=document.createElement("small");unit.textContent="cm";
+          sizeLabel.append(sizeInput,unit);heading.append(sizeLabel);
+        }
+        list.append(heading);lastGroup=item.group;
       }
       const row=document.createElement("div");row.className="file-item";
       const img=document.createElement("img");img.src=item.url;img.alt="";
@@ -375,18 +391,7 @@
   }
 
   function renderGroupHeights(){
-    const box=$("groupHeights"); if(!box) return;
-    box.innerHTML="";
-    const groups=[...new Set(state.images.map(item=>item.group))];
-    box.hidden=!$("adjustGroups").checked || !groups.length;
-    groups.forEach(group=>{
-      const row=document.createElement("label");row.className="group-height-row";
-      const title=document.createElement("span");title.textContent=`Grupo ${group} — altura:`;
-      const input=document.createElement("input");input.type="number";input.min="0.1";input.max="100";input.step="0.1";input.placeholder="cm";input.value=state.groupHeights[group]||"";
-      input.addEventListener("change",()=>{state.groupHeights[group]=parseFloat(input.value)>0?parseFloat(input.value):0;updatePreview();});
-      const unit=document.createElement("small");unit.textContent="cm (mantém proporção)";
-      row.append(title,input,unit);box.append(row);
-    });
+    renderFileList();
   }
 
   $("fileInput").addEventListener("change",e=>{addFiles(e.target.files);e.target.value="";});

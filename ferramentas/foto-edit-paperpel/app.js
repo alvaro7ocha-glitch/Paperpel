@@ -27,7 +27,7 @@
  function pagePlan(){
   if(state.kind==='circle'){
    const gap=.5, natal=state.natal, diameter=natal?6.3:Math.max(1,Math.min(30,Number(state.circleSize)||5)), backDiameter=6.5;
-   const formats=[{id:'photo',w:10,h:15,label:'10 × 15 cm'},{id:'a4',w:21,h:29.7,label:'A4'},{id:'sra3',w:32,h:45,label:'SRA3'}];
+   const formats=[{id:'photo',w:10,h:15,label:'10 × 15 cm'},{id:'a5',w:14.8,h:21,label:'A5'},{id:'a4',w:21,h:29.7,label:'A4'},{id:'sra3',w:32,h:45,label:'SRA3'}];
    const fit=(f,d)=>({cols:Math.max(0,Math.floor((f.w+gap+1e-8)/(d+gap))),rows:Math.max(0,Math.floor((f.h+gap+1e-8)/(d+gap)))});
    const q=totalQty();let chosen=formats[formats.length-1],grid=fit(chosen,diameter);
    for(const f of formats){const g=fit(f,diameter);if(g.cols*g.rows>=Math.max(1,q)){chosen=f;grid=g;break}}
@@ -36,7 +36,17 @@
    const pages=[];
    if(natal){
     if(!ordered.length){pages.push({items:[],side:'front'});pages.push({items:[],side:'back'});}
-    else for(let i=0;i<ordered.length;i+=cap){const batch=ordered.slice(i,i+cap);pages.push({items:batch,side:'front'});const mirrored=[];for(let r=0;r<grid.rows;r++){const row=batch.slice(r*grid.cols,(r+1)*grid.cols).reverse();mirrored.push(...row)}pages.push({items:mirrored,side:'back'});}
+    else for(let i=0;i<ordered.length;i+=cap){
+     const batch=ordered.slice(i,i+cap);
+     pages.push({items:batch,side:'front'});
+     // Espelha horizontalmente cada linha, sem inverter a ordem das linhas.
+     // Usa somente os itens existentes na linha, inclusive na última linha incompleta.
+     const mirrored=[];
+     for(let start=0;start<batch.length;start+=grid.cols){
+      mirrored.push(...batch.slice(start,start+grid.cols).reverse());
+     }
+     pages.push({items:mirrored,side:'back'});
+    }
    }else for(let i=0;i<ordered.length;i+=cap)pages.push({items:ordered.slice(i,i+cap),side:'front'});
    return {circle:true,natal,diameter,backDiameter,gap,pw:chosen.w,ph:chosen.h,label:chosen.label,cols:grid.cols,rows:grid.rows,cap,pages};
   }

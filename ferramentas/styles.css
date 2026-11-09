@@ -55,3 +55,10 @@ input[type=checkbox]{accent-color:#788fff}
 
 @media(max-width:900px){.workspace{grid-template-columns:340px 1fr}.sidebar{padding-top:25px}.preview-area{padding:20px 14px}}
 @media(max-width:680px){.workspace{display:flex;flex-direction:column}.sidebar{border-right:0;padding:18px 12px}.preview-area{min-height:500px;padding:18px 8px}.sheet-stage{min-height:360px}.preview-toolbar{padding:0 8px}.brand-name{display:none}.formats{margin-top:25px}}
+
+.group-heights{margin-top:10px;padding:10px;background:#343141;border:1px solid #514b60;border-radius:5px}
+.group-height-row{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:11px;color:#e2dfeb}
+.group-height-row input{width:68px;background:#24212e;border:1px solid #514b60;border-radius:3px;color:#fff;padding:5px;font-size:11px}
+.group-height-row small{color:#aaa6b7}
+.file-group-title{grid-column:1/-1;color:#9eaeff;font-size:11px;font-weight:700;padding:4px 2px 0}
+.paper-tabs{grid-template-columns:repeat(5,1fr)}

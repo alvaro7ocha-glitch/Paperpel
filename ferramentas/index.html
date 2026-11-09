@@ -25,9 +25,9 @@
   <main class="workspace">
     <aside class="sidebar">
       <div class="controls-row">
-        <label for="copies">Cópias de cada imagem:</label>
+        <label for="copies">Cópias</label>
         <input id="copies" type="number" min="1" max="500" value="1">
-        <label class="check-label"><input id="fit" type="checkbox"> Ajustar imagem ao quadro</label>
+        <label class="check-label"><input id="fit" type="checkbox"> Ajustar ao quadro</label>
       </div>
 
       <div class="paper-tabs" role="group" aria-label="Tamanho do papel">
@@ -35,6 +35,7 @@
         <button class="paper-tab" data-paper="A3">A3</button>
         <button class="paper-tab" data-paper="SRA3">SRA3</button>
         <button class="paper-tab" data-paper="10x15">10 × 15</button>
+        <button class="paper-tab" data-paper="CXSÓ">CXSÓ</button>
       </div>
 
       <section class="upload-card">
@@ -49,7 +50,9 @@
         <div class="options-row">
           <label class="cut-option"><input id="cutLines" type="checkbox"> linha de corte</label>
           <label class="cut-option"><input id="smartFill" type="checkbox"> Aproveitamento inteligente</label>
+          <label class="cut-option"><input id="adjustGroups" type="checkbox"> Ajustar Grupo</label>
         </div>
+        <div id="groupHeights" class="group-heights" hidden></div>
       </section>
 
       <div class="download-area">

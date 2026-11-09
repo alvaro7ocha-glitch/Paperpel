@@ -1,8 +1,20 @@
 (() => {
   const $ = id => document.getElementById(id);
   const paperSizes = { A4:[21,29.7], A3:[29.7,42], SRA3:[32,45], "10x15":[10,15] };
+  function sheetDimensions(){
+    if(state.paper==="CXSÓ") return totalCopies()<=12 ? paperSizes.A4 : paperSizes.SRA3;
+    return paperSizes[state.paper];
+  }
+  function effectiveItemSize(item){
+    const groupHeight=$("adjustGroups")?.checked ? state.groupHeights[item.group] : 0;
+    if(groupHeight>0){
+      const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
+      return {w:groupHeight*ratio,h:groupHeight};
+    }
+    return {w:item.customW||0,h:item.customH||0};
+  }
   const presets = [[10,15],[9,13],[8,12],[7,10],[6,9],[5,7]];
-  const state = { paper:"A4", images:[], layout:null, busy:false };
+  const state = { paper:"A4", images:[], layout:null, busy:false, nextGroup:1, groupHeights:{} };
   const canvas = $("previewCanvas"), ctx = canvas.getContext("2d");
 
   function setStatus(message, warning=false){ $("status").textContent = message; $("status").classList.toggle("warning",warning); }
@@ -12,14 +24,23 @@
   function chooseGridLayout(){
     const count = totalCopies();
     if(!count) return null;
+    if(state.paper==="CXSÓ"){
+      const isA4=count<=12;
+      const [pw,ph]=isA4?paperSizes.A4:paperSizes.SRA3;
+      const orientation=isA4?"portrait":"landscape";
+      return {orientation,sw:isA4?pw:ph,sh:isA4?ph:pw,cols:isA4?3:7,rows:4,
+        cellW:5,cellH:7,gap:0.1,margin:0.5,cxo:true,capacity:isA4?12:28,overflow:count>28};
+    }
     const cut = $("cutLines").checked;
     const gap = cut ? 0 : 0.5;
-    const margin = state.paper === "10x15" ? 0.2 : 1;
-    const customItems = state.images.filter(item => item.customW > 0 && item.customH > 0);
+    const margin = state.paper === "10x15" ? 0.2 : (state.paper==="CXSÓ"?0.5:1);
+    const customItems = state.images.filter(item => {
+      const size=effectiveItemSize(item); return size.w>0 && size.h>0;
+    });
     if(customItems.length){
-      const baseW=Math.max(...customItems.map(i=>i.customW));
-      const baseH=Math.max(...customItems.map(i=>i.customH));
-      const [pw0,ph0]=paperSizes[state.paper];
+      const baseW=Math.max(...customItems.map(i=>effectiveItemSize(i).w));
+      const baseH=Math.max(...customItems.map(i=>effectiveItemSize(i).h));
+      const [pw0,ph0]=sheetDimensions();
       const options=[];
       for(const orientation of ["portrait","landscape"]){
         const sw=orientation==="portrait"?pw0:ph0, sh=orientation==="portrait"?ph0:pw0;
@@ -43,7 +64,7 @@
       best.capacity=best.cols*Math.floor(((best.sh-2*margin)+gap)/(best.cellH+gap));
       return best;
     }
-    const [pw,ph] = paperSizes[state.paper];
+    const [pw,ph] = sheetDimensions();
     const candidates = [];
     for(const orientation of ["portrait","landscape"]){
       const sw = orientation==="portrait" ? pw : ph;
@@ -105,16 +126,18 @@
   }
 
   function chooseLayout(){
+    if(state.paper==="CXSÓ") return chooseGridLayout();
     if(!$('smartFill').checked) return chooseGridLayout();
 
-    const [pw,ph]=paperSizes[state.paper];
-    const margin=state.paper==='10x15'?0.2:0.7;
+    const [pw,ph]=sheetDimensions();
+    const margin=state.paper==='10x15'?0.2:(state.paper==='CXSÓ'?0.5:0.7);
     const gap=$('cutLines').checked?0:0.2;
     const baseLayout=chooseGridLayout();
     const dimensions=state.images.map(item=>{
       const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
-      const h=item.customH>0?item.customH:(baseLayout?.cellH||7);
-      const w=item.customW>0?item.customW:h*ratio;
+      const groupSize=effectiveItemSize(item);
+      const h=groupSize.h>0?groupSize.h:(baseLayout?.cellH||7);
+      const w=groupSize.w>0?groupSize.w:h*ratio;
       return {item,w,h};
     }).filter(d=>d.w>0&&d.h>0);
     if(!dimensions.length) return null;
@@ -186,7 +209,7 @@
   }
 
   function drawSheet(targetCanvas, layout, forExport, transparent=false){
-    const [pw,ph]=paperSizes[state.paper];
+    const [pw,ph]=sheetDimensions();
     const sheetW=layout.orientation==="portrait"?pw:ph;
     const sheetH=layout.orientation==="portrait"?ph:pw;
     const dpi=forExport?300:72;
@@ -223,11 +246,18 @@
       const col=i%layout.cols, row=Math.floor(i/layout.cols);
       const x=startX+col*(cellW+gap), y=startY+row*(cellH+gap);
       c.save();
-      c.beginPath(); c.rect(x,y,cellW,cellH); c.clip();
+      c.beginPath();
+      if(layout.cxo){
+        const r=cellW/2;
+        c.moveTo(x,y+r); c.lineTo(x,y+cellH); c.lineTo(x+cellW,y+cellH);
+        c.lineTo(x+cellW,y+r); c.arc(x+r,y+r,r,0,Math.PI,true);
+      }else c.rect(x,y,cellW,cellH);
+      c.closePath(); c.clip();
       const iw=item.image.naturalWidth, ih=item.image.naturalHeight;
       const cover=$("fit").checked;
-      const targetW=item.customW>0&&item.customH>0?item.customW*scale:cellW;
-      const targetH=item.customW>0&&item.customH>0?item.customH*scale:cellH;
+      const itemSize=effectiveItemSize(item);
+      const targetW=itemSize.w>0&&itemSize.h>0?itemSize.w*scale:cellW;
+      const targetH=itemSize.w>0&&itemSize.h>0?itemSize.h*scale:cellH;
       const dx=x+(cellW-targetW)/2, dy=y+(cellH-targetH)/2;
       if(cover){
         const s=Math.max(targetW/iw,targetH/ih), sw=targetW/s, sh=targetH/s;
@@ -237,8 +267,15 @@
         c.drawImage(item.image,dx+(targetW-dw)/2,dy+(targetH-dh)/2,dw,dh);
       }
       c.restore();
+      if(layout.cxo && $("cutLines").checked){
+        c.save(); c.beginPath();
+        const r=cellW/2;
+        c.moveTo(x,y+r); c.lineTo(x,y+cellH); c.lineTo(x+cellW,y+cellH);
+        c.lineTo(x+cellW,y+r); c.arc(x+r,y+r,r,0,Math.PI,true); c.closePath();
+        c.strokeStyle="#D2D3D5"; c.lineWidth=Math.max(forExport?0.5:1,0.02*scale); c.stroke(); c.restore();
+      }
     });
-    if($("cutLines").checked){
+    if($("cutLines").checked && !layout.cxo){
       c.save(); c.strokeStyle="#D2D3D5"; c.lineWidth=Math.max(forExport?0.5:1,0.02*scale);
       // Fine internal cut guides, only between occupied cells.
       for(let col=1;col<layout.cols;col++){
@@ -264,21 +301,25 @@
     drawSheet(canvas,layout,false);
     canvas.style.display="block";$("emptyState").style.display="none";
     const orient=layout.orientation==="portrait"?"Retrato":"Paisagem";
-    $("paperInfo").textContent=`${state.paper} • ${orient}`;
+    $("paperInfo").textContent=`${state.paper==="CXSÓ"?(layout.sw===21?"A4":"SRA3")+" • CXSÓ":state.paper} • ${orient}`;
     if(layout.smart){
       const counts=state.images.map(item=>`${item.file.name}: ${layout.placements.filter(p=>p.item===item).length}`).join(" • ");
       $("sizeInfo").textContent=`${layout.capacity} unidades aproveitadas`;
       setStatus(`${counts} • aproveitamento inteligente`);
     }else{
-      $("sizeInfo").textContent=`Imagem: ${cmText(layout.cellW)} × ${cmText(layout.cellH)} • ${totalCopies()} unidades`;
+      $("sizeInfo").textContent=layout.cxo
+        ? `CXSÓ 5 × 7 cm • ${totalCopies()} de ${layout.capacity} peças`
+        : `Imagem: ${cmText(layout.cellW)} × ${cmText(layout.cellH)} • ${totalCopies()} unidades`;
     }
     const mode=layout.smart?"aproveitamento inteligente":($("cutLines").checked?"linha de corte":"espaçamento de 0,5 cm");
-    const margin=state.paper==="10x15"?"0,2 cm":(layout.smart?"0,7 cm":"1 cm");
+    const margin=state.paper==="10x15"?"0,2 cm":(state.paper==="CXSÓ"?"0,5 cm":(layout.smart?"0,7 cm":"1 cm"));
     const custom=state.images.some(i=>i.customW>0&&i.customH>0);
-    const over=custom && (layout.overflow || totalCopies()>layout.capacity);
+    const over=(custom && (layout.overflow || totalCopies()>layout.capacity)) || (state.paper==="CXSÓ" && totalCopies()>28);
     $("download").disabled=!!over;
     if(layout.smart){
       $("download").disabled=false;
+    }else if(state.paper==="CXSÓ" && totalCopies()<=28){
+      setStatus(`${totalCopies()} peças • ${layout.sw===21?"A4":"SRA3"} • CXSÓ`);
     }else if(over){
       setStatus(`Quantidade máxima: ${layout.capacity} imagens neste tamanho. Reduza a quantidade ou as dimensões.`,true);
     }else if(!layout.smart){
@@ -288,7 +329,12 @@
 
   function renderFileList(){
     const list=$("fileList");list.innerHTML="";
+    let lastGroup=0;
     state.images.forEach((item,index)=>{
+      if(item.group!==lastGroup){
+        const heading=document.createElement("div");heading.className="file-group-title";
+        heading.textContent=`GRUPO ${item.group}`;list.append(heading);lastGroup=item.group;
+      }
       const row=document.createElement("div");row.className="file-item";
       const img=document.createElement("img");img.src=item.url;img.alt="";
       const meta=document.createElement("div");meta.className="file-meta";
@@ -302,7 +348,10 @@
       sizes.append(w,document.createTextNode("×"),h,unit);
       meta.append(name,sizes);
       const remove=document.createElement("button");remove.className="remove-file";remove.type="button";remove.textContent="×";remove.title="Remover imagem";
-      remove.addEventListener("click",()=>{URL.revokeObjectURL(item.url);state.images.splice(index,1);renderFileList();updatePreview();});
+      remove.addEventListener("click",()=>{URL.revokeObjectURL(item.url);state.images.splice(index,1);
+        const remainingGroups=[...new Set(state.images.map(item=>item.group))];
+        state.nextGroup=remainingGroups.length?Math.max(...remainingGroups)+1:1;
+        renderFileList();renderGroupHeights();updatePreview();});
       row.append(img,meta,remove);list.append(row);
     });
   }
@@ -310,21 +359,41 @@
   async function addFiles(files){
     const valid=[...files].filter(f=>/^image\/(png|jpeg)$/.test(f.type));
     if(!valid.length){setStatus("Selecione arquivos PNG ou JPEG.");return;}
+    const group=state.nextGroup;
+    if(group>3){setStatus("Limite de 3 grupos atingido. Remova as imagens de um grupo antes de adicionar outro.",true);return;}
+    let added=0;
     for(const file of valid){
       const url=URL.createObjectURL(file);
       try{
         const image=new Image();
         await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;image.src=url;});
-        state.images.push({file,url,image,customW:0,customH:0});
+        state.images.push({file,url,image,customW:0,customH:0,group}); added++;
       }catch(e){URL.revokeObjectURL(url);}
     }
-    renderFileList();updatePreview();
+    if(added) state.nextGroup=Math.min(4,group+1);
+    renderFileList();renderGroupHeights();updatePreview();
+  }
+
+  function renderGroupHeights(){
+    const box=$("groupHeights"); if(!box) return;
+    box.innerHTML="";
+    const groups=[...new Set(state.images.map(item=>item.group))];
+    box.hidden=!$("adjustGroups").checked || !groups.length;
+    groups.forEach(group=>{
+      const row=document.createElement("label");row.className="group-height-row";
+      const title=document.createElement("span");title.textContent=`Grupo ${group} — altura:`;
+      const input=document.createElement("input");input.type="number";input.min="0.1";input.max="100";input.step="0.1";input.placeholder="cm";input.value=state.groupHeights[group]||"";
+      input.addEventListener("change",()=>{state.groupHeights[group]=parseFloat(input.value)>0?parseFloat(input.value):0;updatePreview();});
+      const unit=document.createElement("small");unit.textContent="cm (mantém proporção)";
+      row.append(title,input,unit);box.append(row);
+    });
   }
 
   $("fileInput").addEventListener("change",e=>{addFiles(e.target.files);e.target.value="";});
   ["copies","fit","cutLines"].forEach(id=>$(id).addEventListener("input",updatePreview));
   $("smartFill").addEventListener("change",updatePreview);
   $("smartFill").addEventListener("input",updatePreview);
+  $("adjustGroups").addEventListener("change",()=>{renderGroupHeights();updatePreview();});
   document.querySelectorAll(".paper-tab").forEach(btn=>btn.addEventListener("click",()=>{
     state.paper=btn.dataset.paper;
     document.querySelectorAll(".paper-tab").forEach(b=>b.classList.toggle("active",b===btn));
@@ -348,7 +417,7 @@
           setStatus("Não foi possível carregar o gerador de PDF. Verifique sua conexão e tente novamente.");
           btn.disabled=false;return;
         }
-        const [pw,ph]=paperSizes[state.paper];
+        const [pw,ph]=sheetDimensions();
         const sheetW=state.layout.orientation==="portrait"?pw:ph;
         const sheetH=state.layout.orientation==="portrait"?ph:pw;
         const {jsPDF}=window.jspdf;

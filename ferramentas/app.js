@@ -364,13 +364,23 @@
       const targetW=itemSize.w>0&&itemSize.h>0?itemSize.w*scale:cellW;
       const targetH=itemSize.w>0&&itemSize.h>0?itemSize.h*scale:cellH;
       const dx=x+(cellW-targetW)/2, dy=y+(cellH-targetH)/2;
-      if(cover){
-        const s=Math.max(targetW/iw,targetH/ih), sw=targetW/s, sh=targetH/s;
-        c.drawImage(item.image,(iw-sw)/2,(ih-sh)/2,sw,sh,dx,dy,targetW,targetH);
-      }else{
-        const s=Math.min(targetW/iw,targetH/ih), dw=iw*s, dh=ih*s;
-        c.drawImage(item.image,dx+(targetW-dw)/2,dy+(targetH-dh)/2,dw,dh);
-      }
+      const rotation=((item.rotation||0)%360+360)%360;
+      const quarterTurn=Math.abs(rotation%180)===90;
+      const rotatedW=quarterTurn?ih:iw;
+      const rotatedH=quarterTurn?iw:ih;
+      const baseScale=cover
+        ? Math.max(targetW/rotatedW,targetH/rotatedH)
+        : Math.min(targetW/rotatedW,targetH/rotatedH);
+      const zoom=Math.max(1,Math.min(3,item.zoom||1));
+      const drawW=iw*baseScale*zoom;
+      const drawH=ih*baseScale*zoom;
+      const centerX=x+cellW/2+(item.panX||0)*targetW/100;
+      const centerY=y+cellH/2+(item.panY||0)*targetH/100;
+      c.save();
+      c.translate(centerX,centerY);
+      c.rotate(rotation*Math.PI/180);
+      c.drawImage(item.image,-drawW/2,-drawH/2,drawW,drawH);
+      c.restore();
       c.restore();
       if(layout.cxo && $("cutLines").checked){
         c.save(); c.beginPath();
@@ -468,6 +478,57 @@
       w.addEventListener("change",apply);h.addEventListener("change",apply);
       sizes.append(w,document.createTextNode("×"),h,unit);
       meta.append(name,sizes);
+
+      if(state.paper==="CXSÓ"){
+        item.rotation=item.rotation||0;
+        item.zoom=item.zoom||1;
+        item.panX=item.panX||0;
+        item.panY=item.panY||0;
+        const edit=document.createElement("div");
+        edit.className="cxo-image-controls";
+
+        const rotate=document.createElement("button");
+        rotate.type="button";
+        rotate.className="cxo-rotate";
+        rotate.textContent="↻";
+        rotate.title="Girar 90°";
+        rotate.setAttribute("aria-label","Girar imagem 90 graus");
+        rotate.addEventListener("click",()=>{
+          item.rotation=(item.rotation+90)%360;
+          updatePreview();
+        });
+
+        const makeSlider=(caption,key,min,max,step,format)=>{
+          const label=document.createElement("label");
+          label.className="cxo-control";
+          const title=document.createElement("span");
+          title.textContent=caption;
+          const range=document.createElement("input");
+          range.type="range";
+          range.min=String(min);
+          range.max=String(max);
+          range.step=String(step);
+          range.value=String(item[key]);
+          const value=document.createElement("small");
+          value.textContent=format(item[key]);
+          range.addEventListener("input",()=>{
+            item[key]=Number(range.value);
+            value.textContent=format(item[key]);
+            updatePreview();
+          });
+          label.append(title,range,value);
+          return label;
+        };
+
+        edit.append(
+          rotate,
+          makeSlider("Zoom","zoom",1,3,0.05,v=>Math.round(v*100)+"%"),
+          makeSlider("Horizontal","panX",-50,50,1,v=>v+"%"),
+          makeSlider("Vertical","panY",-50,50,1,v=>v+"%")
+        );
+        meta.append(edit);
+      }
+
       const remove=document.createElement("button");remove.className="remove-file";remove.type="button";remove.textContent="×";remove.title="Remover imagem";
       remove.addEventListener("click",()=>{URL.revokeObjectURL(item.url);state.images.splice(index,1);
         const remainingGroups=[...new Set(state.images.map(item=>item.group))];
@@ -488,7 +549,7 @@
       try{
         const image=new Image();
         await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;image.src=url;});
-        state.images.push({file,url,image,customW:0,customH:0,group}); added++;
+        state.images.push({file,url,image,customW:0,customH:0,group,rotation:0,zoom:1,panX:0,panY:0}); added++;
       }catch(e){URL.revokeObjectURL(url);}
     }
     if(added) state.nextGroup=Math.min(4,group+1);
@@ -507,6 +568,7 @@
   document.querySelectorAll(".paper-tab").forEach(btn=>btn.addEventListener("click",()=>{
     state.paper=btn.dataset.paper;
     document.querySelectorAll(".paper-tab").forEach(b=>b.classList.toggle("active",b===btn));
+    renderFileList();
     updatePreview();
   }));
   const drop=$("dropzone");

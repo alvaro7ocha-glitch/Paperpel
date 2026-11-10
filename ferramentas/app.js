@@ -135,146 +135,136 @@
     const baseLayout=chooseGridLayout();
     if(!baseLayout || !state.images.length) return baseLayout;
 
-    // Mede cada imagem separadamente: a altura do grupo prevalece
-    // sobre as dimensões individuais quando "Ajustar Grupo" está ativo.
-    const dimensions=state.images.map(item=>{
-      const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
-      const chosen=effectiveItemSize(item);
-      const h=chosen.h>0?chosen.h:(baseLayout.cellH||7);
-      const w=chosen.w>0?chosen.w:h*ratio;
-      return {item,w,h};
-    }).filter(d=>d.w>0&&d.h>0);
+    const copies=Math.max(1,Math.min(500,parseInt($("copies").value,10)||1));
+    const groups=[...new Set(state.images.map(item=>item.group||1))].sort((a,b)=>a-b);
+    const groupItems=groups.map(group=>({
+      group,
+      items:state.images.filter(item=>(item.group||1)===group).map(item=>{
+        const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
+        const chosen=effectiveItemSize(item);
+        const h=chosen.h>0?chosen.h:(baseLayout.cellH||7);
+        const w=chosen.w>0?chosen.w:h*ratio;
+        return {item,w,h};
+      }).filter(d=>d.w>0&&d.h>0)
+    }));
 
-    if(!dimensions.length) return null;
-
-    function tryPack(rectangles, areaW, areaH){
-      let free=[{x:0,y:0,w:areaW+gap,h:areaH+gap}];
-      const placed=[];
-      for(const rect of rectangles){
-        const rw=rect.w+gap, rh=rect.h+gap;
-        let best=-1, bestScore=Infinity, bx=0, by=0;
-        for(let i=0;i<free.length;i++){
-          const f=free[i];
-          if(rw<=f.w+1e-7 && rh<=f.h+1e-7){
-            const leftoverW=f.w-rw, leftoverH=f.h-rh;
-            const score=Math.min(leftoverW,leftoverH)*10000+Math.max(leftoverW,leftoverH);
-            if(score<bestScore){best=i;bestScore=score;bx=f.x;by=f.y;}
-          }
+    function makeRows(items,areaW){
+      const ordered=[...items].sort((a,b)=>(b.w-a.w)||(b.h-a.h));
+      const rows=[];
+      let row=[],usedW=0,rowH=0;
+      for(const d of ordered){
+        if(d.w>areaW+1e-7) return null;
+        const needed= row.length ? gap+d.w : d.w;
+        if(row.length && usedW+needed>areaW+1e-7){
+          rows.push({items:row,height:rowH});
+          row=[];usedW=0;rowH=0;
         }
-        if(best<0) return {placed,free,complete:false};
-
-        placed.push({item:rect.item,x:bx,y:by,w:rect.w,h:rect.h});
-        const used={x:bx,y:by,w:rw,h:rh};
-        const next=[];
-        for(const f of free){
-          const hit=used.x<f.x+f.w-1e-7 && used.x+used.w>f.x+1e-7 &&
-                    used.y<f.y+f.h-1e-7 && used.y+used.h>f.y+1e-7;
-          if(!hit){next.push(f);continue;}
-          if(used.x>f.x+1e-7) next.push({x:f.x,y:f.y,w:used.x-f.x,h:f.h});
-          if(used.x+used.w<f.x+f.w-1e-7) next.push({x:used.x+used.w,y:f.y,w:f.x+f.w-(used.x+used.w),h:f.h});
-          if(used.y>f.y+1e-7) next.push({x:f.x,y:f.y,w:f.w,h:used.y-f.y});
-          if(used.y+used.h<f.y+f.h-1e-7) next.push({x:f.x,y:used.y+used.h,w:f.w,h:f.y+f.h-(used.y+used.h)});
-        }
-        free=next.filter((r,i,arr)=>r.w>1e-7&&r.h>1e-7&&
-          !arr.some((q,j)=>j!==i&&q.x<=r.x+1e-7&&q.y<=r.y+1e-7&&
-            q.x+q.w>=r.x+r.w-1e-7&&q.y+q.h>=r.y+r.h-1e-7));
+        const add=row.length?gap:0;
+        row.push({...d,localX:usedW+add});
+        usedW+=add+d.w;
+        rowH=Math.max(rowH,d.h);
       }
-      return {placed,free,complete:true};
+      if(row.length) rows.push({items:row,height:rowH});
+      return rows;
     }
 
-    const options=[];
-    for(const orientation of ["portrait","landscape"]){
+    function rowsHeight(rows){
+      return rows.reduce((sum,row)=>sum+row.height,0)+Math.max(0,rows.length-1)*gap;
+    }
+
+    function buildOrientation(orientation){
       const sw=orientation==="portrait"?pw:ph;
       const sh=orientation==="portrait"?ph:pw;
-      const areaW=sw-2*margin, areaH=sh-2*margin;
-      if(dimensions.some(d=>d.w>areaW+1e-7||d.h>areaH+1e-7)) continue;
+      const areaW=sw-2*margin,areaH=sh-2*margin;
+      const blocks=groupItems.map(group=>({
+        group:group.group,
+        baseRows:makeRows(group.items,areaW),
+        rows:[]
+      }));
+      if(blocks.some((b,i)=>!b.baseRows || !b.baseRows.length)) return null;
 
-      // Fase 1: uma unidade de cada imagem, sem repetir nenhuma.
-      // Fase 2: cópias adicionais solicitadas pelo campo "Cópias".
-      // Fase 3: somente depois disso, repete em ciclos para ocupar sobras.
-      const copies=Math.max(1,Math.min(500,parseInt($("copies").value,10)||1));
-      const firstRound=dimensions.slice().sort((a,b)=>(b.w*b.h-a.w*a.h)||(b.h-a.h));
-      let packed=tryPack(firstRound,areaW,areaH);
-      if(!packed.complete) continue;
+      // Reserva primeiro uma ocorrência de cada imagem de todos os grupos.
+      let usedH=0;
+      for(const block of blocks){
+        block.rows=block.baseRows.map(r=>({...r,items:r.items.map(p=>({...p}))}));
+        usedH+=rowsHeight(block.rows)+(block.rows.length?gap:0);
+      }
+      if(usedH>areaH+1e-7) return null;
 
-      let allPlaced=packed.placed.slice();
-      let free=packed.free;
-      let requestedCount=dimensions.length*copies;
-      let requestedComplete=true;
-
-      // Coloca as demais cópias solicitadas em rodadas completas.
+      // Depois distribui as cópias pedidas em rodadas, sem misturar grupos.
+      let requestedOverflow=false;
       for(let round=1;round<copies;round++){
-        const roundItems=dimensions.slice().sort((a,b)=>(b.w*b.h-a.w*a.h)||(b.h-a.h));
-        const next=tryPackIntoFree(roundItems,free,areaW,areaH);
-        if(!next.complete){requestedComplete=false;break;}
-        allPlaced=allPlaced.concat(next.placed);
-        free=next.free;
-      }
-
-      // Se todas as cópias solicitadas couberam, aproveita o restante.
-      // A repetição começa novamente pelo conjunto completo de imagens.
-      let extraCount=0;
-      if(requestedComplete){
-        let safety=0, keepGoing=true;
-        while(keepGoing && safety++<100){
-          const cycle=dimensions.slice().sort((a,b)=>(b.w*b.h-a.w*a.h)||(b.h-a.h));
-          const next=tryPackIntoFree(cycle,free,areaW,areaH);
-          if(next.placed.length===0) break;
-          allPlaced=allPlaced.concat(next.placed);
-          extraCount+=next.placed.length;
-          free=next.free;
-          if(!next.complete) keepGoing=false;
-        }
-      }
-
-      // Centraliza o conjunto final na folha.
-      const minX=Math.min(...allPlaced.map(p=>p.x));
-      const minY=Math.min(...allPlaced.map(p=>p.y));
-      const maxX=Math.max(...allPlaced.map(p=>p.x+p.w));
-      const maxY=Math.max(...allPlaced.map(p=>p.y+p.h));
-      const offsetX=Math.max(0,(areaW-(maxX-minX))/2)-minX;
-      const offsetY=Math.max(0,(areaH-(maxY-minY))/2)-minY;
-      allPlaced.forEach(p=>{p.x+=margin+offsetX;p.y+=margin+offsetY;});
-
-      options.push({
-        orientation,sw,sh,margin,gap,placements:allPlaced,
-        capacity:allPlaced.length,smart:true,requested:requestedCount,
-        overflow:!requestedComplete,extraCount
-      });
-    }
-
-    function tryPackIntoFree(rectangles,initialFree,areaW,areaH){
-      let free=initialFree.map(r=>({...r}));
-      const placed=[];
-      let complete=true;
-      for(const rect of rectangles){
-        const rw=rect.w+gap, rh=rect.h+gap;
-        let best=-1,bestScore=Infinity,bx=0,by=0;
-        for(let i=0;i<free.length;i++){
-          const f=free[i];
-          if(rw<=f.w+1e-7&&rh<=f.h+1e-7){
-            const lw=f.w-rw,lh=f.h-rh,score=Math.min(lw,lh)*10000+Math.max(lw,lh);
-            if(score<bestScore){best=i;bestScore=score;bx=f.x;by=f.y;}
+        let placedAny=false;
+        for(let i=0;i<blocks.length;i++){
+          const block=blocks[i];
+          const source=groupItems[i].items;
+          const extraRows=makeRows(source,areaW);
+          const extraH=rowsHeight(extraRows)+(block.rows.length?gap:0);
+          if(usedH+extraH<=areaH+1e-7){
+            block.rows.push(...extraRows.map(r=>({...r,items:r.items.map(p=>({...p}))})));
+            usedH+=extraH;
+            placedAny=true;
+          }else{
+            requestedOverflow=true;
           }
         }
-        if(best<0){complete=false;continue;}
-        placed.push({item:rect.item,x:bx,y:by,w:rect.w,h:rect.h});
-        const used={x:bx,y:by,w:rw,h:rh},next=[];
-        for(const f of free){
-          const hit=used.x<f.x+f.w-1e-7&&used.x+used.w>f.x+1e-7&&used.y<f.y+f.h-1e-7&&used.y+used.h>f.y+1e-7;
-          if(!hit){next.push(f);continue;}
-          if(used.x>f.x+1e-7)next.push({x:f.x,y:f.y,w:used.x-f.x,h:f.h});
-          if(used.x+used.w<f.x+f.w-1e-7)next.push({x:used.x+used.w,y:f.y,w:f.x+f.w-(used.x+used.w),h:f.h});
-          if(used.y>f.y+1e-7)next.push({x:f.x,y:f.y,w:f.w,h:used.y-f.y});
-          if(used.y+used.h<f.y+f.h-1e-7)next.push({x:f.x,y:used.y+used.h,w:f.w,h:f.y+f.h-(used.y+used.h)});
-        }
-        free=next.filter((r,i,arr)=>r.w>1e-7&&r.h>1e-7&&!arr.some((q,j)=>j!==i&&q.x<=r.x+1e-7&&q.y<=r.y+1e-7&&q.x+q.w>=r.x+r.w-1e-7&&q.y+q.h>=r.y+r.h-1e-7));
+        if(!placedAny) break;
       }
-      return {placed,free,complete};
+
+      // Só depois de todas as imagens originais e cópias que couberam,
+      // repete ciclos completos por grupo para aproveitar o espaço restante.
+      let safety=0,addedInLastCycle=!requestedOverflow;
+      while(addedInLastCycle && safety++<100){
+        addedInLastCycle=false;
+        for(let i=0;i<blocks.length;i++){
+          const block=blocks[i];
+          const extraRows=makeRows(groupItems[i].items,areaW);
+          const extraH=rowsHeight(extraRows)+(block.rows.length?gap:0);
+          if(usedH+extraH<=areaH+1e-7){
+            block.rows.push(...extraRows.map(r=>({...r,items:r.items.map(p=>({...p}))})));
+            usedH+=extraH;
+            addedInLastCycle=true;
+          }
+        }
+      }
+
+      const placements=[];
+      let y=margin;
+      for(const block of blocks){
+        for(const row of block.rows){
+          const rowW=row.items.reduce((sum,p,i)=>sum+p.w+(i?gap:0),0);
+          const offsetX=Math.max(0,(areaW-rowW)/2);
+          for(const p of row.items){
+            placements.push({
+              item:p.item,
+              x:margin+offsetX+p.localX,
+              y:y+(row.height-p.h)/2,
+              w:p.w,h:p.h
+            });
+          }
+          y+=row.height+gap;
+        }
+        if(block.rows.length) y+=gap;
+      }
+      if(y>margin+areaH) y=margin+areaH;
+
+      const requested=state.images.length*copies;
+      const firstOccurrenceCount=state.images.length;
+      const occurrenceCount=new Map();
+      placements.forEach(p=>occurrenceCount.set(p.item,(occurrenceCount.get(p.item)||0)+1));
+      const requestedComplete=state.images.every(item=>(occurrenceCount.get(item)||0)>=copies);
+      return {
+        orientation,sw,sh,margin,gap,placements,
+        capacity:placements.length,smart:true,requested,
+        overflow:!requestedComplete,
+        groupsSeparated:true
+      };
     }
 
+    const options=["portrait","landscape"].map(buildOrientation).filter(Boolean);
     if(!options.length){
-      return {orientation:"portrait",sw:pw,sh:ph,margin,gap,placements:[],capacity:0,smart:true,overflow:true};
+      const sw=pw,sh=ph;
+      return {orientation:"portrait",sw,sh,margin,gap,placements:[],capacity:0,smart:true,overflow:true,groupsSeparated:true};
     }
     options.sort((a,b)=>b.capacity-a.capacity);
     return options[0];

@@ -228,6 +228,30 @@
         }
       }
 
+      // Depois de todas as imagens e cópias solicitadas estarem colocadas,
+      // completa a largura livre de cada fileira com imagens do próprio grupo.
+      // Nunca usa imagens de outro grupo e mantém a dimensão individual de cada peça.
+      if(!requestedOverflow){
+        for(let i=0;i<blocks.length;i++){
+          const block=blocks[i];
+          const source=groupItems[i].items;
+          if(!source.length) continue;
+          for(const row of block.rows){
+            let usedW=row.items.reduce((sum,p,index)=>sum+p.w+(index?gap:0),0);
+            let cursor=0,guard=0;
+            while(guard++<2000){
+              const candidate=source[cursor%source.length];
+              const needed=(row.items.length?gap:0)+candidate.w;
+              if(usedW+needed>areaW+1e-7) break;
+              const localX=usedW+(row.items.length?gap:0);
+              row.items.push({...candidate,localX});
+              usedW=localX+candidate.w;
+              cursor++;
+            }
+          }
+        }
+      }
+
       const placements=[];
       let y=margin;
       for(const block of blocks){

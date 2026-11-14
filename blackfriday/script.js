@@ -2,8 +2,8 @@ const products = {
   porta: { old: 31, price: 25, pack: 1, singular: 'porta-retrato 15×20 com foto', plural: 'porta-retratos 15×20 com foto' },
   polaroids: { old: 24, price: 20, pack: 12, singular: '12 Polaroids padrão', plural: 'Polaroids padrão' },
   fotos: { old: 100, price: 80, pack: 50, singular: '50 fotos 10×15 cm', plural: 'fotos 10×15 cm' },
-  adesivos4: { old: 350, price: 196, pack: 500, singular: '500 adesivos vinil fosco 4 cm', plural: 'adesivos vinil fosco 4 cm' },
-  adesivos5: { old: 280, price: 158, pack: 250, singular: '250 adesivos vinil fosco 5 cm', plural: 'adesivos vinil fosco 5 cm' },
+  adesivos4: { old: 350, price: 196, pack: 500, singular: '500 adesivos vinil fosco 4 cm, meio-corte', plural: 'adesivos vinil fosco 4 cm, meio-corte' },
+  adesivos5: { old: 280, price: 158, pack: 250, singular: '250 adesivos vinil fosco 5 cm, meio-corte', plural: 'adesivos vinil fosco 5 cm, meio-corte' },
   banner: { old: 154, price: 99, pack: 1, singular: 'banner 120 × 80 cm', plural: 'banners 120 × 80 cm' }
 };
 const cart = {};
@@ -25,8 +25,8 @@ function itemLabel(id, qty) {
   if (id === 'banner') return `${qty} ${qty === 1 ? 'banner' : 'banners'} 120 × 80 cm`;
   if (id === 'polaroids') return `${total.toLocaleString('pt-BR')} Polaroids padrão`;
   if (id === 'fotos') return `${total.toLocaleString('pt-BR')} fotos 10×15 cm`;
-  if (id === 'adesivos4') return `${total.toLocaleString('pt-BR')} adesivos vinil fosco 4 cm`;
-  if (id === 'adesivos5') return `${total.toLocaleString('pt-BR')} adesivos vinil fosco 5 cm`;
+  if (id === 'adesivos4') return `${total.toLocaleString('pt-BR')} adesivos vinil fosco 4 cm, meio-corte`;
+  if (id === 'adesivos5') return `${total.toLocaleString('pt-BR')} adesivos vinil fosco 5 cm, meio-corte`;
   return p.singular;
 }
 function totals() {
@@ -43,6 +43,8 @@ function syncProductButtons() {
     button.classList.toggle('is-added', selected);
     button.setAttribute('aria-pressed', String(selected));
     button.innerHTML = selected ? 'Adicionado ao pedido <span>✓</span>' : 'Adicionar ao pedido <span>+</span>';
+    const cardTitle = button.closest('.product-info')?.querySelector('h2');
+    if (cardTitle) cardTitle.textContent = itemLabel(button.dataset.add, cart[button.dataset.add] || 1);
   });
 }
 function renderCart() {
@@ -95,7 +97,8 @@ document.getElementById('copy-pix').addEventListener('click', async () => {
 function orderMessage() {
   const t = totals();
   const lines = Object.entries(cart).filter(([, qty]) => qty > 0).map(([id, qty]) => `• ${itemLabel(id, qty)} — ${money(products[id].price * qty)}`);
-  return `Olá! Quero finalizar meu pedido da Black Friday da Paperpel:\n\n${lines.join('\n')}\n\nTotal promocional: ${money(t.promo)}\nEconomia: ${money(t.old - t.promo)}\n\nVou enviar o comprovante do PIX por aqui.\nNome: `;
+  const customerName = document.getElementById('customer-name')?.value.trim() || '';
+  return `Olá! Quero finalizar meu pedido da Black Friday da Paperpel.\nNome: ${customerName}\n\n${lines.join('\n')}\n\nTotal promocional: ${money(t.promo)}\nEconomia: ${money(t.old - t.promo)}\n\nVou enviar o comprovante do PIX por aqui.`;
 }
 sendWhatsapp.addEventListener('click', () => {
   if (!totals().count) return;
@@ -122,4 +125,15 @@ function launchConfetti() {
 }
 document.getElementById('year').textContent = new Date().getFullYear();
 renderCart();
-launchConfetti();
+const nameInput = document.getElementById('customer-name');
+const revealButton = document.getElementById('reveal-offers');
+nameInput.addEventListener('input', () => {
+  revealButton.disabled = nameInput.value.trim().length < 2;
+});
+revealButton.addEventListener('click', () => {
+  if (nameInput.value.trim().length < 2) return;
+  document.getElementById('welcome-gate').hidden = true;
+  document.getElementById('site-content').hidden = false;
+  launchConfetti();
+  window.scrollTo({ top: 0, behavior: 'instant' });
+});

@@ -1,7 +1,7 @@
  :root{--blue:#087bd7;--blue2:#13a8ed;--yellow:#ffd400;--ink:#08090d;--muted:#b8bbc3;--panel:#14161b;--line:#30333a;--green:#20c878}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:#090a0d;color:#fff;font-family:Montserrat,Arial,sans-serif;background-image:linear-gradient(rgba(0,0,0,.86),rgba(0,0,0,.89)),url('assets/background.png');background-size:auto,560px;background-repeat:repeat}
+body{margin:0;background:#090a0d;color:#fff;font-family:Poppins,Arial,sans-serif;background-image:linear-gradient(rgba(0,0,0,.86),rgba(0,0,0,.89)),url('assets/background.png');background-size:auto,560px;background-repeat:repeat}
 button,a{font:inherit}
 [hidden]{display:none!important}
 .top-strip,.bottom-strip{height:34px;overflow:hidden;background:#087bd7}
@@ -135,3 +135,19 @@ footer{background:#11141a;padding:30px 20px 24px}
   .add-button{font-size:9px;min-height:39px}
   .bottom-strip,.bottom-strip img{height:25px}
 }
+
+/* Entrada com nome e revelação das ofertas */
+.welcome-gate{min-height:100svh;display:grid;place-items:center;padding:28px 18px;background:linear-gradient(rgba(7,9,13,.78),rgba(7,9,13,.88)),url('assets/background.png') center/500px}
+.welcome-card{width:min(100%,440px);padding:34px 30px 30px;border:1px solid #343b47;border-radius:16px;background:linear-gradient(145deg,#202630,#12161e);box-shadow:0 22px 70px #0009;text-align:center}
+.welcome-logo{display:block;width:min(100%,340px);max-height:125px;object-fit:contain;margin:0 auto 26px}
+.welcome-card label{display:block;font-size:16px;font-weight:700;margin-bottom:12px}
+.welcome-card input{width:100%;padding:14px 15px;border:1px solid #596575;border-radius:7px;background:#0e1219;color:#fff;font:inherit;font-size:14px;outline:none}
+.welcome-card input:focus{border-color:#13a8ed;box-shadow:0 0 0 3px #13a8ed25}
+.welcome-card button{width:100%;margin-top:13px;padding:14px;border:0;border-radius:7px;background:linear-gradient(90deg,#087bd7,#13a8ed);color:white;font:inherit;font-size:12px;font-weight:900;letter-spacing:.08em;cursor:pointer}
+.welcome-card button:disabled{opacity:.4;cursor:not-allowed}
+.welcome-card p{margin:17px 0 0;color:#b8c0cc;font-size:11px}
+.product-info h2{min-height:0;margin:7px 0 13px;line-height:1.45}
+.price-line{margin-top:auto}
+.product-info{gap:0}
+.product-tag{min-height:0}
+@media(max-width:620px){.welcome-card{padding:27px 20px}.welcome-logo{max-height:100px}.product-info h2{margin:6px 0 10px}}

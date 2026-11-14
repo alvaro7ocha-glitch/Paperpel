@@ -8,10 +8,21 @@
   <title>Black Friday | Paperpel Gráfica</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <section id="welcome-gate" class="welcome-gate" aria-label="Boas-vindas">
+    <div class="welcome-card">
+      <img src="assets/titulo-black-friday.png" alt="Black Friday Paperpel Gráfica" class="welcome-logo">
+      <label for="customer-name">Digite seu nome para entrar</label>
+      <input id="customer-name" type="text" maxlength="60" autocomplete="name" placeholder="Seu nome" required>
+      <button id="reveal-offers" type="button" disabled>VER OFERTAS <span aria-hidden="true">→</span></button>
+      <p>Prepare-se para aproveitar nossas ofertas especiais!</p>
+    </div>
+  </section>
+  <div id="site-content" hidden>
+
   <div class="top-strip" aria-hidden="true"><img src="assets/faixa-topo.png" alt=""></div>
   <header class="hero">
     <div class="hero-inner">
@@ -26,27 +37,27 @@
       <div class="product-grid" id="product-grid">
         <article class="product-card" data-id="porta">
           <div class="product-art"><img src="assets/porta-retrato.png" alt="Porta-retrato 15 por 20 com foto"></div>
-          <div class="product-info"><span class="product-tag">PRESENTE ESPECIAL</span><h2>1 porta-retrato 15×20 com foto</h2><p class="product-detail">1 porta-retrato + 1 foto</p><div class="price-line"><del>R$ 31,00</del><strong>R$ 25,00</strong></div><button class="add-button" data-add="porta" type="button" aria-pressed="false">Adicionar ao pedido <span>+</span></button></div>
+          <div class="product-info"><span class="product-tag">PRESENTE ESPECIAL</span><h2>1 porta-retrato 15×20 com foto</h2><div class="price-line"><del>R$ 31,00</del><strong>R$ 25,00</strong></div><button class="add-button" data-add="porta" type="button" aria-pressed="false">Adicionar ao pedido <span>+</span></button></div>
         </article>
         <article class="product-card" data-id="polaroids">
           <div class="product-art"><img src="assets/polaroids.png" alt="Conjunto de fotos Polaroid"></div>
-          <div class="product-info"><span class="product-tag">MEMÓRIAS IMPRESSAS</span><h2>12 Polaroids padrão</h2><p class="product-detail">12 fotos estilo Polaroid</p><div class="price-line"><del>R$ 24,00</del><strong>R$ 20,00</strong></div><button class="add-button" data-add="polaroids" type="button" aria-pressed="false">Adicionar ao pedido <span>+</span></button></div>
+          <div class="product-info"><span class="product-tag">MEMÓRIAS IMPRESSAS</span><h2>12 Polaroids padrão</h2><div class="price-line"><del>R$ 24,00</del><strong>R$ 20,00</strong></div><button class="add-button" data-add="polaroids" type="button" aria-pressed="false">Adicionar ao pedido <span>+</span></button></div>
         </article>
         <article class="product-card" data-id="fotos">
           <div class="product-art"><img src="assets/fotos-10x15.png" alt="Fotos impressas em papel fotográfico"></div>
-          <div class="product-info"><span class="product-tag">REVELE SUAS FOTOS</span><h2>50 fotos 10×15 cm</h2><p class="product-detail">Pacote com 50 fotografias</p><div class="price-line"><del>R$ 100,00</del><strong>R$ 80,00</strong></div><button class="add-button" data-add="fotos" type="button" aria-pressed="false">Adicionar ao pedido <span>+</span></button></div>
+          <div class="product-info"><span class="product-tag">REVELE SUAS FOTOS</span><h2>50 fotos 10×15 cm</h2><div class="price-line"><del>R$ 100,00</del><strong>R$ 80,00</strong></div><button class="add-button" data-add="fotos" type="button" aria-pressed="false">Adicionar ao pedido <span>+</span></button></div>
         </article>
         <article class="product-card" data-id="adesivos4">
           <div class="product-art"><img src="assets/adesivos-4cm.png" alt="Rolo de adesivos vinil fosco de 4 centímetros"></div>
-          <div class="product-info"><span class="product-tag">OFERTA DE DESTAQUE</span><h2>500 adesivos vinil fosco 4 cm</h2><p class="product-detail">Meio corte · vinil fosco</p><div class="price-line"><del>R$ 350,00</del><strong>R$ 196,00</strong></div><button class="add-button" data-add="adesivos4" type="button" aria-pressed="false">Adicionar ao pedido <span>+</span></button></div>
+          <div class="product-info"><span class="product-tag">OFERTA DE DESTAQUE</span><h2>500 adesivos vinil fosco 4 cm, meio-corte</h2><div class="price-line"><del>R$ 350,00</del><strong>R$ 196,00</strong></div><button class="add-button" data-add="adesivos4" type="button" aria-pressed="false">Adicionar ao pedido <span>+</span></button></div>
         </article>
         <article class="product-card" data-id="adesivos5">
           <div class="product-art"><img src="assets/adesivos-5cm.png" alt="Rolo de adesivos vinil fosco de 5 centímetros"></div>
-          <div class="product-info"><span class="product-tag">OFERTA DE DESTAQUE</span><h2>250 adesivos vinil fosco 5 cm</h2><p class="product-detail">Meio corte · vinil fosco</p><div class="price-line"><del>R$ 280,00</del><strong>R$ 158,00</strong></div><button class="add-button" data-add="adesivos5" type="button" aria-pressed="false">Adicionar ao pedido <span>+</span></button></div>
+          <div class="product-info"><span class="product-tag">OFERTA DE DESTAQUE</span><h2>250 adesivos vinil fosco 5 cm, meio-corte</h2><div class="price-line"><del>R$ 280,00</del><strong>R$ 158,00</strong></div><button class="add-button" data-add="adesivos5" type="button" aria-pressed="false">Adicionar ao pedido <span>+</span></button></div>
         </article>
         <article class="product-card" data-id="banner">
           <div class="product-art"><img src="assets/banner-120x80.png" alt="Banner promocional 120 por 80 centímetros"></div>
-          <div class="product-info"><span class="product-tag">DIVULGUE SUA MARCA</span><h2>1 banner 120 × 80 cm</h2><p class="product-detail">Impressão de banner</p><div class="price-line"><del>R$ 154,00</del><strong>R$ 99,00</strong></div><button class="add-button" data-add="banner" type="button" aria-pressed="false">Adicionar ao pedido <span>+</span></button></div>
+          <div class="product-info"><span class="product-tag">DIVULGUE SUA MARCA</span><h2>1 banner 120 × 80 cm</h2><div class="price-line"><del>R$ 154,00</del><strong>R$ 99,00</strong></div><button class="add-button" data-add="banner" type="button" aria-pressed="false">Adicionar ao pedido <span>+</span></button></div>
         </article>
       </div>
     </section>
@@ -84,6 +95,7 @@
   </footer>
   <div class="bottom-strip" aria-hidden="true"><img src="assets/faixa-topo.png" alt=""></div>
   <div id="confetti-layer" aria-hidden="true"></div>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>

@@ -13,12 +13,24 @@
 </head>
 <body>
   <section id="welcome-gate" class="welcome-gate" aria-label="Boas-vindas">
-    <div class="welcome-card">
+    <div class="welcome-entry">
+      <div class="welcome-countdown" aria-label="Contagem regressiva até o fim da promoção">
+        <p>Suas ofertas especiais têm prazo para acabar.</p>
+        <div class="countdown-units">
+          <div class="countdown-unit"><strong id="countdown-days">--</strong><span>DIAS</span></div>
+          <div class="countdown-unit"><strong id="countdown-hours">--</strong><span>HORAS</span></div>
+          <div class="countdown-unit"><strong id="countdown-minutes">--</strong><span>MIN</span></div>
+          <div class="countdown-unit"><strong id="countdown-seconds">--</strong><span>SEG</span></div>
+        </div>
+        <div class="countdown-deadline">ENCERRA EM 30 DE NOVEMBRO</div>
+      </div>
+      <div class="welcome-card">
       <img src="assets/titulo-black-friday.png" alt="Black Friday Paperpel Gráfica" class="welcome-logo">
       <label for="customer-name">Digite seu nome para entrar</label>
       <input id="customer-name" type="text" maxlength="60" autocomplete="name" placeholder="Seu nome" required>
       <button id="reveal-offers" type="button" disabled>VER OFERTAS <span aria-hidden="true">→</span></button>
       <p>Prepare-se para aproveitar nossas ofertas especiais!</p>
+      </div>
     </div>
   </section>
   <div id="site-content" hidden>

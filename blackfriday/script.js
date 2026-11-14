@@ -128,6 +128,43 @@ function launchConfetti() {
 }
 document.getElementById('year').textContent = new Date().getFullYear();
 renderCart();
+
+// Contagem regressiva até 30/11/2026 às 23:59:59 no horário local.
+const promoDeadline = new Date(2026, 10, 30, 23, 59, 59).getTime();
+const countdownNodes = {
+  days: document.getElementById('countdown-days'),
+  hours: document.getElementById('countdown-hours'),
+  minutes: document.getElementById('countdown-minutes'),
+  seconds: document.getElementById('countdown-seconds')
+};
+function updatePromoCountdown() {
+  const remaining = Math.max(0, promoDeadline - Date.now());
+  const days = Math.floor(remaining / 86400000);
+  const hours = Math.floor((remaining % 86400000) / 3600000);
+  const minutes = Math.floor((remaining % 3600000) / 60000);
+  const seconds = Math.floor((remaining % 60000) / 1000);
+  countdownNodes.days.textContent = String(days).padStart(2, '0');
+  countdownNodes.hours.textContent = String(hours).padStart(2, '0');
+  countdownNodes.minutes.textContent = String(minutes).padStart(2, '0');
+  countdownNodes.seconds.textContent = String(seconds).padStart(2, '0');
+}
+updatePromoCountdown();
+setInterval(updatePromoCountdown, 1000);
+
+// O mesmo efeito sonoro acompanha todos os botões, inclusive os criados dinamicamente.
+const uiButtonSound = new Audio('assets/verOfertas.mp3');
+uiButtonSound.preload = 'auto';
+uiButtonSound.volume = 0.72;
+document.addEventListener('click', (event) => {
+  const control = event.target.closest('button, .hero-cta');
+  if (!control || control.disabled) return;
+  try {
+    uiButtonSound.currentTime = 0;
+    const playback = uiButtonSound.play();
+    if (playback && typeof playback.catch === 'function') playback.catch(() => {});
+  } catch (_) {}
+}, true);
+
 const nameInput = document.getElementById('customer-name');
 const revealButton = document.getElementById('reveal-offers');
 nameInput.addEventListener('input', () => {
@@ -137,9 +174,6 @@ revealButton.addEventListener('click', () => {
   if (nameInput.value.trim().length < 2) return;
   document.getElementById('welcome-gate').hidden = true;
   document.getElementById('site-content').hidden = false;
-  const entranceSound = new Audio('assets/verOfertas.mp3');
-  entranceSound.volume = 0.85;
-  entranceSound.play().catch(() => {});
   launchConfetti();
   window.scrollTo({ top: 0, behavior: 'instant' });
 });

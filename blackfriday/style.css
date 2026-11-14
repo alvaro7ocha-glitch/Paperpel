@@ -151,3 +151,15 @@ footer{background:#11141a;padding:30px 20px 24px}
 .product-info{gap:0}
 .product-tag{min-height:0}
 @media(max-width:620px){.welcome-card{padding:27px 20px}.welcome-logo{max-height:100px}.product-info h2{margin:6px 0 10px}}
+
+/* Contagem regressiva compacta na tela inicial */
+.welcome-entry{width:min(100%,465px);display:flex;flex-direction:column;align-items:stretch;gap:24px}
+.welcome-countdown{width:100%;padding:0 0 10px;text-align:center;color:#dce4ef}
+.welcome-countdown p{margin:0 0 9px;font-size:13px;line-height:1.4;color:#d7dfeb}
+.countdown-units{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:5px;background:#111720;border:1px solid #27313e;border-radius:5px}
+.countdown-unit{min-height:42px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;background:#242d39;border-radius:4px}
+.countdown-unit strong{font-size:17px;line-height:1.1;color:#ffd400;font-weight:800;font-variant-numeric:tabular-nums}
+.countdown-unit span{font-size:7px;line-height:1.2;color:#e0e6ee;font-weight:700}
+.countdown-deadline{margin-top:7px;padding:7px 8px;background:#202833;border:1px solid #293443;border-radius:3px;color:#ffd400;font-size:12px;font-weight:800;letter-spacing:.015em}
+.welcome-card{width:100%}
+@media(max-width:520px){.welcome-entry{gap:18px}.welcome-countdown p{font-size:12px}.countdown-unit{min-height:40px}.countdown-unit strong{font-size:16px}.countdown-deadline{font-size:11px}}

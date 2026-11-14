@@ -98,7 +98,10 @@ function orderMessage() {
   const t = totals();
   const lines = Object.entries(cart).filter(([, qty]) => qty > 0).map(([id, qty]) => `• ${itemLabel(id, qty)} — ${money(products[id].price * qty)}`);
   const customerName = document.getElementById('customer-name')?.value.trim() || '';
-  return `Olá! Quero finalizar meu pedido da Black Friday da Paperpel.\nNome: ${customerName}\n\n${lines.join('\n')}\n\nTotal promocional: ${money(t.promo)}\nEconomia: ${money(t.old - t.promo)}\n\nVou enviar o comprovante do PIX por aqui.`;
+  const savingsPercent = t.old > 0 ? ((t.old - t.promo) / t.old) * 100 : 0;
+  const formattedPercent = savingsPercent.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const boldLines = lines.map(line => line.replace(/^• (.*?) — (.*)$/, '• *$1*'));
+  return `Olá! me chamo ${customerName}.\nQuero finalizar meu pedido da\n*Black Friday da Paperpel*.\n\n${boldLines.join('\n')}\nTotal promocional: *${money(t.promo)}*\nEconomia de *${formattedPercent}%*\n\nVou enviar o comprovante do PIX por aqui.`;
 }
 sendWhatsapp.addEventListener('click', () => {
   if (!totals().count) return;
@@ -134,6 +137,9 @@ revealButton.addEventListener('click', () => {
   if (nameInput.value.trim().length < 2) return;
   document.getElementById('welcome-gate').hidden = true;
   document.getElementById('site-content').hidden = false;
+  const entranceSound = new Audio('assets/verOfertas.mp3');
+  entranceSound.volume = 0.85;
+  entranceSound.play().catch(() => {});
   launchConfetti();
   window.scrollTo({ top: 0, behavior: 'instant' });
 });

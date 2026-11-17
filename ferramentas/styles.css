@@ -112,8 +112,3 @@ input[type=checkbox]{accent-color:#788fff}
 .sheet-stage{position:relative;overflow:auto;overscroll-behavior:contain}
 .preview-zoom-wrap{line-height:0;flex:0 0 auto}
 .preview-zoom-readout{position:sticky;left:calc(100% - 100px);bottom:8px;align-self:flex-end;margin-top:-24px;padding:5px 9px;border-radius:14px;background:#14121ccc;color:#f4f2f8;font:11px Arial,sans-serif;pointer-events:none;z-index:2}
-
-/* A ampliação afeta somente a prévia e não altera o fluxo/tamanho da página */
-.sheet-stage{min-width:0;max-width:100%;overflow:auto;overscroll-behavior:contain}
-.sheet-stage.is-zoomed{justify-content:flex-start;align-items:flex-start}
-.preview-zoom-wrap{transform-origin:0 0;flex:0 0 auto}

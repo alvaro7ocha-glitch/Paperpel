@@ -297,7 +297,16 @@
       }
 
       const placements=[];
-      let y=margin;
+      // Centraliza verticalmente o conjunto no modo inteligente, sem alterar
+      // o alinhamento superior do modo de montagem normal.
+      const totalRows=blocks.reduce((sum,block)=>sum+block.rows.length,0);
+      const contentHeight=blocks.reduce((sum,block)=>sum+rowsHeight(block.rows),0)
+        +Math.max(0,totalRows-1)*gap
+        +Math.max(0,blocks.length-1)*gap;
+      const verticalOffset=contentHeight>areaH*0.5
+        ? Math.max(0,(areaH-contentHeight)/2)
+        : 0;
+      let y=margin+verticalOffset;
       for(const block of blocks){
         for(const row of block.rows){
           const rowW=row.items.reduce((sum,p,i)=>sum+p.w+(i?gap:0),0);
@@ -405,7 +414,13 @@
     const gridW=layout.cols*cellW+(layout.cols-1)*gap;
     const gridH=layout.rows*cellH+(layout.rows-1)*gap;
     const startX=x0+((sheetW-2*layout.margin)*scale-gridW)/2;
-    const startY=y0;
+    const availableH=(sheetH-2*layout.margin)*scale;
+    // Mantém no topo quando há poucas imagens; centraliza quando a montagem
+    // ocupa mais da metade da área útil, independentemente do modo utilizado.
+    const verticalOffset=gridH>availableH*0.5
+      ? Math.max(0,(availableH-gridH)/2)
+      : 0;
+    const startY=y0+verticalOffset;
     images.forEach((item,i)=>{
       const col=i%layout.cols, row=Math.floor(i/layout.cols);
       const x=startX+col*(cellW+gap), y=startY+row*(cellH+gap);

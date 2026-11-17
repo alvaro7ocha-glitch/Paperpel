@@ -112,3 +112,43 @@ input[type=checkbox]{accent-color:#788fff}
 .sheet-stage{position:relative;overflow:auto;overscroll-behavior:contain}
 .preview-zoom-wrap{line-height:0;flex:0 0 auto}
 .preview-zoom-readout{position:sticky;left:calc(100% - 100px);bottom:8px;align-self:flex-end;margin-top:-24px;padding:5px 9px;border-radius:14px;background:#14121ccc;color:#f4f2f8;font:11px Arial,sans-serif;pointer-events:none;z-index:2}
+
+
+/* Ajustes individuais de enquadramento para cada imagem */
+.image-position-controls{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:4px;
+  padding:7px 0 2px;
+  margin-top:5px;
+  border-top:1px solid #514b60;
+  width:100%;
+}
+.image-adjust-button{
+  min-width:27px;
+  height:27px;
+  padding:0 6px;
+  border:1px solid #514b60;
+  border-radius:5px;
+  background:#24212e;
+  color:#f4f2f8;
+  font-size:15px;
+  line-height:1;
+  cursor:pointer;
+}
+.image-adjust-button:hover,.cxo-rotate:hover{
+  border-color:#8298ff;
+  background:#3b3650;
+}
+.image-zoom-value{
+  min-width:45px;
+  font-size:10px;
+  cursor:pointer;
+}
+.file-item.selected-image{
+  outline:1px solid #8298ff;
+  background:#3b3650;
+}
+.file-item{cursor:pointer}
+.file-item .remove-file{cursor:pointer}

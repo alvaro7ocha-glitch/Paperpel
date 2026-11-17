@@ -15,6 +15,13 @@
   }
   const presets = [[10,15],[9,13],[8,12],[7,10],[6,9],[5,7]];
   const state = { paper:"A4", images:[], layout:null, busy:false, nextGroup:1, groupHeights:{} };
+  let selectedItem=null;
+  function updateSelectedRows(){
+    document.querySelectorAll(".file-item").forEach(row=>{
+      const index=Number(row.dataset.imageIndex);
+      row.classList.toggle("selected-image",state.images[index]===selectedItem);
+    });
+  }
   const canvas = $("previewCanvas"), ctx = canvas.getContext("2d");
   const sheetStage = canvas.closest(".sheet-stage");
   const emptyState = $("emptyState");
@@ -350,6 +357,24 @@
     }
   }
 
+  function drawAdjustedImage(target,image,x,y,w,h,item,cover){
+    const iw=image.naturalWidth,ih=image.naturalHeight;
+    const rotation=((item.rotation||0)%360+360)%360;
+    const quarterTurn=Math.abs(rotation%180)===90;
+    const rotatedW=quarterTurn?ih:iw,rotatedH=quarterTurn?iw:ih;
+    const baseScale=cover?Math.max(w/rotatedW,h/rotatedH):Math.min(w/rotatedW,h/rotatedH);
+    const zoom=Math.max(0.5,Math.min(3,item.zoom??1));
+    const drawW=iw*baseScale*zoom,drawH=ih*baseScale*zoom;
+    const centerX=x+w/2+(item.panX||0)*w/100;
+    const centerY=y+h/2+(item.panY||0)*h/100;
+    target.save();
+    target.beginPath();target.rect(x,y,w,h);target.clip();
+    target.translate(centerX,centerY);
+    target.rotate(rotation*Math.PI/180);
+    target.drawImage(image,-drawW/2,-drawH/2,drawW,drawH);
+    target.restore();
+  }
+
   function drawSheet(targetCanvas, layout, forExport, transparent=false){
     const [pw,ph]=sheetDimensions();
     const sheetW=layout.orientation==="portrait"?pw:ph;
@@ -365,10 +390,7 @@
       layout.placements.forEach(p=>{
         const x=p.x*scale,y=p.y*scale,w=p.w*scale,h=p.h*scale;
         c.save();c.beginPath();c.rect(x,y,w,h);c.clip();
-        const iw=p.item.image.naturalWidth,ih=p.item.image.naturalHeight;
-        const cover=$("fit").checked;
-        if(cover){const s=Math.max(w/iw,h/ih),sw= w/s,sh=h/s;c.drawImage(p.item.image,(iw-sw)/2,(ih-sh)/2,sw,sh,x,y,w,h);}
-        else{const s=Math.min(w/iw,h/ih),dw=iw*s,dh=ih*s;c.drawImage(p.item.image,x+(w-dw)/2,y+(h-dh)/2,dw,dh);}
+        drawAdjustedImage(c,p.item.image,x,y,w,h,p.item,$("fit").checked);
         c.restore();
       });
       if($("cutLines").checked){
@@ -498,7 +520,7 @@
         }
         list.append(heading);lastGroup=item.group;
       }
-      const row=document.createElement("div");row.className="file-item";
+      const row=document.createElement("div");row.className="file-item";row.dataset.imageIndex=String(index);
       const img=document.createElement("img");img.src=item.url;img.alt="";
       const meta=document.createElement("div");meta.className="file-meta";
       const name=document.createElement("span");name.className="file-name";name.textContent=item.file.name;
@@ -511,63 +533,66 @@
       sizes.append(w,document.createTextNode("×"),h,unit);
       meta.append(name,sizes);
 
-      if(state.paper==="CXSÓ"){
-        item.rotation=item.rotation||0;
-        item.zoom=item.zoom||1;
-        item.panX=item.panX||0;
-        item.panY=item.panY||0;
-        const edit=document.createElement("div");
-        edit.className="cxo-image-controls";
+      item.rotation=item.rotation||0;
+      item.zoom=item.zoom??1;
+      item.panX=item.panX||0;
+      item.panY=item.panY||0;
+      const edit=document.createElement("div");
+      edit.className="cxo-image-controls image-position-controls";
 
-        const rotate=document.createElement("button");
-        rotate.type="button";
-        rotate.className="cxo-rotate";
-        rotate.textContent="↻";
-        rotate.title="Girar 90°";
-        rotate.setAttribute("aria-label","Girar imagem 90 graus");
-        rotate.addEventListener("click",()=>{
-          item.rotation=(item.rotation+90)%360;
+      const makeButton=(caption,title,action,className="image-adjust-button")=>{
+        const button=document.createElement("button");
+        button.type="button";
+        button.className=className;
+        button.textContent=caption;
+        button.title=title;
+        button.setAttribute("aria-label",title);
+        button.addEventListener("click",event=>{
+          event.preventDefault();event.stopPropagation();
+          selectedItem=item;
+          action();
+          updateSelectedRows();
+          const zoomReadout=edit.querySelector(".image-zoom-value");
+          if(zoomReadout) zoomReadout.textContent=`${Math.round(item.zoom*100)}%`;
           updatePreview();
         });
-
-        const makeSlider=(caption,key,min,max,step,format)=>{
-          const label=document.createElement("label");
-          label.className="cxo-control";
-          const title=document.createElement("span");
-          title.textContent=caption;
-          const range=document.createElement("input");
-          range.type="range";
-          range.min=String(min);
-          range.max=String(max);
-          range.step=String(step);
-          range.value=String(item[key]);
-          const value=document.createElement("small");
-          value.textContent=format(item[key]);
-          range.addEventListener("input",()=>{
-            item[key]=Number(range.value);
-            value.textContent=format(item[key]);
-            schedulePreview();
-          });
-          label.append(title,range,value);
-          return label;
-        };
-
-        edit.append(
-          rotate,
-          makeSlider("Zoom","zoom",0.5,3,0.01,v=>Math.round(v*100)+"%"),
-          makeSlider("Horizontal","panX",-50,50,1,v=>v+"%"),
-          makeSlider("Vertical","panY",-50,50,1,v=>v+"%")
-        );
-        meta.append(edit);
+        return button;
+      };
+      const changeZoom=amount=>{
+        item.zoom=Math.max(0.5,Math.min(3,Math.round((item.zoom+amount)*100)/100));
+      };
+      const move=(x,y)=>{
+        item.panX=Math.max(-100,Math.min(100,item.panX+x));
+        item.panY=Math.max(-100,Math.min(100,item.panY+y));
+      };
+      edit.append(
+        makeButton("−","Diminuir zoom",()=>changeZoom(-0.1)),
+        makeButton(`${Math.round(item.zoom*100)}%`,"Zoom atual",()=>{item.zoom=1;},"image-zoom-value"),
+        makeButton("+","Aumentar zoom",()=>changeZoom(0.1)),
+        makeButton("←","Mover para a esquerda",()=>move(-2,0)),
+        makeButton("↑","Mover para cima",()=>move(0,-2)),
+        makeButton("↓","Mover para baixo",()=>move(0,2)),
+        makeButton("→","Mover para a direita",()=>move(2,0))
+      );
+      if(state.paper==="CXSÓ"){
+        const rotate=makeButton("↻","Girar 90°",()=>{
+          item.rotation=(item.rotation+90)%360;
+        },"cxo-rotate");
+        edit.append(rotate);
       }
+      meta.append(edit);
+      row.addEventListener("click",()=>{selectedItem=item;updateSelectedRows();});
+      img.addEventListener("click",event=>{event.stopPropagation();selectedItem=item;updateSelectedRows();});
+
 
       const remove=document.createElement("button");remove.className="remove-file";remove.type="button";remove.textContent="×";remove.title="Remover imagem";
-      remove.addEventListener("click",()=>{URL.revokeObjectURL(item.url);state.images.splice(index,1);
+      remove.addEventListener("click",event=>{event.stopPropagation();URL.revokeObjectURL(item.url);state.images.splice(index,1);if(selectedItem===item) selectedItem=state.images[Math.min(index,state.images.length-1)]||null;
         const remainingGroups=[...new Set(state.images.map(item=>item.group))];
         state.nextGroup=remainingGroups.length?Math.max(...remainingGroups)+1:1;
         renderGroupHeights();updatePreview();});
       row.append(img,meta,remove);list.append(row);
     });
+    updateSelectedRows();
   }
 
   async function addFiles(files){
@@ -581,7 +606,7 @@
       try{
         const image=new Image();
         await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;image.src=url;});
-        state.images.push({file,url,image,customW:0,customH:0,group,rotation:0,zoom:1,panX:0,panY:0}); added++;
+        state.images.push({file,url,image,customW:0,customH:0,group,rotation:0,zoom:1,panX:0,panY:0}); if(!selectedItem) selectedItem=state.images[state.images.length-1]; added++;
       }catch(e){URL.revokeObjectURL(url);}
     }
     if(added) state.nextGroup=Math.min(4,group+1);
@@ -603,6 +628,24 @@
     renderFileList();
     updatePreview();
   }));
+  document.addEventListener("keydown",event=>{
+    if(!selectedItem || !state.images.includes(selectedItem)) return;
+    if(event.target && /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
+    if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(event.key)){
+      event.preventDefault();
+      const step=event.shiftKey?5:1;
+      if(event.key==="ArrowLeft") selectedItem.panX=Math.max(-100,selectedItem.panX-step);
+      if(event.key==="ArrowRight") selectedItem.panX=Math.min(100,selectedItem.panX+step);
+      if(event.key==="ArrowUp") selectedItem.panY=Math.max(-100,selectedItem.panY-step);
+      if(event.key==="ArrowDown") selectedItem.panY=Math.min(100,selectedItem.panY+step);
+      updatePreview();
+    }else if(event.key==="+" || event.key==="="){
+      event.preventDefault();selectedItem.zoom=Math.min(3,Math.round((selectedItem.zoom+0.1)*100)/100);renderFileList();updatePreview();
+    }else if(event.key==="-"){
+      event.preventDefault();selectedItem.zoom=Math.max(0.5,Math.round((selectedItem.zoom-0.1)*100)/100);renderFileList();updatePreview();
+    }
+  });
+
   const drop=$("dropzone");
   ["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("dragover");}));
   ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("dragover");}));

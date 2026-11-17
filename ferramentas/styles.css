@@ -47,7 +47,7 @@ input[type=checkbox]{accent-color:#788fff}
 .size-info{color:#bcb8c8!important;text-align:right}
 .sheet-stage{flex:1;min-height:480px;display:flex;align-items:center;justify-content:center;overflow:auto;padding:12px}
 #previewCanvas{display:none;max-width:none;max-height:none;width:auto;height:auto;object-fit:contain;background:white;box-shadow:0 3px 22px #0005}
-.empty-state{width:595px;height:842px;flex:0 0 auto;aspect-ratio:21/29.7;background:#fff;box-shadow:0 3px 22px #0004;position:relative;overflow:hidden}
+.empty-state{width:842px;height:595px;flex:0 0 auto;aspect-ratio:842/595;background:#fff;box-shadow:0 3px 22px #0004;position:relative;overflow:hidden}
 .empty-watermark{position:absolute;width:76%;height:90%;object-fit:contain;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
 .empty-state strong,.empty-state span{position:relative;z-index:1}
 .empty-state strong{color:#777}.empty-state span{color:#999}

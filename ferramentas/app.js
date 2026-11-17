@@ -644,5 +644,5 @@
     }catch(err){console.error(err);setStatus("O navegador não conseguiu gerar o arquivo. Tente reduzir a quantidade de imagens.");btn.disabled=false;}
   });
 
-  $("paperInfo").textContent="A4 • Retrato";
+  $("paperInfo").textContent="A4 • Paisagem";
 })();

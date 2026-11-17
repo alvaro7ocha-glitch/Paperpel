@@ -16,6 +16,42 @@
   const presets = [[10,15],[9,13],[8,12],[7,10],[6,9],[5,7]];
   const state = { paper:"A4", images:[], layout:null, busy:false, nextGroup:1, groupHeights:{} };
   const canvas = $("previewCanvas"), ctx = canvas.getContext("2d");
+  const sheetStage = canvas.closest(".sheet-stage");
+  const emptyState = $("emptyState");
+  const previewWrap = document.createElement("div");
+  previewWrap.className = "preview-zoom-wrap";
+  previewWrap.style.cssText = "display:inline-block;flex:0 0 auto;zoom:1;";
+  sheetStage.insertBefore(previewWrap, emptyState);
+  previewWrap.append(emptyState, canvas);
+  let previewZoom = 1;
+  const zoomReadout = document.createElement("div");
+  zoomReadout.className = "preview-zoom-readout";
+  zoomReadout.textContent = "Zoom 100%";
+  sheetStage.appendChild(zoomReadout);
+  sheetStage.addEventListener("wheel", event => {
+    event.preventDefault();
+    const previous = previewZoom;
+    const factor = event.deltaY < 0 ? 1.12 : 1 / 1.12;
+    previewZoom = Math.max(0.25, Math.min(4, previewZoom * factor));
+    if (previewZoom === previous) return;
+    const rect = previewWrap.getBoundingClientRect();
+    const anchorX = event.clientX - rect.left;
+    const anchorY = event.clientY - rect.top;
+    previewWrap.style.zoom = String(previewZoom);
+    zoomReadout.textContent = `Zoom ${Math.round(previewZoom * 100)}%`;
+    const ratio = previewZoom / previous;
+    sheetStage.scrollLeft += anchorX * (ratio - 1);
+    sheetStage.scrollTop += anchorY * (ratio - 1);
+  }, { passive: false });
+
+  function schedulePreview() {
+    if (schedulePreview.pending) return;
+    schedulePreview.pending = true;
+    requestAnimationFrame(() => {
+      schedulePreview.pending = false;
+      updatePreview();
+    });
+  }
 
   function setStatus(message, warning=false){ $("status").textContent = message; $("status").classList.toggle("warning",warning); }
   function cmText(n){ return (Math.round(n*100)/100).toLocaleString("pt-BR",{maximumFractionDigits:2})+" cm"; }
@@ -346,7 +382,7 @@
     const gridW=layout.cols*cellW+(layout.cols-1)*gap;
     const gridH=layout.rows*cellH+(layout.rows-1)*gap;
     const startX=x0+((sheetW-2*layout.margin)*scale-gridW)/2;
-    const startY=y0+((sheetH-2*layout.margin)*scale-gridH)/2;
+    const startY=y0;
     images.forEach((item,i)=>{
       const col=i%layout.cols, row=Math.floor(i/layout.cols);
       const x=startX+col*(cellW+gap), y=startY+row*(cellH+gap);
@@ -371,7 +407,7 @@
       const baseScale=cover
         ? Math.max(targetW/rotatedW,targetH/rotatedH)
         : Math.min(targetW/rotatedW,targetH/rotatedH);
-      const zoom=Math.max(1,Math.min(3,item.zoom||1));
+      const zoom=Math.max(0.5,Math.min(3,item.zoom??1));
       const drawW=iw*baseScale*zoom;
       const drawH=ih*baseScale*zoom;
       const centerX=x+cellW/2+(item.panX||0)*targetW/100;
@@ -382,6 +418,13 @@
       c.drawImage(item.image,-drawW/2,-drawH/2,drawW,drawH);
       c.restore();
       c.restore();
+      if($("cutLines").checked && !layout.cxo){
+        c.save();
+        c.strokeStyle="#D2D3D5";
+        c.lineWidth=Math.max(forExport?0.5:1,0.02*scale);
+        c.strokeRect(x,y,cellW,cellH);
+        c.restore();
+      }
       if(layout.cxo && $("cutLines").checked){
         c.save(); c.beginPath();
         const r=cellW/2;
@@ -390,19 +433,7 @@
         c.strokeStyle="#D2D3D5"; c.lineWidth=Math.max(forExport?0.5:1,0.02*scale); c.stroke(); c.restore();
       }
     });
-    if($("cutLines").checked && !layout.cxo){
-      c.save(); c.strokeStyle="#D2D3D5"; c.lineWidth=Math.max(forExport?0.5:1,0.02*scale);
-      // Fine internal cut guides, only between occupied cells.
-      for(let col=1;col<layout.cols;col++){
-        const x=startX+col*cellW+(col-1)*gap+gap/2;
-        c.beginPath();c.moveTo(x,startY);c.lineTo(x,startY+gridH);c.stroke();
-      }
-      for(let row=1;row<layout.rows;row++){
-        const y=startY+row*cellH+(row-1)*gap+gap/2;
-        c.beginPath();c.moveTo(startX,y);c.lineTo(startX+gridW,y);c.stroke();
-      }
-      c.restore();
-    }
+
   }
 
   function updatePreview(){
@@ -514,7 +545,7 @@
           range.addEventListener("input",()=>{
             item[key]=Number(range.value);
             value.textContent=format(item[key]);
-            updatePreview();
+            schedulePreview();
           });
           label.append(title,range,value);
           return label;
@@ -522,7 +553,7 @@
 
         edit.append(
           rotate,
-          makeSlider("Zoom","zoom",1,3,0.05,v=>Math.round(v*100)+"%"),
+          makeSlider("Zoom","zoom",0.5,3,0.01,v=>Math.round(v*100)+"%"),
           makeSlider("Horizontal","panX",-50,50,1,v=>v+"%"),
           makeSlider("Vertical","panY",-50,50,1,v=>v+"%")
         );
@@ -533,7 +564,7 @@
       remove.addEventListener("click",()=>{URL.revokeObjectURL(item.url);state.images.splice(index,1);
         const remainingGroups=[...new Set(state.images.map(item=>item.group))];
         state.nextGroup=remainingGroups.length?Math.max(...remainingGroups)+1:1;
-        renderFileList();renderGroupHeights();updatePreview();});
+        renderGroupHeights();updatePreview();});
       row.append(img,meta,remove);list.append(row);
     });
   }
@@ -553,7 +584,7 @@
       }catch(e){URL.revokeObjectURL(url);}
     }
     if(added) state.nextGroup=Math.min(4,group+1);
-    renderFileList();renderGroupHeights();updatePreview();
+    renderGroupHeights();updatePreview();
   }
 
   function renderGroupHeights(){
@@ -561,9 +592,9 @@
   }
 
   $("fileInput").addEventListener("change",e=>{addFiles(e.target.files);e.target.value="";});
-  ["copies","fit","cutLines"].forEach(id=>$(id).addEventListener("input",updatePreview));
-  $("smartFill").addEventListener("change",updatePreview);
-  $("smartFill").addEventListener("input",updatePreview);
+  ["copies","fit","cutLines"].forEach(id=>$(id).addEventListener("input",schedulePreview));
+  $("smartFill").addEventListener("change",schedulePreview);
+  $("smartFill").addEventListener("input",schedulePreview);
   $("adjustGroups").addEventListener("change",()=>{renderGroupHeights();updatePreview();});
   document.querySelectorAll(".paper-tab").forEach(btn=>btn.addEventListener("click",()=>{
     state.paper=btn.dataset.paper;

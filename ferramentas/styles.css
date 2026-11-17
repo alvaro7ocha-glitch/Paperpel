@@ -107,3 +107,8 @@ input[type=checkbox]{accent-color:#788fff}
   .cxo-image-controls{grid-template-columns:28px 1fr 1fr;}
   .cxo-control:last-child{grid-column:2 / 4;}
 }
+
+/* Zoom exclusivo da pré-visualização, controlado pelo scroll do mouse */
+.sheet-stage{position:relative;overflow:auto;overscroll-behavior:contain}
+.preview-zoom-wrap{line-height:0;flex:0 0 auto}
+.preview-zoom-readout{position:sticky;left:calc(100% - 100px);bottom:8px;align-self:flex-end;margin-top:-24px;padding:5px 9px;border-radius:14px;background:#14121ccc;color:#f4f2f8;font:11px Arial,sans-serif;pointer-events:none;z-index:2}

@@ -23,11 +23,11 @@
   previewWrap.style.cssText = "display:inline-block;flex:0 0 auto;";
   sheetStage.insertBefore(previewWrap, emptyState);
   previewWrap.append(emptyState, canvas);
-  let previewZoom = 2;
+  let previewZoom = 1;
   previewWrap.style.zoom = String(previewZoom);
   const zoomReadout = document.createElement("div");
   zoomReadout.className = "preview-zoom-readout";
-  zoomReadout.textContent = "Zoom 200%";
+  zoomReadout.textContent = "Zoom 100%";
   sheetStage.appendChild(zoomReadout);
   sheetStage.addEventListener("wheel", event => {
     event.preventDefault();

@@ -20,7 +20,7 @@
   const emptyState = $("emptyState");
   const previewWrap = document.createElement("div");
   previewWrap.className = "preview-zoom-wrap";
-  previewWrap.style.cssText = "display:inline-block;flex:0 0 auto;zoom:1;";
+  previewWrap.style.cssText = "display:inline-block;flex:0 0 auto;transform:scale(1);transform-origin:0 0;";
   sheetStage.insertBefore(previewWrap, emptyState);
   previewWrap.append(emptyState, canvas);
   let previewZoom = 1;
@@ -37,7 +37,8 @@
     const rect = previewWrap.getBoundingClientRect();
     const anchorX = event.clientX - rect.left;
     const anchorY = event.clientY - rect.top;
-    previewWrap.style.zoom = String(previewZoom);
+    previewWrap.style.transform = `scale(${previewZoom})`;
+    sheetStage.classList.toggle("is-zoomed", previewZoom > 1);
     zoomReadout.textContent = `Zoom ${Math.round(previewZoom * 100)}%`;
     const ratio = previewZoom / previous;
     sheetStage.scrollLeft += anchorX * (ratio - 1);

@@ -371,7 +371,7 @@
         c.restore();
       });
       if($("cutLines").checked){
-        c.save();c.strokeStyle="#D2D3D5";c.lineWidth=Math.max(forExport?0.5:1,0.02*scale);
+        c.save();c.strokeStyle="#D2D3D5";c.lineWidth=Math.max(forExport?0.35:0.6,0.008*scale);
         layout.placements.forEach(p=>{const x=p.x*scale,y=p.y*scale,w=p.w*scale,h=p.h*scale;c.strokeRect(x,y,w,h);});
         c.restore();
       }
@@ -421,7 +421,7 @@
       if($("cutLines").checked && !layout.cxo){
         c.save();
         c.strokeStyle="#D2D3D5";
-        c.lineWidth=Math.max(forExport?0.5:1,0.02*scale);
+        c.lineWidth=Math.max(forExport?0.35:0.6,0.008*scale);
         c.strokeRect(x,y,cellW,cellH);
         c.restore();
       }
@@ -430,7 +430,7 @@
         const r=cellW/2;
         c.moveTo(x,y+r); c.lineTo(x,y+cellH); c.lineTo(x+cellW,y+cellH);
         c.lineTo(x+cellW,y+r); c.arc(x+r,y+r,r,0,Math.PI,true); c.closePath();
-        c.strokeStyle="#D2D3D5"; c.lineWidth=Math.max(forExport?0.5:1,0.02*scale); c.stroke(); c.restore();
+        c.strokeStyle="#D2D3D5"; c.lineWidth=Math.max(forExport?0.35:0.6,0.008*scale); c.stroke(); c.restore();
       }
     });
 

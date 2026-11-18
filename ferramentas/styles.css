@@ -159,3 +159,50 @@ input[type=checkbox]{accent-color:#788fff}
 .group-axis-field input{width:62px;background:#24212e;border:1px solid #718cff;border-radius:3px;color:#fff;padding:4px;font-size:11px}
 
 .group-proportional-label{color:#e2dfeb;font-size:11px;font-weight:400}
+
+/* Controles de dimensionamento por grupo: modo proporcional ou quadro X × Y */
+.file-group-size{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:4px;
+}
+.group-proportional-row,
+.group-axes-row{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:7px;
+}
+.group-proportional-row{
+  color:#e2dfeb;
+  font-size:11px;
+  font-weight:400;
+}
+.group-proportional-row input,
+.group-axis-field input{
+  width:58px;
+  background:#24212e;
+  border:1px solid #718cff;
+  border-radius:3px;
+  color:#fff;
+  padding:4px;
+  font-size:11px;
+}
+.group-axis-field{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  color:#e2dfeb;
+  font-size:11px;
+  font-weight:400;
+}
+.group-axes-row .group-axis-field input{width:52px}
+
+/* Navegação discreta de páginas, sem alterar a estrutura atual. */
+.preview-right{display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+.page-controls{display:flex;align-items:center;gap:5px;font-size:11px;color:#d9d6e2}
+.page-controls button{background:#343141;border:1px solid #514b60;border-radius:4px;color:#f4f2f8;width:23px;height:23px;cursor:pointer;font-size:17px;line-height:1}
+.page-controls button:disabled{opacity:.35;cursor:default}
+.page-controls #pageAdd{color:#9eaeff;font-weight:bold}
+.page-controls span{min-width:36px;text-align:center}

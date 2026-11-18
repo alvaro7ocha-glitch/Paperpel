@@ -1,34 +1,31 @@
 (() => {
   const $ = id => document.getElementById(id);
   const paperSizes = { A4:[21,29.7], A3:[29.7,42], SRA3:[32,45], "10x15":[10,15] };
+  let pageItemsOverride=null;
+  let pageCopiesOverride=null;
+  function copiesCount(){ return pageCopiesOverride ?? Math.max(1,Math.min(500,parseInt($("copies").value,10)||1)); }
   function sheetDimensions(){
     if(state.paper==="CXSÓ") return totalCopies()<=12 ? paperSizes.A4 : paperSizes.SRA3;
     return paperSizes[state.paper];
   }
   function effectiveItemSize(item){
     const groupSize=state.groupSizes[item.group]||{};
-    const groupW=groupSize.w||0, groupH=groupSize.h||0;
     const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
-    if(groupW>0||groupH>0){
-      if($("adjustGroups")?.checked){
-        // Proporcional: X e Y definem uma caixa-limite; cada imagem conserva sua proporção.
-        if(groupW>0&&groupH>0){
-          const scale=Math.min(groupW/ratio,groupH);
-          return {w:scale*ratio,h:scale};
-        }
-        if(groupW>0) return {w:groupW,h:groupW/ratio};
-        return {w:groupH*ratio,h:groupH};
+    if($("adjustGroups")?.checked){
+      // O campo proporcional define a altura; a largura acompanha a proporção original.
+      if(groupSize.proportional>0){
+        return {w:groupSize.proportional*ratio,h:groupSize.proportional,groupFrame:false};
       }
-      // Não proporcional: com X e Y preenchidos, usa exatamente as duas dimensões.
-      // Com apenas um valor, mantém a proporção original enquanto o outro está vazio.
-      if(groupW>0&&groupH>0) return {w:groupW,h:groupH};
-      if(groupW>0) return {w:groupW,h:groupW/ratio};
-      return {w:groupH*ratio,h:groupH};
+      // X e Y definem o quadro; a imagem será encaixada inteira dentro dele.
+      if(groupSize.w>0&&groupSize.h>0){
+        return {w:groupSize.w,h:groupSize.h,groupFrame:true};
+      }
     }
-    return {w:item.customW||0,h:item.customH||0};
+    return {w:item.customW||0,h:item.customH||0,groupFrame:false};
   }
+
   const presets = [[10,15],[9,13],[8,12],[7,10],[6,9],[5,7]];
-  const state = { paper:"A4", images:[], layout:null, busy:false, nextGroup:1, groupSizes:{} };
+  const state = { manualPages:1, currentPage:0, pages:[], paper:"A4", images:[], layout:null, busy:false, nextGroup:1, groupSizes:{} };
   let selectedItem=null;
   function updateSelectedRows(){
     document.querySelectorAll(".file-item").forEach(row=>{
@@ -77,7 +74,7 @@
 
   function setStatus(message, warning=false){ $("status").textContent = message; $("status").classList.toggle("warning",warning); }
   function cmText(n){ return (Math.round(n*100)/100).toLocaleString("pt-BR",{maximumFractionDigits:2})+" cm"; }
-  function totalCopies(){ return state.images.length * Math.max(1,Math.min(500,parseInt($("copies").value,10)||1)); }
+  function totalCopies(){ return (pageItemsOverride ? pageItemsOverride.length : state.images.length * copiesCount()); }
 
   function chooseGridLayout(){
     const count = totalCopies();
@@ -193,7 +190,7 @@
     const baseLayout=chooseGridLayout();
     if(!baseLayout || !state.images.length) return baseLayout;
 
-    const copies=Math.max(1,Math.min(500,parseInt($("copies").value,10)||1));
+    const copies=copiesCount();
     const groups=[...new Set(state.images.map(item=>item.group||1))].sort((a,b)=>a-b);
     const groupItems=groups.map(group=>({
       group,
@@ -362,7 +359,8 @@
   }
 
   function makeOrderedCopies(){
-    const copies=Math.max(1,Math.min(500,parseInt($("copies").value,10)||1));
+    const copies=copiesCount();
+    if(pageItemsOverride) return pageItemsOverride;
     const arr=[];
     for(const item of state.images) for(let i=0;i<copies;i++) arr.push(item);
     return arr;
@@ -413,7 +411,9 @@
       layout.placements.forEach(p=>{
         const x=p.x*scale,y=p.y*scale,w=p.w*scale,h=p.h*scale;
         c.save();c.beginPath();c.rect(x,y,w,h);c.clip();
-        drawAdjustedImage(c,p.item.image,x,y,w,h,p.item,$("fit").checked);
+        const groupSize=state.groupSizes[p.item.group]||{};
+        const containGroupFrame=$("adjustGroups").checked&&((groupSize.proportional>0)||(groupSize.w>0&&groupSize.h>0));
+        drawAdjustedImage(c,p.item.image,x,y,w,h,p.item,containGroupFrame?false:$("fit").checked);
         c.restore();
       });
       if($("cutLines").checked){
@@ -456,9 +456,11 @@
       const quarterTurn=Math.abs(rotation%180)===90;
       const rotatedW=quarterTurn?ih:iw;
       const rotatedH=quarterTurn?iw:ih;
-      const baseScale=cover
-        ? Math.max(targetW/rotatedW,targetH/rotatedH)
-        : Math.min(targetW/rotatedW,targetH/rotatedH);
+      const baseScale=(itemSize.groupFrame || ($("adjustGroups").checked&&state.groupSizes[item.group]?.proportional>0))
+        ? Math.min(targetW/rotatedW,targetH/rotatedH)
+        : (cover
+          ? Math.max(targetW/rotatedW,targetH/rotatedH)
+          : Math.min(targetW/rotatedW,targetH/rotatedH));
       const zoom=Math.max(0.5,Math.min(3,item.zoom??1));
       const drawW=iw*baseScale*zoom;
       const drawH=ih*baseScale*zoom;
@@ -488,41 +490,84 @@
 
   }
 
-  function updatePreview(){
-    if(!state.images.length){
-      canvas.style.display="none";$("emptyState").style.display="flex";
-      $("sizeInfo").textContent="";$("paperInfo").textContent=state.paper;
-      $("download").disabled=true;return;
+  // Mantém o comportamento de montagem original, calculando cada folha isoladamente.
+  function layoutForPage(items){
+    const originalImages=state.images;
+    const oldOverride=pageItemsOverride,oldCopies=pageCopiesOverride;
+    try{
+      state.images=items;
+      pageItemsOverride=items;
+      pageCopiesOverride=1;
+      return chooseLayout();
+    }finally{
+      state.images=originalImages;
+      pageItemsOverride=oldOverride;
+      pageCopiesOverride=oldCopies;
     }
-    const layout=chooseLayout(); state.layout=layout;
-    if(!layout){setStatus("Não foi possível calcular a montagem.");return;}
-    drawSheet(canvas,layout,false);
+  }
+  function createPages(){
+    const pages=[];
+    const copies=copiesCount();
+    for(let manual=0;manual<state.manualPages;manual++){
+      const originals=state.images.filter(item=>(item.manualPage||0)===manual);
+      const pending=[];
+      for(const item of originals) for(let i=0;i<copies;i++) pending.push(item);
+      if(!pending.length){pages.push({items:[],layout:null,manual});continue;}
+      let offset=0,guard=0;
+      while(offset<pending.length && guard++<2000){
+        const remaining=pending.slice(offset);
+        let layout=layoutForPage(remaining);
+        // A montagem original pode mostrar peças abaixo da folha; aqui as excedentes
+        // passam para a próxima página, sem alterar a distribuição dentro da folha.
+        let count=Math.max(1,Math.min(remaining.length,layout?.capacity||1));
+        if(layout?.overflow && count===remaining.length && count>1) count--;
+        let chosen=remaining.slice(0,count);
+        layout=layoutForPage(chosen);
+        while(count>1 && layout?.overflow){
+          count--;chosen=remaining.slice(0,count);layout=layoutForPage(chosen);
+        }
+        pages.push({items:chosen,layout,manual,oversized:!!layout?.overflow});
+        offset+=count;
+      }
+    }
+    return pages;
+  }
+  function updatePageControls(){
+    const total=state.pages.length||1;
+    $("pageCounter").textContent=`${state.currentPage+1} / ${total}`;
+    $("pagePrevious").disabled=state.currentPage===0;
+    $("pageNext").disabled=state.currentPage>=total-1;
+  }
+  $("pagePrevious").addEventListener("click",()=>{if(state.currentPage>0){state.currentPage--;updatePreview();}});
+  $("pageNext").addEventListener("click",()=>{if(state.currentPage<state.pages.length-1){state.currentPage++;updatePreview();}});
+  $("pageAdd").addEventListener("click",()=>{
+    state.manualPages++;
+    state.currentPage=state.pages.length;
+    updatePreview();
+  });
+  function updatePreview(){
+    state.pages=createPages();
+    state.currentPage=Math.min(state.currentPage,Math.max(0,state.pages.length-1));
+    updatePageControls();
+    const page=state.pages[state.currentPage];
+    if(!page?.items.length){
+      canvas.style.display="none";$("emptyState").style.display="flex";
+      $("sizeInfo").textContent="Página em branco";
+      $("paperInfo").textContent=state.paper;
+      $("download").disabled=!state.images.length;
+      setStatus(state.images.length?"Página em branco. Envie imagens para esta página.":"Adicione imagens para começar.");
+      return;
+    }
+    const layout=page.layout;state.layout=layout;
+    if(!layout){setStatus("Não foi possível calcular a montagem.",true);return;}
+    pageItemsOverride=page.items;
+    try{drawSheet(canvas,layout,false);}finally{pageItemsOverride=null;}
     canvas.style.display="block";$("emptyState").style.display="none";
     const orient=layout.orientation==="portrait"?"Retrato":"Paisagem";
-    $("paperInfo").textContent=`${state.paper==="CXSÓ"?(layout.sw===21?"A4":"SRA3")+" • CXSÓ":state.paper} • ${orient}`;
-    if(layout.smart){
-      const counts=state.images.map(item=>`${item.file.name}: ${layout.placements.filter(p=>p.item===item).length}`).join(" • ");
-      $("sizeInfo").textContent=`${layout.capacity} unidades aproveitadas`;
-      setStatus(`${counts} • aproveitamento inteligente${layout.overflow ? " • nem todas as cópias solicitadas couberam" : ""}` , !!layout.overflow);
-    }else{
-      $("sizeInfo").textContent=layout.cxo
-        ? `CXSÓ 5 × 7 cm • ${totalCopies()} de ${layout.capacity} peças`
-        : `Imagem: ${cmText(layout.cellW)} × ${cmText(layout.cellH)} • ${totalCopies()} unidades`;
-    }
-    const mode=layout.smart?"aproveitamento inteligente":($("cutLines").checked?"linha de corte":"espaçamento de 0,5 cm");
-    const margin=state.paper==="10x15"?"0,2 cm":(state.paper==="CXSÓ"?"0,5 cm":(layout.smart?"0,7 cm":"1 cm"));
-    const custom=state.images.some(i=>i.customW>0&&i.customH>0);
-    const over=(custom && (layout.overflow || totalCopies()>layout.capacity)) || (state.paper==="CXSÓ" && totalCopies()>28);
-    $("download").disabled=!!over;
-    if(layout.smart){
-      $("download").disabled=false;
-    }else if(state.paper==="CXSÓ" && totalCopies()<=28){
-      setStatus(`${totalCopies()} peças • ${layout.sw===21?"A4":"SRA3"} • CXSÓ`);
-    }else if(over){
-      setStatus(`Quantidade máxima: ${layout.capacity} imagens neste tamanho. Reduza a quantidade ou as dimensões.`,true);
-    }else if(!layout.smart){
-      setStatus(`${totalCopies()} imagens • margem de ${margin} • ${mode}`);
-    }
+    $("paperInfo").textContent=`${state.paper} • ${orient}`;
+    $("sizeInfo").textContent=`${page.items.length} unidades • Página ${state.currentPage+1} de ${state.pages.length}`;
+    $("download").disabled=state.pages.some(p=>p.oversized);
+    setStatus(page.oversized?"Uma imagem não cabe na folha com as dimensões escolhidas.":`${state.pages.length} página(s) • ${state.images.length*copiesCount()} imagens ao todo`,page.oversized);
   }
 
   function renderFileList(){
@@ -533,12 +578,24 @@
         const heading=document.createElement("div");heading.className="file-group-title";
         const title=document.createElement("strong");title.textContent=`GRUPO ${item.group}`;
         heading.append(title);
-        const groupSize=state.groupSizes[item.group]||(state.groupSizes[item.group]={w:0,h:0});
+        const groupSize=state.groupSizes[item.group]||(state.groupSizes[item.group]={proportional:0,w:0,h:0});
         const sizeControls=document.createElement("div");sizeControls.className="file-group-size";
-        const proportionalLabel=document.createElement("span");
-        proportionalLabel.className="group-proportional-label";
-        proportionalLabel.textContent="Proporcional:";
-        sizeControls.append(proportionalLabel);
+        const proportionalRow=document.createElement("label");proportionalRow.className="group-proportional-row";
+        const proportionalCaption=document.createElement("span");proportionalCaption.textContent="Proporcional:";
+        const proportionalInput=document.createElement("input");
+        proportionalInput.type="number";proportionalInput.min="0.1";proportionalInput.max="100";proportionalInput.step="0.1";
+        proportionalInput.placeholder="cm";proportionalInput.value=groupSize.proportional||"";
+        proportionalInput.setAttribute("aria-label",`Altura proporcional do grupo ${item.group} em centímetros`);
+        proportionalInput.addEventListener("change",()=>{
+          groupSize.proportional=parseFloat(proportionalInput.value)>0?parseFloat(proportionalInput.value):0;
+          if(groupSize.proportional>0){
+            groupSize.w=0;groupSize.h=0;
+            xInput.value="";yInput.value="";
+          }
+          updatePreview();
+        });
+        proportionalRow.append(proportionalCaption,proportionalInput);
+        const axesRow=document.createElement("div");axesRow.className="group-axes-row";
         const makeGroupInput=(axis,placeholder,label)=>{
           const wrap=document.createElement("label");wrap.className="group-axis-field";
           const caption=document.createElement("span");caption.textContent=axis+":";
@@ -548,12 +605,20 @@
           input.setAttribute("aria-label",`${label} do grupo ${item.group} em centímetros`);
           input.addEventListener("change",()=>{
             groupSize[axis==="X"?"w":"h"]=parseFloat(input.value)>0?parseFloat(input.value):0;
+            if(groupSize.w>0||groupSize.h>0){
+              groupSize.proportional=0;
+              proportionalInput.value="";
+            }
             updatePreview();
           });
-          wrap.append(caption,input);
-          return wrap;
+          return {wrap,input};
         };
-        sizeControls.append(makeGroupInput("X","cm","Largura"),makeGroupInput("Y","cm","Altura"));
+        const xField=makeGroupInput("X","cm","Largura");
+        const yField=makeGroupInput("Y","cm","Altura");
+        const xInput=xField.input,yInput=yField.input;
+        xField.wrap.append(xInput);yField.wrap.append(yInput);
+        axesRow.append(xField.wrap,yField.wrap);
+        sizeControls.append(proportionalRow,axesRow);
         heading.append(sizeControls);
         list.append(heading);lastGroup=item.group;
       }
@@ -643,7 +708,7 @@
       try{
         const image=new Image();
         await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;image.src=url;});
-        state.images.push({file,url,image,customW:0,customH:0,group,rotation:0,zoom:1,panX:0,panY:0}); if(!selectedItem) selectedItem=state.images[state.images.length-1]; added++;
+        state.images.push({file,url,image,customW:0,customH:0,group,manualPage:state.pages[state.currentPage]?.manual??0,rotation:0,zoom:1,panX:0,panY:0}); if(!selectedItem) selectedItem=state.images[state.images.length-1]; added++;
       }catch(e){URL.revokeObjectURL(url);}
     }
     if(added) state.nextGroup=Math.min(4,group+1);
@@ -689,39 +754,48 @@
   drop.addEventListener("drop",e=>addFiles(e.dataTransfer.files));
 
   $("download").addEventListener("click",()=>{
-    if(!state.images.length||!state.layout)return;
+    if(!state.images.length||!state.pages.length)return;
     const btn=$("download");btn.disabled=true;setStatus("Gerando arquivo em alta resolução…");
     try{
       const format=$("format").value;
-      const output=document.createElement("canvas");
-      drawSheet(output,state.layout,true,format==="png");
-
-      if(format==="pdf"){
-        if(!window.jspdf?.jsPDF){
-          setStatus("Não foi possível carregar o gerador de PDF. Verifique sua conexão e tente novamente.");
-          btn.disabled=false;return;
+      const renderPage=(page,transparent)=>{
+        const output=document.createElement("canvas");
+        if(!page.layout){
+          const [pw,ph]=sheetDimensions();
+          output.width=Math.round(pw*300/2.54);output.height=Math.round(ph*300/2.54);
+          if(!transparent){const c=output.getContext("2d");c.fillStyle="#fff";c.fillRect(0,0,output.width,output.height);}
+        }else{
+          pageItemsOverride=page.items;
+          try{drawSheet(output,page.layout,true,transparent);}finally{pageItemsOverride=null;}
         }
-        const [pw,ph]=sheetDimensions();
-        const sheetW=state.layout.orientation==="portrait"?pw:ph;
-        const sheetH=state.layout.orientation==="portrait"?ph:pw;
+        return output;
+      };
+      if(format==="pdf"){
+        if(!window.jspdf?.jsPDF){setStatus("Não foi possível carregar o gerador de PDF.");btn.disabled=false;return;}
         const {jsPDF}=window.jspdf;
-        const pdf=new jsPDF({orientation:state.layout.orientation,unit:"mm",format:[sheetW*10,sheetH*10],compress:true});
-        pdf.addImage(output.toDataURL("image/jpeg",0.98),"JPEG",0,0,sheetW*10,sheetH*10,undefined,"FAST");
-        pdf.save(`paperpel-${state.paper.toLowerCase()}-300dpi.pdf`);
-        setStatus("Arquivo PDF gerado em 300 DPI.");
-        btn.disabled=false;
-        return;
+        let pdf=null;
+        state.pages.forEach((page,index)=>{
+          const [pw,ph]=sheetDimensions();
+          const landscape=page.layout?.orientation==="landscape";
+          const w=(landscape?ph:pw)*10,h=(landscape?pw:ph)*10;
+          if(!pdf)pdf=new jsPDF({orientation:landscape?"landscape":"portrait",unit:"mm",format:[w,h],compress:true});
+          else pdf.addPage([w,h],landscape?"landscape":"portrait");
+          pdf.addImage(renderPage(page,false).toDataURL("image/jpeg",0.98),"JPEG",0,0,w,h,undefined,"FAST");
+        });
+        pdf.save(`paperpel-${state.paper.toLowerCase()}-${state.pages.length}-paginas.pdf`);
+        setStatus(`PDF gerado com ${state.pages.length} páginas em 300 DPI.`);
+        btn.disabled=false;return;
       }
-
+      // PNG/JPG continuam exportando a página que está sendo visualizada.
+      const output=renderPage(state.pages[state.currentPage],format==="png");
       output.toBlob(blob=>{
-        if(!blob){setStatus("Não foi possível gerar o arquivo. Tente reduzir a quantidade de imagens.");btn.disabled=false;return;}
+        if(!blob){setStatus("Não foi possível gerar o arquivo.");btn.disabled=false;return;}
         const a=document.createElement("a"),url=URL.createObjectURL(blob);
-        a.href=url;a.download=`paperpel-${state.paper.toLowerCase()}-300dpi.${format==="png"?"png":"jpg"}`;
+        a.href=url;a.download=`paperpel-${state.paper.toLowerCase()}-pagina-${state.currentPage+1}-300dpi.${format==="png"?"png":"jpg"}`;
         document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
-        setStatus(`Arquivo ${format.toUpperCase()} gerado em 300 DPI.`);
-        btn.disabled=false;
+        setStatus(`Página ${state.currentPage+1} exportada em ${format.toUpperCase()}.`);btn.disabled=false;
       },format==="png"?"image/png":"image/jpeg",format==="jpeg"?0.98:undefined);
-    }catch(err){console.error(err);setStatus("O navegador não conseguiu gerar o arquivo. Tente reduzir a quantidade de imagens.");btn.disabled=false;}
+    }catch(err){console.error(err);setStatus("Não foi possível gerar o arquivo.",true);btn.disabled=false;}
   });
 
   $("paperInfo").textContent="A4 • Paisagem";

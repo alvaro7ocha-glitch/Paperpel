@@ -141,10 +141,18 @@
  document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{state.kind=b.dataset.kind;state.manualBack=false;$('manualBack').checked=false;state.page=0;update()}));$('fileInput').addEventListener('change',e=>{loadFiles(e.target.files);e.target.value=''});$('paperMode').addEventListener('change',()=>{state.paper=$('paperMode').value;state.page=0;update()});$('autoColor').addEventListener('change',update);$('showPhotoGuide').addEventListener('change',()=>{state.showPhotoGuide=$('showPhotoGuide').checked;updatePreviewOnly()});$('colorBorder').addEventListener('change',update);$('circleSize').addEventListener('change',()=>{state.circleSize=Math.max(1,Math.min(30,Number($('circleSize').value)||5));state.page=0;update()});$('christmasBall').addEventListener('change',()=>{state.natal=$('christmasBall').checked;state.manualBack=false;state.page=0;update()});$('manualBack').addEventListener('change',()=>{state.manualBack=$('manualBack').checked;if(state.manualBack){state.items.forEach(item=>{item.backZoom=item.zoom??1;item.backPanX=item.panX??0;item.backPanY=item.panY??0;item.backRotation=item.rotation??0;item.backFit=!!item.fit;});const backPage=state.pages.findIndex(p=>p.side==='back');if(backPage>=0)state.page=backPage;}else{state.items.forEach(item=>{delete item.backZoom;delete item.backPanX;delete item.backPanY;delete item.backRotation;delete item.backFit;});if(state.pages[state.page]?.side==='back')state.page=Math.max(0,state.page-1);}update()});$('prevPage').addEventListener('click',()=>{state.page=Math.max(0,state.page-1);renderPage(preview,state.page,false);updateNav()});$('nextPage').addEventListener('click',()=>{state.page=Math.min(state.pages.length-1,state.page+1);renderPage(preview,state.page,false);updateNav()});function updateNav(){$('pageLabel').textContent=`Página ${state.pages.length?state.page+1:0} / ${state.pages.length}`;$('prevPage').disabled=state.page<=0;$('nextPage').disabled=state.page>=state.pages.length-1}$('downloadPng').addEventListener('click',downloadPng);$('downloadPdf').addEventListener('click',downloadPdf);
  document.addEventListener('keydown',e=>{
   if(state.selectedIndex<0||!state.items[state.selectedIndex])return;
+  // Não intercepta teclas enquanto o usuário estiver digitando em campos.
   if(e.target.matches('input,textarea,select,[contenteditable="true"]'))return;
   const item=state.items[state.selectedIndex];
-  if(e.key==='+'||e.key==='Add'){e.preventDefault();setItemValue(item,'zoom',Math.min(3,Math.round((itemValue(item,'zoom')+.1)*100)/100));updatePreviewOnly();renderList();}
-  else if(e.key==='-'||e.key==='_'||e.key==='Subtract'){e.preventDefault();setItemValue(item,'zoom',Math.max(.5,Math.round((itemValue(item,'zoom')-.1)*100)/100));updatePreviewOnly();renderList();}
+  const moveBy=2;
+  let moved=false;
+  if(e.key==='ArrowLeft'){setItemValue(item,'panX',Math.max(-50,Math.min(50,itemValue(item,'panX')-moveBy)));moved=true;}
+  else if(e.key==='ArrowRight'){setItemValue(item,'panX',Math.max(-50,Math.min(50,itemValue(item,'panX')+moveBy)));moved=true;}
+  else if(e.key==='ArrowUp'){setItemValue(item,'panY',Math.max(-50,Math.min(50,itemValue(item,'panY')-moveBy)));moved=true;}
+  else if(e.key==='ArrowDown'){setItemValue(item,'panY',Math.max(-50,Math.min(50,itemValue(item,'panY')+moveBy)));moved=true;}
+  else if(e.key==='+'||e.key==='='||e.key==='Add'){e.preventDefault();setItemValue(item,'zoom',Math.min(3,Math.round((itemValue(item,'zoom')+.1)*100)/100));updatePreviewOnly();renderList();return;}
+  else if(e.key==='-'||e.key==='_'||e.key==='Subtract'){e.preventDefault();setItemValue(item,'zoom',Math.max(.5,Math.round((itemValue(item,'zoom')-.1)*100)/100));updatePreviewOnly();renderList();return;}
+  if(moved){e.preventDefault();updatePreviewOnly();renderList();}
  });
  const dz=$('dropzone');['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('dragover')}));['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('dragover')}));dz.addEventListener('drop',e=>loadFiles(e.dataTransfer.files));
  update();

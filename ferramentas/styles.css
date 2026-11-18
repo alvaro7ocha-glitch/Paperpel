@@ -213,3 +213,15 @@ input[type=checkbox]{accent-color:#788fff}
 .page-controls #pageRemove{color:#ffb0b0}
 .page-controls #pageRemove:disabled{opacity:.28;cursor:not-allowed}
 .file-group-size[hidden]{display:none!important}
+
+/* Revisão dos controles de grupo: só aparecem com Ajustar Grupo ativo. */
+.file-group-size[hidden]{display:none!important}
+.file-group-size input,
+.group-axis-field input,
+.group-axes-row .group-axis-field input{
+  width:28px!important;
+  min-width:28px;
+  max-width:28px;
+  padding:3px 1px;
+  text-align:center;
+}

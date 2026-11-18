@@ -412,7 +412,7 @@
         const x=p.x*scale,y=p.y*scale,w=p.w*scale,h=p.h*scale;
         c.save();c.beginPath();c.rect(x,y,w,h);c.clip();
         const groupSize=state.groupSizes[p.item.group]||{};
-        const containGroupFrame=$("adjustGroups").checked&&((groupSize.proportional>0)||(groupSize.w>0&&groupSize.h>0));
+        const containGroupFrame=$("adjustGroups").checked&&groupSize.w>0&&groupSize.h>0;
         drawAdjustedImage(c,p.item.image,x,y,w,h,p.item,containGroupFrame?false:$("fit").checked);
         c.restore();
       });
@@ -538,7 +538,9 @@
     $("pagePrevious").disabled=state.currentPage===0;
     $("pageNext").disabled=state.currentPage>=total-1;
     const current=state.pages[state.currentPage];
-    $("pageRemove").disabled=!current || current.items.length>0 || state.manualPages<=1;
+    const removable=!!current && current.items.length===0 && current.manual>0 &&
+      !state.images.some(item=>(item.manualPage||0)===current.manual) && state.manualPages>1;
+    $("pageRemove").disabled=!removable;
   }
   $("pagePrevious").addEventListener("click",()=>{if(state.currentPage>0){state.currentPage--;updatePreview();}});
   $("pageNext").addEventListener("click",()=>{if(state.currentPage<state.pages.length-1){state.currentPage++;updatePreview();}});
@@ -549,9 +551,13 @@
   });
   $("pageRemove").addEventListener("click",()=>{
     const page=state.pages[state.currentPage];
-    // Só permite remover páginas manuais vazias; páginas com imagens nunca são apagadas.
-    if(!page || page.items.length || state.manualPages<=1) return;
+    // Exclui somente uma página manual vazia. Não remove páginas automáticas
+    // de continuação nem qualquer página que contenha imagens.
+    if(!page || page.items.length!==0 || state.manualPages<=1) return;
     const manualToRemove=page.manual;
+    if(!Number.isInteger(manualToRemove) || manualToRemove===0) return;
+    const hasImages=state.images.some(item=>(item.manualPage||0)===manualToRemove);
+    if(hasImages) return;
     state.images.forEach(item=>{
       if((item.manualPage||0)>manualToRemove) item.manualPage--;
     });
@@ -614,7 +620,7 @@
           const wrap=document.createElement("label");wrap.className="group-axis-field";
           const caption=document.createElement("span");caption.textContent=axis+":";
           const input=document.createElement("input");
-          input.type="number";input.min="0.1";input.max="99";input.step="0.1";
+          input.type="number";input.min="0.1";input.max="99";input.step="1";input.inputMode="numeric";
           input.placeholder=placeholder;input.value=groupSize[axis==="X"?"w":"h"]||"";
           input.setAttribute("aria-label",`${label} do grupo ${item.group} em centímetros`);
           input.addEventListener("change",()=>{
@@ -737,7 +743,10 @@
   ["copies","fit","cutLines"].forEach(id=>$(id).addEventListener("input",schedulePreview));
   $("smartFill").addEventListener("change",schedulePreview);
   $("smartFill").addEventListener("input",schedulePreview);
-  $("adjustGroups").addEventListener("change",()=>{renderGroupHeights();updatePreview();});
+  $("adjustGroups").addEventListener("change",()=>{
+    renderGroupHeights();
+    updatePreview();
+  });
   document.querySelectorAll(".paper-tab").forEach(btn=>btn.addEventListener("click",()=>{
     state.paper=btn.dataset.paper;
     document.querySelectorAll(".paper-tab").forEach(b=>b.classList.toggle("active",b===btn));

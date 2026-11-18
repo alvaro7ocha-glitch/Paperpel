@@ -709,8 +709,8 @@
 
       const remove=document.createElement("button");remove.className="remove-file";remove.type="button";remove.textContent="×";remove.title="Remover imagem";
       remove.addEventListener("click",event=>{event.stopPropagation();URL.revokeObjectURL(item.url);state.images.splice(index,1);if(selectedItem===item) selectedItem=state.images[Math.min(index,state.images.length-1)]||null;
-        const remainingGroups=[...new Set(state.images.map(item=>item.group))];
-        state.nextGroup=remainingGroups.length?Math.max(...remainingGroups)+1:1;
+        const usedGroups=new Set(state.images.map(image=>image.group));
+        state.nextGroup=Array.from({length:9},(_,i)=>i+1).find(group=>!usedGroups.has(group))||10;
         renderGroupHeights();updatePreview();});
       row.append(img,meta,remove);list.append(row);
     });
@@ -721,7 +721,7 @@
     const valid=[...files].filter(f=>/^image\/(png|jpeg)$/.test(f.type));
     if(!valid.length){setStatus("Selecione arquivos PNG ou JPEG.");return;}
     const group=state.nextGroup;
-    if(group>3){setStatus("Limite de 3 grupos atingido. Remova as imagens de um grupo antes de adicionar outro.",true);return;}
+    if(group>9){setStatus("Limite de 9 grupos atingido. Remova as imagens de um grupo antes de adicionar outro.",true);return;}
     let added=0;
     for(const file of valid){
       const url=URL.createObjectURL(file);
@@ -731,7 +731,7 @@
         state.images.push({file,url,image,customW:0,customH:0,group,manualPage:state.pages[state.currentPage]?.manual??0,rotation:0,zoom:1,panX:0,panY:0}); if(!selectedItem) selectedItem=state.images[state.images.length-1]; added++;
       }catch(e){URL.revokeObjectURL(url);}
     }
-    if(added) state.nextGroup=Math.min(4,group+1);
+    if(added) state.nextGroup=Math.min(10,group+1);
     renderGroupHeights();updatePreview();
   }
 

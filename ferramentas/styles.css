@@ -235,3 +235,17 @@ input[type=checkbox]{accent-color:#788fff}
 .file-list{
   max-height:240px;
 }
+
+
+/* Navegação por teclado: destaca claramente cada campo alcançado com Tab. */
+.file-list input:focus-visible,
+.file-list button:focus-visible{
+  outline:2px solid #8298ff;
+  outline-offset:2px;
+  border-color:#9eaeff!important;
+  background:#343b63!important;
+  box-shadow:0 0 0 2px #718cff33;
+}
+.file-list input:focus-visible{
+  color:#fff;
+}

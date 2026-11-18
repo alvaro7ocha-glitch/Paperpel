@@ -537,12 +537,32 @@
     $("pageCounter").textContent=`${state.currentPage+1} / ${total}`;
     $("pagePrevious").disabled=state.currentPage===0;
     $("pageNext").disabled=state.currentPage>=total-1;
+    const current=state.pages[state.currentPage];
+    const removable=!!current && current.items.length===0 && current.manual>0 &&
+      !state.images.some(item=>(item.manualPage||0)===current.manual) && state.manualPages>1;
+    $("pageRemove").disabled=!removable;
   }
   $("pagePrevious").addEventListener("click",()=>{if(state.currentPage>0){state.currentPage--;updatePreview();}});
   $("pageNext").addEventListener("click",()=>{if(state.currentPage<state.pages.length-1){state.currentPage++;updatePreview();}});
   $("pageAdd").addEventListener("click",()=>{
     state.manualPages++;
     state.currentPage=state.pages.length;
+    updatePreview();
+  });
+  $("pageRemove").addEventListener("click",()=>{
+    const page=state.pages[state.currentPage];
+    // Exclui somente uma página manual vazia. Não remove páginas automáticas
+    // de continuação nem qualquer página que contenha imagens.
+    if(!page || page.items.length!==0 || state.manualPages<=1) return;
+    const manualToRemove=page.manual;
+    if(!Number.isInteger(manualToRemove) || manualToRemove===0) return;
+    const hasImages=state.images.some(item=>(item.manualPage||0)===manualToRemove);
+    if(hasImages) return;
+    state.images.forEach(item=>{
+      if((item.manualPage||0)>manualToRemove) item.manualPage--;
+    });
+    state.manualPages--;
+    state.currentPage=Math.max(0,state.currentPage-1);
     updatePreview();
   });
   function updatePreview(){
@@ -579,7 +599,7 @@
         const title=document.createElement("strong");title.textContent=`GRUPO ${item.group}`;
         heading.append(title);
         const groupSize=state.groupSizes[item.group]||(state.groupSizes[item.group]={proportional:0,w:0,h:0});
-        const sizeControls=document.createElement("div");sizeControls.className="file-group-size";sizeControls.hidden=!$("adjustGroups").checked;sizeControls.style.display=$("adjustGroups").checked?"inline-flex":"none";
+        const sizeControls=document.createElement("div");sizeControls.className="file-group-size";sizeControls.hidden=!$("adjustGroups").checked;
         const proportionalRow=document.createElement("label");proportionalRow.className="group-proportional-row";
         const proportionalCaption=document.createElement("span");proportionalCaption.textContent="Proporcional:";
         const proportionalInput=document.createElement("input");
@@ -724,8 +744,6 @@
   $("smartFill").addEventListener("change",schedulePreview);
   $("smartFill").addEventListener("input",schedulePreview);
   $("adjustGroups").addEventListener("change",()=>{
-    const visible=$("adjustGroups").checked;
-    document.querySelectorAll(".file-group-size").forEach(el=>{el.hidden=!visible;el.style.display=visible?"inline-flex":"none";});
     renderGroupHeights();
     updatePreview();
   });

@@ -210,6 +210,8 @@ input[type=checkbox]{accent-color:#788fff}
 /* Campos compactos para dimensões de grupo e remoção segura de páginas vazias. */
 .file-group-size input{width:34px;max-width:34px;padding:4px 2px;text-align:center}
 .group-axes-row .group-axis-field input{width:34px;max-width:34px;padding:4px 2px;text-align:center}
+.page-controls #pageRemove{color:#ffb0b0}
+.page-controls #pageRemove:disabled{opacity:.28;cursor:not-allowed}
 .file-group-size[hidden]{display:none!important}
 
 /* Revisão dos controles de grupo: só aparecem com Ajustar Grupo ativo. */
@@ -223,8 +225,3 @@ input[type=checkbox]{accent-color:#788fff}
   padding:3px 1px;
   text-align:center;
 }
-
-/* Ajustar Grupo: campos compactos e ocultos até ativar a opção. */
-.file-group-size[hidden]{display:none!important}
-.file-group-size{gap:5px}
-.group-axes-row .group-axis-field input{width:24px!important;min-width:24px!important;max-width:24px!important;padding:3px 1px!important;text-align:center}

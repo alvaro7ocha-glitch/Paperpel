@@ -225,3 +225,13 @@ input[type=checkbox]{accent-color:#788fff}
   padding:3px 1px;
   text-align:center;
 }
+
+/* Ajustes solicitados: campo proporcional mais largo e lista com mais área visível. */
+.group-proportional-row input{
+  width:64px!important;
+  min-width:64px;
+  max-width:64px;
+}
+.file-list{
+  max-height:240px;
+}

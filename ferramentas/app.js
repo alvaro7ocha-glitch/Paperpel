@@ -604,7 +604,7 @@
         const proportionalCaption=document.createElement("span");proportionalCaption.textContent="Proporcional:";
         const proportionalInput=document.createElement("input");
         proportionalInput.type="number";proportionalInput.min="0.1";proportionalInput.max="99";proportionalInput.step="0.1";
-        proportionalInput.placeholder="cm";proportionalInput.value=groupSize.proportional||"";
+        proportionalInput.placeholder="";proportionalInput.value=groupSize.proportional||"";
         proportionalInput.setAttribute("aria-label",`Altura proporcional do grupo ${item.group} em centímetros`);
         proportionalInput.addEventListener("change",()=>{
           groupSize.proportional=parseFloat(proportionalInput.value)>0?parseFloat(proportionalInput.value):0;

@@ -6,15 +6,29 @@
     return paperSizes[state.paper];
   }
   function effectiveItemSize(item){
-    const groupHeight=$("adjustGroups")?.checked ? state.groupHeights[item.group] : 0;
-    if(groupHeight>0){
-      const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
-      return {w:groupHeight*ratio,h:groupHeight};
+    const groupSize=state.groupSizes[item.group]||{};
+    const groupW=groupSize.w||0, groupH=groupSize.h||0;
+    const ratio=item.image.naturalWidth/Math.max(1,item.image.naturalHeight);
+    if(groupW>0||groupH>0){
+      if($("adjustGroups")?.checked){
+        // Proporcional: X e Y definem uma caixa-limite; cada imagem conserva sua proporção.
+        if(groupW>0&&groupH>0){
+          const scale=Math.min(groupW/ratio,groupH);
+          return {w:scale*ratio,h:scale};
+        }
+        if(groupW>0) return {w:groupW,h:groupW/ratio};
+        return {w:groupH*ratio,h:groupH};
+      }
+      // Não proporcional: com X e Y preenchidos, usa exatamente as duas dimensões.
+      // Com apenas um valor, mantém a proporção original enquanto o outro está vazio.
+      if(groupW>0&&groupH>0) return {w:groupW,h:groupH};
+      if(groupW>0) return {w:groupW,h:groupW/ratio};
+      return {w:groupH*ratio,h:groupH};
     }
     return {w:item.customW||0,h:item.customH||0};
   }
   const presets = [[10,15],[9,13],[8,12],[7,10],[6,9],[5,7]];
-  const state = { paper:"A4", images:[], layout:null, busy:false, nextGroup:1, groupHeights:{} };
+  const state = { paper:"A4", images:[], layout:null, busy:false, nextGroup:1, groupSizes:{} };
   let selectedItem=null;
   function updateSelectedRows(){
     document.querySelectorAll(".file-item").forEach(row=>{
@@ -519,20 +533,28 @@
         const heading=document.createElement("div");heading.className="file-group-title";
         const title=document.createElement("strong");title.textContent=`GRUPO ${item.group}`;
         heading.append(title);
-        if($("adjustGroups").checked){
-          const sizeLabel=document.createElement("label");sizeLabel.className="file-group-size";
-          sizeLabel.textContent="Altura:";
-          const sizeInput=document.createElement("input");
-          sizeInput.type="number";sizeInput.min="0.1";sizeInput.max="100";sizeInput.step="0.1";
-          sizeInput.placeholder="cm";sizeInput.value=state.groupHeights[item.group]||"";
-          sizeInput.setAttribute("aria-label",`Altura de todas as imagens do grupo ${item.group}`);
-          sizeInput.addEventListener("change",()=>{
-            state.groupHeights[item.group]=parseFloat(sizeInput.value)>0?parseFloat(sizeInput.value):0;
+        const groupSize=state.groupSizes[item.group]||(state.groupSizes[item.group]={w:0,h:0});
+        const sizeControls=document.createElement("div");sizeControls.className="file-group-size";
+        const proportionalLabel=document.createElement("span");
+        proportionalLabel.className="group-proportional-label";
+        proportionalLabel.textContent="Proporcional:";
+        sizeControls.append(proportionalLabel);
+        const makeGroupInput=(axis,placeholder,label)=>{
+          const wrap=document.createElement("label");wrap.className="group-axis-field";
+          const caption=document.createElement("span");caption.textContent=axis+":";
+          const input=document.createElement("input");
+          input.type="number";input.min="0.1";input.max="100";input.step="0.1";
+          input.placeholder=placeholder;input.value=groupSize[axis==="X"?"w":"h"]||"";
+          input.setAttribute("aria-label",`${label} do grupo ${item.group} em centímetros`);
+          input.addEventListener("change",()=>{
+            groupSize[axis==="X"?"w":"h"]=parseFloat(input.value)>0?parseFloat(input.value):0;
             updatePreview();
           });
-          const unit=document.createElement("small");unit.textContent="cm";
-          sizeLabel.append(sizeInput,unit);heading.append(sizeLabel);
-        }
+          wrap.append(caption,input);
+          return wrap;
+        };
+        sizeControls.append(makeGroupInput("X","cm","Largura"),makeGroupInput("Y","cm","Altura"));
+        heading.append(sizeControls);
         list.append(heading);lastGroup=item.group;
       }
       const row=document.createElement("div");row.className="file-item";row.dataset.imageIndex=String(index);

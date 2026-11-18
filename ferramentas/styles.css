@@ -152,3 +152,10 @@ input[type=checkbox]{accent-color:#788fff}
 }
 .file-item{cursor:pointer}
 .file-item .remove-file{cursor:pointer}
+
+/* Campos X e Y para dimensionamento por grupo */
+.file-group-size{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.group-axis-field{display:inline-flex;align-items:center;gap:4px;color:#e2dfeb;font-size:11px;font-weight:400}
+.group-axis-field input{width:62px;background:#24212e;border:1px solid #718cff;border-radius:3px;color:#fff;padding:4px;font-size:11px}
+
+.group-proportional-label{color:#e2dfeb;font-size:11px;font-weight:400}

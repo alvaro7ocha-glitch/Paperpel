@@ -249,3 +249,15 @@ input[type=checkbox]{accent-color:#788fff}
 .file-list input:focus-visible{
   color:#fff;
 }
+
+
+/* TAB seleciona cada bloco de imagem por inteiro, sem parar em cada campo interno. */
+.file-item:focus{
+  outline:2px solid #8298ff;
+  outline-offset:1px;
+  background:#3b3650;
+}
+.file-item:focus-visible{
+  outline:2px solid #9eaeff;
+  outline-offset:2px;
+}

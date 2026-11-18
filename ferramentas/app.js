@@ -643,12 +643,20 @@
         list.append(heading);lastGroup=item.group;
       }
       const row=document.createElement("div");row.className="file-item";row.dataset.imageIndex=String(index);
+      // Cada imagem funciona como um único bloco na navegação por TAB.
+      row.tabIndex=0;
+      row.setAttribute("role","group");
+      row.setAttribute("aria-label",`Bloco da imagem ${index+1}: ${item.file.name}`);
+      row.addEventListener("focus",()=>{
+        selectedItem=item;
+        updateSelectedRows();
+      });
       const img=document.createElement("img");img.src=item.url;img.alt="";
       const meta=document.createElement("div");meta.className="file-meta";
       const name=document.createElement("span");name.className="file-name";name.textContent=item.file.name;
       const sizes=document.createElement("div");sizes.className="custom-size";
-      const w=document.createElement("input");w.type="number";w.min="0.1";w.max="100";w.step="0.1";w.placeholder="L cm";w.value=item.customW||"";w.setAttribute("aria-label",`Largura personalizada da imagem ${item.file.name}`);
-      const h=document.createElement("input");h.type="number";h.min="0.1";h.max="100";h.step="0.1";h.placeholder="A cm";h.value=item.customH||"";h.setAttribute("aria-label",`Altura personalizada da imagem ${item.file.name}`);
+      const w=document.createElement("input");w.type="number";w.min="0.1";w.max="100";w.step="0.1";w.placeholder="L cm";w.value=item.customW||"";w.tabIndex=-1;w.setAttribute("aria-label",`Largura personalizada da imagem ${item.file.name}`);
+      const h=document.createElement("input");h.type="number";h.min="0.1";h.max="100";h.step="0.1";h.placeholder="A cm";h.value=item.customH||"";h.tabIndex=-1;h.setAttribute("aria-label",`Altura personalizada da imagem ${item.file.name}`);
       const unit=document.createElement("em");unit.textContent="cm";
       const apply=()=>{item.customW=parseFloat(w.value)>0?parseFloat(w.value):0;item.customH=parseFloat(h.value)>0?parseFloat(h.value):0;updatePreview();};
       w.addEventListener("change",apply);h.addEventListener("change",apply);
@@ -665,6 +673,7 @@
       const makeButton=(caption,title,action,className="image-adjust-button")=>{
         const button=document.createElement("button");
         button.type="button";
+        button.tabIndex=-1;
         button.className=className;
         button.textContent=caption;
         button.title=title;
@@ -707,7 +716,7 @@
       img.addEventListener("click",event=>{event.stopPropagation();selectedItem=item;updateSelectedRows();});
 
 
-      const remove=document.createElement("button");remove.className="remove-file";remove.type="button";remove.textContent="×";remove.title="Remover imagem";
+      const remove=document.createElement("button");remove.className="remove-file";remove.type="button";remove.tabIndex=-1;remove.textContent="×";remove.title="Remover imagem";
       remove.addEventListener("click",event=>{event.stopPropagation();URL.revokeObjectURL(item.url);state.images.splice(index,1);if(selectedItem===item) selectedItem=state.images[Math.min(index,state.images.length-1)]||null;
         const usedGroups=new Set(state.images.map(image=>image.group));
         state.nextGroup=Array.from({length:9},(_,i)=>i+1).find(group=>!usedGroups.has(group))||10;

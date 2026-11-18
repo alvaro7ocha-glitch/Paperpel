@@ -13,3 +13,13 @@
 .tabs{grid-template-columns:repeat(4,minmax(0,1fr))}.circle-options{background:#2d2938;border-radius:8px;padding:12px;margin-top:10px;display:flex;flex-direction:column;gap:9px;color:#ddd8e9}.circle-options small{font-size:11px;color:var(--muted)}.circle-size{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px}.circle-size input{width:76px;background:#1d1a26;color:#fff;border:1px solid #514b60;border-radius:4px;padding:7px}.circle-size input:disabled{opacity:.6}
 
 .manual-back-toggle{display:flex;align-items:center;gap:7px;padding-top:4px;color:#e4dfed;cursor:pointer}
+
+/* Seleção e comandos rápidos de edição por imagem */
+.file-row{cursor:pointer;border:1px solid transparent;transition:border-color .12s,background .12s}
+.file-row.selected{border:1px solid #6682ff;box-shadow:0 0 0 1px #6682ff55;background:#403b50}
+.file-row:focus-visible{outline:2px solid #8c80ff;outline-offset:2px}
+.pan-buttons{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:6px}
+.edit-key{height:24px;min-width:25px;padding:0 6px;border:1px solid #514b60;border-radius:5px;background:#24212e;color:#f5f3fb;font-size:13px;line-height:1;cursor:pointer}
+.edit-key:hover:not(:disabled){background:#514b70;border-color:#8290ff}
+.edit-key:disabled{min-width:40px;background:#f5f3fb;color:#24212e;opacity:1;cursor:default;font-size:10px}
+.edit-key.zoom-key{font-weight:bold}

@@ -537,12 +537,26 @@
     $("pageCounter").textContent=`${state.currentPage+1} / ${total}`;
     $("pagePrevious").disabled=state.currentPage===0;
     $("pageNext").disabled=state.currentPage>=total-1;
+    const current=state.pages[state.currentPage];
+    $("pageRemove").disabled=!current || current.items.length>0 || state.manualPages<=1;
   }
   $("pagePrevious").addEventListener("click",()=>{if(state.currentPage>0){state.currentPage--;updatePreview();}});
   $("pageNext").addEventListener("click",()=>{if(state.currentPage<state.pages.length-1){state.currentPage++;updatePreview();}});
   $("pageAdd").addEventListener("click",()=>{
     state.manualPages++;
     state.currentPage=state.pages.length;
+    updatePreview();
+  });
+  $("pageRemove").addEventListener("click",()=>{
+    const page=state.pages[state.currentPage];
+    // Só permite remover páginas manuais vazias; páginas com imagens nunca são apagadas.
+    if(!page || page.items.length || state.manualPages<=1) return;
+    const manualToRemove=page.manual;
+    state.images.forEach(item=>{
+      if((item.manualPage||0)>manualToRemove) item.manualPage--;
+    });
+    state.manualPages--;
+    state.currentPage=Math.max(0,state.currentPage-1);
     updatePreview();
   });
   function updatePreview(){
@@ -579,11 +593,11 @@
         const title=document.createElement("strong");title.textContent=`GRUPO ${item.group}`;
         heading.append(title);
         const groupSize=state.groupSizes[item.group]||(state.groupSizes[item.group]={proportional:0,w:0,h:0});
-        const sizeControls=document.createElement("div");sizeControls.className="file-group-size";
+        const sizeControls=document.createElement("div");sizeControls.className="file-group-size";sizeControls.hidden=!$("adjustGroups").checked;
         const proportionalRow=document.createElement("label");proportionalRow.className="group-proportional-row";
         const proportionalCaption=document.createElement("span");proportionalCaption.textContent="Proporcional:";
         const proportionalInput=document.createElement("input");
-        proportionalInput.type="number";proportionalInput.min="0.1";proportionalInput.max="100";proportionalInput.step="0.1";
+        proportionalInput.type="number";proportionalInput.min="0.1";proportionalInput.max="99";proportionalInput.step="0.1";
         proportionalInput.placeholder="cm";proportionalInput.value=groupSize.proportional||"";
         proportionalInput.setAttribute("aria-label",`Altura proporcional do grupo ${item.group} em centímetros`);
         proportionalInput.addEventListener("change",()=>{
@@ -600,7 +614,7 @@
           const wrap=document.createElement("label");wrap.className="group-axis-field";
           const caption=document.createElement("span");caption.textContent=axis+":";
           const input=document.createElement("input");
-          input.type="number";input.min="0.1";input.max="100";input.step="0.1";
+          input.type="number";input.min="0.1";input.max="99";input.step="0.1";
           input.placeholder=placeholder;input.value=groupSize[axis==="X"?"w":"h"]||"";
           input.setAttribute("aria-label",`${label} do grupo ${item.group} em centímetros`);
           input.addEventListener("change",()=>{

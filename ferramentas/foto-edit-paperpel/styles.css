@@ -23,3 +23,8 @@
 .edit-key:hover:not(:disabled){background:#514b70;border-color:#8290ff}
 .edit-key:disabled{min-width:40px;background:#f5f3fb;color:#24212e;opacity:1;cursor:default;font-size:10px}
 .edit-key.zoom-key{font-weight:bold}
+
+/* Ação global para ajustar todas as imagens ao quadro */
+.fit-all-btn{width:100%;margin-top:9px;padding:11px 10px;border:1px solid #7770a0;border-radius:8px;background:#393545;color:#f5f3fb;font-weight:bold;cursor:pointer}
+.fit-all-btn:hover{background:#484356;border-color:#8c80ff}
+.fit-all-btn:disabled{opacity:.45;cursor:not-allowed}

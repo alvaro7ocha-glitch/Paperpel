@@ -80,6 +80,16 @@
   list.scrollTop=scrollTop;
  }
  function addImage(file,img){state.items.push({name:file.name,url:URL.createObjectURL(file),image:img,qty:1,fit:false,rotation:0,panX:0,panY:0,zoom:1});}
+ $('fitAll').addEventListener('click',()=>{
+  if(!state.items.length)return;
+  state.items.forEach(item=>{
+   setItemValue(item,'fit',true);
+   setItemValue(item,'zoom',1);
+   setItemValue(item,'panX',0);
+   setItemValue(item,'panY',0);
+  });
+  update();
+ });
  async function loadFiles(files){for(const file of [...files]){if(file.type==='application/pdf'){await loadPdf(file);continue}if(!/^image\/(png|jpeg)$/.test(file.type))continue;const url=URL.createObjectURL(file);const img=new Image();await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=url});state.items.push({name:file.name,url,image:img,qty:1,fit:false,rotation:0,panX:0,panY:0,zoom:1});if(state.selectedIndex<0)state.selectedIndex=state.items.length-1;}update();}
  async function loadPdf(file){if(!window.pdfjsLib){setStatus('Para importar PDF, aguarde o carregamento do leitor de PDF e tente novamente.');return}const data=await file.arrayBuffer();const pdf=await pdfjsLib.getDocument({data}).promise;for(let p=1;p<=pdf.numPages;p++){const page=await pdf.getPage(p),vp=page.getViewport({scale:3});const c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;const im=new Image();im.src=c.toDataURL('image/png');await new Promise(r=>im.onload=r);state.items.push({name:`${file.name} • página ${p}`,url:im.src,image:im,qty:1,fit:false,rotation:0,panX:0,panY:0,zoom:1});if(state.selectedIndex<0)state.selectedIndex=state.items.length-1;}}
  function pagePlan(){

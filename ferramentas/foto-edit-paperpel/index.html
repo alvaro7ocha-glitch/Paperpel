@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Foto Edit | Paperpel Gráfica</title>
-<link rel="stylesheet" href="styles.css?v=7">
+<link rel="stylesheet" href="styles.css?v=8">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
@@ -28,7 +28,7 @@
    <h2>Envie uma ou mais imagens</h2>
    <label class="dropzone" id="dropzone"><input id="fileInput" type="file" accept="image/png,image/jpeg,application/pdf" multiple><span class="upload-symbol">▧</span><b>Enviar imagens</b><small>ou arraste os arquivos para cá</small><small class="formats">PNG · JPEG · PDF</small></label>
    <div id="fileList" class="file-list"></div>
-   <button id="fitAll" class="fit-all-btn" type="button">Ajustar ao quadro global</button>
+   <label class="fit-all-toggle"><input id="fitAll" type="checkbox" disabled> Ajustar ao quadro global</label>
    <div class="circle-options hidden" id="circleOptions">
     <label class="circle-size">Diâmetro do círculo (cm) <input id="circleSize" type="number" min="1" max="30" step="0.1" value="5"></label>
     <label><input id="christmasBall" type="checkbox"> Bolinha de Natal</label>
@@ -52,5 +52,5 @@
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"}</script>
-<script src="app.js?v=9"></script>
+<script src="app.js?v=10"></script>
 </body></html>

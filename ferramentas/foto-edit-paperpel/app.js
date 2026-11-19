@@ -78,20 +78,27 @@
    row.append(img,info,tools);list.append(row);
   });
   list.scrollTop=scrollTop;
+  const fitAll=$('fitAll');
+  const fitCount=state.items.filter(item=>!!itemValue(item,'fit')).length;
+  fitAll.disabled=state.items.length===0;
+  fitAll.checked=state.items.length>0&&fitCount===state.items.length;
+  fitAll.indeterminate=fitCount>0&&fitCount<state.items.length;
  }
  function addImage(file,img){state.items.push({name:file.name,url:URL.createObjectURL(file),image:img,qty:1,fit:false,rotation:0,panX:0,panY:0,zoom:1});}
- $('fitAll').addEventListener('click',()=>{
-  if(!state.items.length)return;
-  state.items.forEach(item=>{
-   setItemValue(item,'fit',true);
-   setItemValue(item,'zoom',1);
-   setItemValue(item,'panX',0);
-   setItemValue(item,'panY',0);
+  $('fitAll').addEventListener('change',()=>{
+   const enabled=$('fitAll').checked;
+   state.items.forEach(item=>{
+    setItemValue(item,'fit',enabled);
+    if(enabled){
+     setItemValue(item,'zoom',1);
+     setItemValue(item,'panX',0);
+     setItemValue(item,'panY',0);
+    }
+   });
+   update();
   });
-  update();
- });
- async function loadFiles(files){for(const file of [...files]){if(file.type==='application/pdf'){await loadPdf(file);continue}if(!/^image\/(png|jpeg)$/.test(file.type))continue;const url=URL.createObjectURL(file);const img=new Image();await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=url});state.items.push({name:file.name,url,image:img,qty:1,fit:false,rotation:0,panX:0,panY:0,zoom:1});if(state.selectedIndex<0)state.selectedIndex=state.items.length-1;}update();}
- async function loadPdf(file){if(!window.pdfjsLib){setStatus('Para importar PDF, aguarde o carregamento do leitor de PDF e tente novamente.');return}const data=await file.arrayBuffer();const pdf=await pdfjsLib.getDocument({data}).promise;for(let p=1;p<=pdf.numPages;p++){const page=await pdf.getPage(p),vp=page.getViewport({scale:3});const c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;const im=new Image();im.src=c.toDataURL('image/png');await new Promise(r=>im.onload=r);state.items.push({name:`${file.name} • página ${p}`,url:im.src,image:im,qty:1,fit:false,rotation:0,panX:0,panY:0,zoom:1});if(state.selectedIndex<0)state.selectedIndex=state.items.length-1;}}
+ async function loadFiles(files){for(const file of [...files]){if(file.type==='application/pdf'){await loadPdf(file);continue}if(!/^image\/(png|jpeg)$/.test(file.type))continue;const url=URL.createObjectURL(file);const img=new Image();await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=url});state.items.push({name:file.name,url,image:img,qty:1,fit:state.items.length>0&&state.items.every(x=>!!itemValue(x,'fit')),rotation:0,panX:0,panY:0,zoom:1});if(state.selectedIndex<0)state.selectedIndex=state.items.length-1;}update();}
+ async function loadPdf(file){if(!window.pdfjsLib){setStatus('Para importar PDF, aguarde o carregamento do leitor de PDF e tente novamente.');return}const data=await file.arrayBuffer();const pdf=await pdfjsLib.getDocument({data}).promise;for(let p=1;p<=pdf.numPages;p++){const page=await pdf.getPage(p),vp=page.getViewport({scale:3});const c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;const im=new Image();im.src=c.toDataURL('image/png');await new Promise(r=>im.onload=r);state.items.push({name:`${file.name} • página ${p}`,url:im.src,image:im,qty:1,fit:state.items.length>0&&state.items.every(x=>!!itemValue(x,'fit')),rotation:0,panX:0,panY:0,zoom:1});if(state.selectedIndex<0)state.selectedIndex=state.items.length-1;}}
  function pagePlan(){
   if(state.kind==='circle'){
    const gap=.5, natal=state.natal, diameter=natal?6.3:Math.max(1,Math.min(30,Number(state.circleSize)||5)), backDiameter=6.5;

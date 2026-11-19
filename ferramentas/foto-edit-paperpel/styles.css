@@ -24,7 +24,8 @@
 .edit-key:disabled{min-width:40px;background:#f5f3fb;color:#24212e;opacity:1;cursor:default;font-size:10px}
 .edit-key.zoom-key{font-weight:bold}
 
-/* Ação global para ajustar todas as imagens ao quadro */
-.fit-all-btn{width:100%;margin-top:9px;padding:11px 10px;border:1px solid #7770a0;border-radius:8px;background:#393545;color:#f5f3fb;font-weight:bold;cursor:pointer}
-.fit-all-btn:hover{background:#484356;border-color:#8c80ff}
-.fit-all-btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* Checkbox para aplicar o ajuste ao quadro em todas as imagens */
+.fit-all-toggle{display:flex;align-items:center;gap:8px;margin:10px 2px 2px;padding:10px 11px;border:1px solid #514b60;border-radius:8px;background:#302c3b;color:#f5f3fb;font-size:12px;cursor:pointer}
+.fit-all-toggle input{accent-color:#8290ff;width:15px;height:15px;margin:0}
+.fit-all-toggle:has(input:disabled){opacity:.55;cursor:not-allowed}

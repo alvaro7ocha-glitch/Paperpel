@@ -49,6 +49,10 @@
    const img=document.createElement('img');img.className='thumb';img.src=item.url;img.addEventListener('click',select);
    const info=document.createElement('div');info.className='file-info';const name=document.createElement('span');name.className='filename';name.textContent=item.name;
    const controls=document.createElement('div');controls.className='file-controls';
+   const qtyLabel=document.createElement('label');qtyLabel.textContent='Quantidade';
+   const qtyInput=document.createElement('input');qtyInput.type='number';qtyInput.min='1';qtyInput.step='1';qtyInput.value=String(Math.max(1,Number(item.qty)||1));qtyInput.title='Quantidade desta imagem';
+   qtyInput.addEventListener('change',()=>{const next=Math.max(1,Math.floor(Number(qtyInput.value)||1));item.qty=next;qtyInput.value=String(next);state.page=0;update();});
+   qtyLabel.append(qtyInput);controls.append(qtyLabel);
    const fit=document.createElement('label');const cb=document.createElement('input');cb.type='checkbox';cb.checked=!!itemValue(item,'fit');cb.addEventListener('change',()=>{state.selectedIndex=i;setItemValue(item,'fit',cb.checked);if(cb.checked){setItemValue(item,'zoom',1);setItemValue(item,'panX',0);setItemValue(item,'panY',0);}update();});fit.append(cb,document.createTextNode('Ajustar ao quadro'));controls.append(fit);
    const pan=document.createElement('div');pan.className='pan-buttons';
    const syncZoomDisplay=()=>{

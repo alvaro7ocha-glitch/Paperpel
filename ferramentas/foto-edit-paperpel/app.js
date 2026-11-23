@@ -18,7 +18,6 @@
  const previewStage=preview.closest('.sheet-stage');
  const applyPreviewZoom=()=>{
   preview.style.zoom=String(previewZoom);
-  previewStage.style.cursor=previewZoom>1?'zoom-out':'zoom-in';
  };
  previewStage.addEventListener('wheel',e=>{
   e.preventDefault();

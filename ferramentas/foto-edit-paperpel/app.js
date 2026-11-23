@@ -13,7 +13,19 @@
  const setItemValue=(item,key,value)=>{const prop=state.kind==='circle'&&state.natal&&state.manualBack?`back${key[0].toUpperCase()}${key.slice(1)}`:key;item[prop]=value;};
  const natalIcon=new Image();natalIcon.src='assets/natal-icon.png';natalIcon.onload=()=>{if(state.kind==='circle')updatePreviewOnly()};
  const preview=$('preview'),ctx=preview.getContext('2d');
- // Zoom da pré-visualização por scroll removido; o zoom das imagens continua pelos controles e teclado.
+ // Zoom independente da área de pré-visualização (não altera o zoom das imagens).
+ let previewZoom=1;
+ const previewStage=preview.closest('.sheet-stage');
+ const applyPreviewZoom=()=>{
+  preview.style.zoom=String(previewZoom);
+  previewStage.style.cursor=previewZoom>1?'zoom-out':'zoom-in';
+ };
+ previewStage.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const direction=e.deltaY<0?1:-1;
+  const next=Math.max(.5,Math.min(3,Math.round((previewZoom+direction*.1)*100)/100));
+  if(next!==previewZoom){previewZoom=next;applyPreviewZoom();}
+ },{passive:false});
  const setStatus=t=>$('status').textContent=t;
  $('toolMenuBtn').addEventListener('click',()=>$('toolMenu').classList.toggle('hidden'));
  document.addEventListener('click',e=>{if(!e.target.closest('.brand-wrap'))$('toolMenu').classList.add('hidden')});
@@ -170,5 +182,6 @@
   if(moved){e.preventDefault();updatePreviewOnly();}
  });
  const dz=$('dropzone');['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('dragover')}));['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('dragover')}));dz.addEventListener('drop',e=>loadFiles(e.dataTransfer.files));
+ applyPreviewZoom();
  update();
 })();
